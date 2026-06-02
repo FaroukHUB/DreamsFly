@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-ivoire text-ink antialiased;
+    font-feature-settings: "ss01", "ss02";
+  }
+  ::selection {
+    @apply bg-midnight text-ivoire;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center gap-2.5 rounded-pill bg-midnight px-7 py-3.5 font-sans text-base font-semibold text-white shadow-[0_4px_20px_rgba(23,37,84,0.15)] transition-all duration-200 hover:bg-midnight-dark hover:-translate-y-px hover:shadow-[0_8px_28px_rgba(56,189,248,0.25)];
+  }
+  .btn-secondary {
+    @apply inline-flex items-center gap-2.5 rounded-pill bg-ivoire px-7 py-3.5 font-sans text-base font-semibold text-ink border border-border transition-all duration-200 hover:bg-sable;
+  }
+  .btn-ghost {
+    @apply font-sans text-sm font-medium text-ink border-b border-brume pb-0.5 transition-colors hover:text-midnight hover:border-midnight;
+  }
+  .pill {
+    @apply inline-flex items-center gap-2 rounded-pill bg-lin px-3.5 py-1.5 text-xs font-semibold text-midnight;
+  }
+  .eyebrow {
+    @apply text-xs font-semibold uppercase tracking-[0.16em] text-midnight;
+  }
+  .section {
+    @apply mx-auto max-w-site px-8 py-20;
+  }
+}
+
+/* Animations utilitaires custom — pour le matelas en couches */
+.layer { opacity: 0; animation: layerIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards; transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+.layer-1 { animation-delay: 0.1s; }
+.layer-2 { animation-delay: 0.25s; }
+.layer-3 { animation-delay: 0.4s; }
+.layer-4 { animation-delay: 0.55s; }
+.layer-5 { animation-delay: 0.7s; }
+
+@keyframes layerIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
