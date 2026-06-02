@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>DreamsFly — Prompts vidéo hero (Luma + alternatives)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ivoire: #FBF9F4;
+    --sable: #F4EFE6;
+    --lin: #EBE3D3;
+    --ink: #1C1B1F;
+    --pierre: #57534E;
+    --brume: #A8A29E;
+    --midnight: #172554;
+    --midnight-dark: #0F1B47;
+    --sky: #38BDF8;
+    --aurora: #BFE4F2;
+    --or: #C8A876;
+    --success: #6B9B5E;
+    --border: #E8E1D0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    background: var(--ivoire);
+    color: var(--ink);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    padding: 48px 24px;
+  }
+  .container { max-width: 1100px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 56px; }
+  .badge {
+    display: inline-block;
+    background: var(--lin);
+    color: var(--midnight);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 999px;
+    margin-bottom: 18px;
+  }
+  h1 {
+    font-family: 'Sora', sans-serif;
+    font-size: clamp(32px, 5vw, 48px);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: 14px;
+  }
+  h1 .accent {
+    background: linear-gradient(135deg, var(--midnight), var(--sky));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-style: italic;
+    font-weight: 500;
+  }
+  header p {
+    color: var(--pierre);
+    max-width: 600px;
+    margin: 0 auto;
+    font-size: 16px;
+  }
+
+  /* Tools row */
+  .tools {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin: 32px 0 48px;
+    flex-wrap: wrap;
+  }
+  .tool-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--ivoire);
+    color: var(--ink);
+    border: 1px solid var(--border);
+    padding: 12px 18px;
+    border-radius: 999px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+  .tool-btn:hover {
+    border-color: var(--midnight);
+    background: var(--sable);
+    transform: translateY(-1px);
+  }
+  .tool-btn.featured {
+    background: var(--midnight);
+    color: #FFFFFF;
+    border-color: var(--midnight);
+  }
+  .tool-btn.featured:hover {
+    background: var(--midnight-dark);
+  }
+  .tool-btn small {
+    font-weight: 500;
+    opacity: 0.7;
+    font-size: 12px;
+  }
+
+  /* Prompt cards */
+  .prompts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .card {
+    background: var(--ivoire);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 28px;
+    position: relative;
+    transition: all 0.25s ease;
+    display: flex;
+    flex-direction: column;
+  }
+  .card:hover {
+    border-color: var(--midnight);
+    box-shadow: 0 12px 36px rgba(28, 27, 31, 0.06);
+    transform: translateY(-3px);
+  }
+  .card.featured {
+    background: linear-gradient(135deg, var(--midnight), #1E2F6B);
+    color: #FFFFFF;
+    border-color: var(--midnight);
+  }
+  .card.featured:hover {
+    box-shadow: 0 12px 36px rgba(23, 37, 84, 0.3);
+  }
+  .card-tag {
+    display: inline-block;
+    background: var(--sable);
+    color: var(--midnight);
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 5px 11px;
+    border-radius: 4px;
+    margin-bottom: 14px;
+    align-self: flex-start;
+  }
+  .card.featured .card-tag {
+    background: var(--sky);
+    color: var(--midnight);
+  }
+  .card h3 {
+    font-family: 'Sora', sans-serif;
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin-bottom: 8px;
+  }
+  .card-sub {
+    font-size: 14px;
+    color: var(--pierre);
+    margin-bottom: 18px;
+  }
+  .card.featured .card-sub { color: rgba(255, 255, 255, 0.75); }
+  .prompt-box {
+    background: var(--sable);
+    border-radius: 14px;
+    padding: 18px;
+    font-family: 'Sora', sans-serif;
+    font-size: 14.5px;
+    font-weight: 400;
+    line-height: 1.55;
+    color: var(--ink);
+    margin-bottom: 18px;
+    min-height: 140px;
+    flex: 1;
+    font-style: italic;
+  }
+  .card.featured .prompt-box {
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+  .actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    flex: 1;
+    min-width: 140px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 12px 16px;
+    border-radius: 999px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+  .btn-copy {
+    background: var(--midnight);
+    color: #FFFFFF;
+  }
+  .btn-copy:hover { background: var(--midnight-dark); }
+  .btn-copy.copied {
+    background: var(--success);
+  }
+  .btn-open {
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid var(--border);
+  }
+  .btn-open:hover {
+    background: var(--ivoire);
+    border-color: var(--midnight);
+  }
+  .card.featured .btn-copy {
+    background: var(--ivoire);
+    color: var(--midnight);
+  }
+  .card.featured .btn-copy:hover { background: var(--aurora); }
+  .card.featured .btn-open {
+    color: #FFFFFF;
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+  .card.featured .btn-open:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+
+  /* Specs panel */
+  .specs {
+    background: var(--midnight);
+    color: #FFFFFF;
+    border-radius: 24px;
+    padding: 40px;
+    margin-top: 56px;
+  }
+  .specs h2 {
+    font-family: 'Sora', sans-serif;
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .specs > p {
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 28px;
+    font-size: 15px;
+  }
+  .specs-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+  .spec {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 14px;
+    padding: 18px;
+  }
+  .spec strong {
+    display: block;
+    font-family: 'Sora', sans-serif;
+    font-size: 14px;
+    color: var(--aurora);
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  .spec span {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  /* Tips */
+  .tips {
+    margin-top: 40px;
+    background: var(--sable);
+    border-radius: 20px;
+    padding: 32px;
+  }
+  .tips h2 {
+    font-family: 'Sora', sans-serif;
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+  .tips ul { list-style: none; }
+  .tips li {
+    padding: 8px 0;
+    font-size: 14.5px;
+    color: var(--ink);
+    display: flex;
+    gap: 10px;
+  }
+  .tips li::before {
+    content: '→';
+    color: var(--midnight);
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--ink);
+    color: #FFFFFF;
+    padding: 14px 24px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 100;
+    pointer-events: none;
+  }
+  .toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+  .toast::before {
+    content: '✓ ';
+    color: var(--success);
+    font-weight: 700;
+  }
+
+  @media (max-width: 800px) {
+    .prompts, .specs-grid { grid-template-columns: 1fr; }
+    .actions { flex-direction: column; }
+    .btn { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <header>
+    <span class="badge">Hero vidéo · DreamsFly</span>
+    <h1>4 prompts <span class="accent">prêts à générer</span></h1>
+    <p>Clique sur « Copier le prompt » pour le récupérer dans ton presse-papier, puis « Ouvrir Luma » pour le coller et générer. Boucle, choisis le meilleur clip de 5 à 8 secondes.</p>
+
+    <div class="tools">
+      <a href="https://lumalabs.ai/dream-machine" target="_blank" rel="noopener" class="tool-btn featured">
+        ⭐ Luma Dream Machine <small>9,99 $/mois</small>
+      </a>
+      <a href="https://hailuoai.video/" target="_blank" rel="noopener" class="tool-btn">
+        Hailuo AI <small>Free + 9 $/mois</small>
+      </a>
+      <a href="https://klingai.com/" target="_blank" rel="noopener" class="tool-btn">
+        Kling AI <small>~10 $/mois</small>
+      </a>
+      <a href="https://runwayml.com/" target="_blank" rel="noopener" class="tool-btn">
+        Runway Gen-4 <small>15-35 $/mois</small>
+      </a>
+      <a href="https://pika.art/" target="_blank" rel="noopener" class="tool-btn">
+        Pika 2.2 <small>10 $/mois</small>
+      </a>
+    </div>
+  </header>
+
+  <!-- Prompt 1 — Transition lit → ciel (RECO) -->
+  <div class="prompts">
+
+    <div class="card featured">
+      <span class="card-tag">⭐ Reco DreamsFly</span>
+      <h3>Transition lit → ciel</h3>
+      <p class="card-sub">Le plus signature : démarre sur un lit paisible, finit en vol au-dessus des nuages.</p>
+      <div class="prompt-box" id="p1">Close up of a person sleeping peacefully on pristine white sheets, soft morning light, cinematic. Camera slowly zooms out and seamlessly transitions into an aerial view of soft cumulus clouds at sunrise, gentle dreamy atmosphere, slow motion, ultra cinematic, warm golden tones, 8 seconds, 16:9, no text</div>
+      <div class="actions">
+        <button class="btn btn-copy" data-target="p1">📋 Copier le prompt</button>
+        <a href="https://lumalabs.ai/dream-machine" target="_blank" rel="noopener" class="btn btn-open">Ouvrir Luma ↗</a>
+      </div>
+    </div>
+
+    <!-- Prompt 2 -->
+    <div class="card">
+      <span class="card-tag">Avion + nuages</span>
+      <h3>Avion au coucher de soleil</h3>
+      <p class="card-sub">Le plus direct : avion qui glisse à travers des nuages dorés. Matche le logo.</p>
+      <div class="prompt-box" id="p2">Cinematic aerial shot of a small white commercial plane flying gracefully through soft pink and orange cumulus clouds at golden hour, peaceful slow motion, dreamy atmosphere, ultra realistic, soft volumetric light rays, 5 seconds, 16:9, no text</div>
+      <div class="actions">
+        <button class="btn btn-copy" data-target="p2">📋 Copier le prompt</button>
+        <a href="https://lumalabs.ai/dream-machine" target="_blank" rel="noopener" class="btn btn-open">Ouvrir Luma ↗</a>
+      </div>
+    </div>
+
+    <!-- Prompt 3 -->
+    <div class="card">
+      <span class="card-tag">Surréaliste</span>
+      <h3>Matelas flottant dans les nuages</h3>
+      <p class="card-sub">Métaphore visuelle puissante : ton produit prend littéralement son envol.</p>
+      <div class="prompt-box" id="p3">A pristine white quilted mattress floating gently through soft pastel pink and lavender clouds at dawn, surreal dreamy aesthetic, slow camera dolly around, peaceful and serene, cinematic, ultra detailed fabric texture, soft volumetric light, 6 seconds, 16:9, no text</div>
+      <div class="actions">
+        <button class="btn btn-copy" data-target="p3">📋 Copier le prompt</button>
+        <a href="https://lumalabs.ai/dream-machine" target="_blank" rel="noopener" class="btn btn-open">Ouvrir Luma ↗</a>
+      </div>
+    </div>
+
+    <!-- Prompt 4 -->
+    <div class="card">
+      <span class="card-tag">POV nocturne</span>
+      <h3>Hublot d'avion au clair de lune</h3>
+      <p class="card-sub">Ambiance nuit profonde, midnight blue, rappel direct des couleurs du logo.</p>
+      <div class="prompt-box" id="p4">POV from an airplane window at night, soft moonlit cumulus clouds drifting slowly below, deep navy and lavender sky, distant stars, the airplane wing barely visible on the side, peaceful slow gentle motion, cinematic shallow depth of field, 6 seconds, 16:9, no text</div>
+      <div class="actions">
+        <button class="btn btn-copy" data-target="p4">📋 Copier le prompt</button>
+        <a href="https://lumalabs.ai/dream-machine" target="_blank" rel="noopener" class="btn btn-open">Ouvrir Luma ↗</a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Specs panel -->
+  <section class="specs">
+    <h2>Specs techniques pour le hero web</h2>
+    <p>À demander à l'IA, ou à appliquer en post-production via HandBrake / ffmpeg.</p>
+    <div class="specs-grid">
+      <div class="spec"><strong>Format</strong><span>MP4 (H.264) + WebM (AV1) en fallback</span></div>
+      <div class="spec"><strong>Ratio</strong><span>16:9 ou 21:9 (cinéma)</span></div>
+      <div class="spec"><strong>Durée</strong><span>5 à 8 sec, en boucle</span></div>
+      <div class="spec"><strong>Poids</strong><span>&lt; 2 Mo (compressé)</span></div>
+      <div class="spec"><strong>Résolution</strong><span>1920×1080 max</span></div>
+      <div class="spec"><strong>Bitrate</strong><span>2-3 Mbps</span></div>
+      <div class="spec"><strong>Son</strong><span>Aucun (muet autoplay)</span></div>
+      <div class="spec"><strong>Poster JPG</strong><span>Premier frame, pour LCP</span></div>
+    </div>
+  </section>
+
+  <!-- Tips -->
+  <section class="tips">
+    <h2>Astuces pour avoir le meilleur résultat</h2>
+    <ul>
+      <li>Génère <strong>3 à 5 variations</strong> du même prompt et garde le meilleur clip.</li>
+      <li>Demande explicitement <strong>« no text »</strong> sinon l'IA ajoute parfois des mots illisibles.</li>
+      <li>Ajoute <strong>« slow motion »</strong> et <strong>« cinematic »</strong> pour un rendu plus haut de gamme.</li>
+      <li>Précise les <strong>couleurs</strong> (pink, lavender, golden, midnight blue) pour matcher la palette DreamsFly.</li>
+      <li>Avant d'uploader : compresse avec <a href="https://handbrake.fr/" target="_blank" rel="noopener" style="color:var(--midnight);text-decoration:underline;">HandBrake</a> en H.264 / 2 Mbps, ça passe sous 2 Mo facilement.</li>
+      <li>Génère aussi une <strong>image poster JPG</strong> du premier frame — elle s'affiche pendant le chargement de la vidéo et compte pour le LCP Core Web Vitals.</li>
+    </ul>
+  </section>
+
+</div>
+
+<div class="toast" id="toast">Prompt copié dans le presse-papier !</div>
+
+<script>
+  const toast = document.getElementById('toast');
+  let toastTimer;
+
+  document.querySelectorAll('.btn-copy').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const target = document.getElementById(btn.dataset.target);
+      const text = target.textContent.trim();
+
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch (e) {
+        // Fallback pour anciens navigateurs
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        ta.remove();
+      }
+
+      const original = btn.innerHTML;
+      btn.innerHTML = '✓ Copié !';
+      btn.classList.add('copied');
+
+      toast.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
+
+      setTimeout(() => {
+        btn.innerHTML = original;
+        btn.classList.remove('copied');
+      }, 2200);
+    });
+  });
+</script>
+
+</body>
+</html>
