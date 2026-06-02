@@ -5,12 +5,22 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { UspStrip } from "@/components/usp-strip";
 
-export const revalidate = 60; // ISR : page régénérée toutes les minutes max
+export const revalidate = 60;
+
+async function safeFetch<T>(query: string): Promise<T | null> {
+  if (!sanityClient) return null;
+  try {
+    return await sanityClient.fetch<T>(query);
+  } catch (err) {
+    console.error("[Sanity fetch error]", err);
+    return null;
+  }
+}
 
 export default async function HomePage() {
   const [homepage, siteSettings] = await Promise.all([
-    sanityClient.fetch(homepageQuery).catch(() => null),
-    sanityClient.fetch(siteSettingsQuery).catch(() => null),
+    safeFetch<any>(homepageQuery),
+    safeFetch<any>(siteSettingsQuery),
   ]);
 
   return (
@@ -19,7 +29,6 @@ export default async function HomePage() {
       <main>
         <Hero hero={homepage?.hero} heroSecondary={homepage?.heroSecondary} />
         <UspStrip items={homepage?.uspStrip} />
-        {/* TODO Phase 2 : Trust counter, Best-sellers, Mosaïque, Quiz CTA, Catégories, Awards, Brand statement, Magazine, Newsletter */}
       </main>
       <Footer settings={siteSettings} />
     </>
