@@ -8,7 +8,6 @@ export const siteSettings = defineType({
   name: "siteSettings",
   title: "Paramètres du site",
   type: "document",
-  __experimental_actions: ["update", "publish"],
   groups: [
     { name: "header", title: "Header", default: true },
     { name: "footer", title: "Footer" },

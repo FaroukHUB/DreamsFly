@@ -11,8 +11,6 @@ export const homepage = defineType({
   name: "homepage",
   title: "Page d'accueil",
   type: "document",
-  // Singleton — un seul document de ce type
-  __experimental_actions: ["update", "publish"],
   fields: [
     defineField({
       name: "title",
