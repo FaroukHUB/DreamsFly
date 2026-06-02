@@ -248,12 +248,12 @@ function HeroFallback() {
           aria-hidden="true"
         />
         <div className="relative z-10 flex h-full min-h-[420px] flex-col justify-center p-12 text-white">
-          <h1 className="mb-6 max-w-xl font-sora text-5xl font-semibold leading-tight tracking-tight md:text-7xl">
-            Dormez.<br />
-            <span className="italic text-aurora">Envolez-vous.</span>
+          <h1 className="mb-6 max-w-2xl font-sora text-5xl font-light leading-[1.05] tracking-tight md:text-7xl">
+            Là où la nuit<br />
+            <span className="italic font-medium text-aurora">prend son envol.</span>
           </h1>
-          <p className="mb-8 max-w-md text-lg text-white/85">
-            Le matelas pensé pour votre meilleur sommeil. Livraison offerte · Essai 100 nuits.
+          <p className="mb-8 max-w-md text-lg font-light text-white/80">
+            Le matelas conçu pour votre voyage intérieur.
           </p>
           <Link
             href="/matelas"
