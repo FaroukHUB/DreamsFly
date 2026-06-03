@@ -2,7 +2,8 @@ import { defineType, defineField } from "sanity";
 
 /**
  * GUIDE — article du magazine du sommeil.
- * Pilier de la stratégie E-E-A-T : auteur identifié, contenu long, schema Article.
+ * URL : /magazine/[slug]
+ * E-E-A-T : auteur identifié, dates, sources, schema Article (+ HowTo si applicable).
  */
 export const guide = defineType({
   name: "guide",
@@ -11,33 +12,67 @@ export const guide = defineType({
   groups: [
     { name: "main", title: "Article", default: true },
     { name: "seo", title: "SEO" },
+    { name: "publish", title: "Publication" },
   ],
   fields: [
-    defineField({ name: "title", title: "Titre", type: "string", group: "main", validation: (r) => r.required() }),
+    defineField({ name: "title", title: "Titre H1", type: "string", group: "main", validation: (r) => r.required() }),
     defineField({ name: "slug", title: "Slug", type: "slug", options: { source: "title" }, group: "main" }),
     defineField({
-      name: "category",
-      title: "Catégorie",
+      name: "articleType",
+      title: "Type d'article",
       type: "string",
       group: "main",
       options: {
-        list: ["Guide d'achat", "Santé du sommeil", "Banc d'essai", "Conseils", "Comparatif"],
+        list: [
+          { title: "Guide d'achat", value: "buying-guide" },
+          { title: "How-to (tutoriel pratique)", value: "how-to" },
+          { title: "Comparatif", value: "comparison" },
+          { title: "Santé du sommeil", value: "health" },
+          { title: "Conseils & astuces", value: "tips" },
+          { title: "Banc d'essai", value: "review" },
+        ],
       },
     }),
-    defineField({ name: "excerpt", title: "Extrait", type: "text", rows: 3, group: "main" }),
+    defineField({
+      name: "excerpt",
+      title: "Extrait / chapô (60-80 mots — pour AI)",
+      type: "text",
+      rows: 3,
+      group: "main",
+      description: "Premier paragraphe affiché. Les LLM en extraient l'essentiel.",
+    }),
     defineField({ name: "coverImage", title: "Image de couverture", type: "image", options: { hotspot: true }, group: "main" }),
-    defineField({ name: "author", title: "Auteur", type: "reference", to: [{ type: "author" }], group: "main" }),
-    defineField({ name: "reviewer", title: "Relu et validé par", type: "reference", to: [{ type: "author" }], group: "main" }),
-    defineField({ name: "publishedAt", title: "Date de publication", type: "datetime", group: "main" }),
-    defineField({ name: "updatedAt", title: "Date de dernière mise à jour", type: "datetime", group: "main" }),
     defineField({
       name: "body",
-      title: "Contenu",
+      title: "Contenu de l'article",
       type: "array",
       group: "main",
       of: [
         { type: "block" },
-        { type: "image", options: { hotspot: true } },
+        {
+          type: "image",
+          options: { hotspot: true },
+          fields: [{ name: "alt", title: "Alt SEO", type: "string" }],
+        },
+        {
+          name: "calloutBlock",
+          type: "object",
+          title: "💡 Encadré conseil",
+          fields: [
+            { name: "title", title: "Titre", type: "string" },
+            { name: "text", title: "Texte", type: "text", rows: 3 },
+          ],
+        },
+        {
+          name: "howToStep",
+          type: "object",
+          title: "📋 Étape de tutoriel (HowTo)",
+          fields: [
+            { name: "name", title: "Nom de l'étape", type: "string" },
+            { name: "text", title: "Description", type: "text", rows: 3 },
+            { name: "image", title: "Visuel", type: "image", options: { hotspot: true } },
+          ],
+        },
       ],
     }),
     defineField({
@@ -45,26 +80,76 @@ export const guide = defineType({
       title: "FAQ (FAQPage schema)",
       type: "array",
       group: "main",
-      of: [{ type: "object", fields: [{ name: "question", type: "string" }, { name: "answer", type: "text", rows: 4 }] }],
+      of: [
+        {
+          type: "object",
+          fields: [
+            { name: "question", type: "string", title: "Question" },
+            { name: "answer", type: "text", rows: 3, title: "Réponse" },
+          ],
+        },
+      ],
     }),
     defineField({
+      name: "sources",
+      title: "Sources & références (signaux d'autorité)",
+      type: "array",
+      group: "main",
+      of: [
+        {
+          type: "object",
+          fields: [
+            { name: "title", title: "Titre source", type: "string" },
+            { name: "publisher", title: "Publisher", type: "string" },
+            { name: "url", title: "URL", type: "url" },
+            { name: "year", title: "Année", type: "number" },
+          ],
+        },
+      ],
+    }),
+
+    // E-E-A-T
+    defineField({ name: "author", title: "Auteur", type: "reference", to: [{ type: "author" }], group: "main" }),
+    defineField({ name: "reviewer", title: "Relu par", type: "reference", to: [{ type: "author" }], group: "main" }),
+
+    // Linking
+    defineField({
       name: "relatedProducts",
-      title: "Produits liés (CTA en bas d'article)",
+      title: "Produits liés (CTA en bas)",
       type: "array",
       group: "main",
       of: [{ type: "reference", to: [{ type: "product" }] }],
     }),
     defineField({
-      name: "seo",
-      title: "SEO",
-      type: "object",
-      group: "seo",
-      fields: [
-        { name: "metaTitle", type: "string", title: "Meta title" },
-        { name: "metaDescription", type: "text", rows: 3, title: "Meta description" },
-        { name: "focusKeyword", type: "string", title: "Mot-clé principal" },
-      ],
+      name: "relatedGuides",
+      title: "Guides liés",
+      type: "array",
+      group: "main",
+      of: [{ type: "reference", to: [{ type: "guide" }] }],
     }),
+    defineField({
+      name: "tags",
+      title: "Tags",
+      type: "array",
+      group: "main",
+      of: [{ type: "string" }],
+    }),
+
+    // SEO
+    defineField({ name: "metaTitle", title: "Meta title", type: "string", group: "seo", validation: (r) => r.max(70) }),
+    defineField({ name: "metaDescription", title: "Meta description", type: "text", rows: 3, group: "seo", validation: (r) => r.max(170) }),
+    defineField({ name: "focusKeyword", title: "Mot-clé principal", type: "string", group: "seo" }),
+
+    // Publication
+    defineField({ name: "publishedAt", title: "Date de publication", type: "datetime", group: "publish" }),
+    defineField({ name: "updatedAt", title: "Date de dernière mise à jour", type: "datetime", group: "publish" }),
   ],
-  preview: { select: { title: "title", subtitle: "category", media: "coverImage" } },
+  preview: {
+    select: { title: "title", subtitle: "articleType", media: "coverImage", pub: "publishedAt" },
+    prepare: ({ title, subtitle, media, pub }) => ({
+      title: `${pub ? "✅" : "📝 Draft"} ${title}`,
+      subtitle,
+      media,
+    }),
+  },
 });
