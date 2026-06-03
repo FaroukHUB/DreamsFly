@@ -254,10 +254,18 @@ export const landingPage = defineType({
                     { name: "profile", title: "Profil / situation", type: "string" },
                     { name: "advice", title: "Conseil", type: "text", rows: 2 },
                   ],
+                  preview: { select: { title: "profile", subtitle: "advice" } },
                 },
               ],
             },
           ],
+          preview: {
+            select: { title: "heading", items: "items" },
+            prepare: ({ title, items }: any) => ({
+              title: title || "Recommandations",
+              subtitle: `🎯 ${items?.length || 0} recommandation${items?.length > 1 ? "s" : ""}`,
+            }),
+          },
         }),
 
         // Grille produits
@@ -291,6 +299,13 @@ export const landingPage = defineType({
             },
             { name: "maxItems", title: "Nombre max de produits", type: "number", initialValue: 4 },
           ],
+          preview: {
+            select: { title: "heading", filter: "filter" },
+            prepare: ({ title, filter }: any) => ({
+              title: title || "Grille produits",
+              subtitle: `🛏️ Filtre : ${filter || "all"}`,
+            }),
+          },
         }),
 
         // Cas d'usage
@@ -314,6 +329,13 @@ export const landingPage = defineType({
               ],
             },
           ],
+          preview: {
+            select: { title: "heading" },
+            prepare: ({ title }: any) => ({
+              title: title || "Cas d'usage",
+              subtitle: "💡 Texte + images contextuels",
+            }),
+          },
         }),
 
         // FAQ
@@ -339,6 +361,13 @@ export const landingPage = defineType({
               ],
             },
           ],
+          preview: {
+            select: { title: "heading", questions: "questions" },
+            prepare: ({ title, questions }: any) => ({
+              title: title || "FAQ",
+              subtitle: `❓ ${questions?.length || 0} question${questions?.length > 1 ? "s" : ""}`,
+            }),
+          },
         }),
 
         // Conseils numérotés
@@ -355,6 +384,13 @@ export const landingPage = defineType({
               of: [{ type: "string" }],
             },
           ],
+          preview: {
+            select: { title: "heading", tips: "tips" },
+            prepare: ({ title, tips }: any) => ({
+              title: title || "Liste de conseils",
+              subtitle: `✅ ${tips?.length || 0} conseil${tips?.length > 1 ? "s" : ""}`,
+            }),
+          },
         }),
 
         // Citation d'expert (E-E-A-T)
@@ -366,6 +402,13 @@ export const landingPage = defineType({
             { name: "quote", title: "Citation", type: "text", rows: 3 },
             { name: "expert", title: "Expert", type: "reference", to: [{ type: "author" }] },
           ],
+          preview: {
+            select: { quote: "quote", name: "expert.name" },
+            prepare: ({ quote, name }: any) => ({
+              title: name ? `💬 ${name}` : "Citation d'expert",
+              subtitle: quote?.slice(0, 80),
+            }),
+          },
         }),
 
         // Sources (autorité)
@@ -388,10 +431,18 @@ export const landingPage = defineType({
                     { name: "url", type: "url", title: "URL" },
                     { name: "year", type: "number", title: "Année" },
                   ],
+                  preview: { select: { title: "title", subtitle: "publisher" } },
                 },
               ],
             },
           ],
+          preview: {
+            select: { sources: "sources" },
+            prepare: ({ sources }: any) => ({
+              title: "Sources & références",
+              subtitle: `📚 ${sources?.length || 0} source${sources?.length > 1 ? "s" : ""}`,
+            }),
+          },
         }),
 
         // Maillage interne (auto + manuel)
@@ -421,6 +472,13 @@ export const landingPage = defineType({
               hidden: ({ parent }) => parent?.mode !== "manual",
             },
           ],
+          preview: {
+            select: { title: "heading", mode: "mode", links: "manualLinks" },
+            prepare: ({ title, mode, links }: any) => ({
+              title: title || "Maillage interne",
+              subtitle: mode === "manual" ? `🔗 ${links?.length || 0} liens manuels` : "🔗 Auto (par tags)",
+            }),
+          },
         }),
 
         // Contenu libre (portable text)
@@ -447,6 +505,16 @@ export const landingPage = defineType({
               ],
             },
           ],
+          preview: {
+            select: { title: "heading", content: "content" },
+            prepare: ({ title, content }: any) => {
+              const firstText = content?.find((c: any) => c._type === "block")?.children?.[0]?.text;
+              return {
+                title: title || "Contenu libre",
+                subtitle: firstText ? `📝 ${firstText.slice(0, 80)}` : "📝 Texte + images",
+              };
+            },
+          },
         }),
 
         // CTA
@@ -469,8 +537,16 @@ export const landingPage = defineType({
               initialValue: "midnight-dark",
             },
           ],
+          preview: {
+            select: { title: "heading", style: "style" },
+            prepare: ({ title, style }: any) => ({
+              title: title || "CTA",
+              subtitle: `🎯 Style : ${style || "midnight-dark"}`,
+            }),
+          },
         }),
       ],
+      options: { sortable: true },
     }),
 
     // ─── Maillage (tags) ───
