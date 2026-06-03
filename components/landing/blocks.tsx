@@ -29,6 +29,25 @@ const portableTextComponents: PortableTextComponents = {
       </a>
     ),
   },
+  types: {
+    image: ({ value }: any) =>
+      value?.asset ? (
+        <figure className="my-8 overflow-hidden rounded-2xl">
+          <Image
+            src={urlFor(value).width(1200).quality(85).url()}
+            alt={value.alt || ""}
+            width={1200}
+            height={750}
+            className="h-auto w-full"
+          />
+          {value.caption && (
+            <figcaption className="mt-2 text-center text-sm text-brume">
+              {value.caption}
+            </figcaption>
+          )}
+        </figure>
+      ) : null,
+  },
 };
 
 import { getShellClasses } from "./section-shells";

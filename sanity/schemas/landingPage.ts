@@ -300,7 +300,19 @@ export const landingPage = defineType({
           title: "💡 Cas d'usage (« Dans quelle chambre ? »)",
           fields: [
             { name: "heading", title: "Titre H2", type: "string" },
-            { name: "content", title: "Contenu", type: "array", of: [{ type: "block" }] },
+            {
+              name: "content",
+              title: "Contenu (texte + images)",
+              type: "array",
+              of: [
+                { type: "block" },
+                {
+                  type: "image",
+                  options: { hotspot: true },
+                  fields: [{ name: "alt", title: "Texte alternatif (SEO)", type: "string" }],
+                },
+              ],
+            },
           ],
         }),
 
@@ -415,10 +427,25 @@ export const landingPage = defineType({
         defineArrayMember({
           name: "richTextBlock",
           type: "object",
-          title: "📝 Contenu libre (texte riche)",
+          title: "📝 Contenu libre (texte + images)",
           fields: [
             { name: "heading", title: "Titre H2 (optionnel)", type: "string" },
-            { name: "content", title: "Contenu", type: "array", of: [{ type: "block" }] },
+            {
+              name: "content",
+              title: "Contenu",
+              type: "array",
+              of: [
+                { type: "block" },
+                {
+                  type: "image",
+                  options: { hotspot: true },
+                  fields: [
+                    { name: "alt", title: "Texte alternatif (SEO)", type: "string" },
+                    { name: "caption", title: "Légende (optionnelle)", type: "string" },
+                  ],
+                },
+              ],
+            },
           ],
         }),
 

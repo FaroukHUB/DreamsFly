@@ -17,7 +17,6 @@ import { Footer } from "@/components/footer";
 import { Sections } from "@/components/landing/blocks";
 import { LandingHero } from "@/components/landing/landing-hero";
 import { ContextualProducts } from "@/components/landing/contextual-products";
-import { TrustBar } from "@/components/trust-bar";
 import { buildMetadata } from "@/lib/seo/metadata";
 import {
   JsonLd,
@@ -103,9 +102,6 @@ export default async function LandingPageRoute({ params }: { params: Promise<Par
   return (
     <>
       <Header settings={siteSettings} />
-
-      {/* TrustBar pleine largeur sous le header */}
-      <TrustBar />
 
       <main className="mx-auto max-w-site px-8 py-12 md:py-16">
         {/* Breadcrumbs visibles */}
