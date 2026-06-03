@@ -119,7 +119,7 @@ export const product = defineType({
         { name: "hypoallergenique", type: "boolean", title: "Hypoallergénique" },
         { name: "oekoTex", type: "boolean", title: "Certifié OEKO-TEX" },
         { name: "fabriqueEurope", type: "boolean", title: "Fabriqué en Europe", initialValue: true },
-        { name: "garantieAns", type: "number", title: "Garantie (années)", initialValue: 5 },
+        { name: "garantieAns", type: "number", title: "Garantie (années)", initialValue: 2 },
         { name: "independanceCouchage", type: "string", title: "Indépendance de couchage" },
       ],
     }),

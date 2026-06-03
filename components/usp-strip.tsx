@@ -21,35 +21,48 @@ export function UspStrip({ items }: { items?: UspItem[] }) {
   );
 }
 
-// USPs propres à DreamsFly (pas d'emprunts aux concurrents)
+// USPs réelles du groupe (Trust Industrie / DreamsFly)
 const DEFAULT_USPS: UspItem[] = [
-  { icon: "flag", title: "Confection française", subtitle: "Fabriqués dans nos ateliers" },
-  { icon: "leaf", title: "Tissus certifiés OEKO-TEX", subtitle: "Matériaux nobles, hypoallergéniques" },
-  { icon: "shield", title: "Garantie 5 ans", subtitle: "Sur l'intégralité de nos matelas" },
-  { icon: "card", title: "Paiement en plusieurs fois", subtitle: "2×, 3× ou 4× via Alma" },
+  { icon: "users", title: "+ 5 000 clients satisfaits", subtitle: "★ 4,9/5 sur Google" },
+  { icon: "lock", title: "Paiement 100 % sécurisé", subtitle: "Via Alma · Stripe · CB" },
+  { icon: "store", title: "3 magasins physiques", subtitle: "Visitez nos showrooms" },
+  { icon: "truck", title: "Livraison à domicile", subtitle: "Partout en France dès 39 €" },
 ];
 
 function Icon({ name }: { name: string }) {
   switch (name) {
-    case "flag":
+    case "users":
       return (
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
-          <line x1="4" y1="22" x2="4" y2="15" />
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
         </svg>
       );
-    case "leaf":
+    case "lock":
       return (
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19.2 2.96c1.4 9.3 -1.7 18.04 -8.2 17.04Z" />
-          <path d="M2 21c0 -3 1.85 -5.36 5.08 -6" />
+          <rect x="3" y="11" width="18" height="11" rx="2" />
+          <path d="M7 11V7a5 5 0 0 1 10 0v4" />
         </svg>
       );
-    case "card":
+    case "store":
       return (
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-          <rect x="2" y="5" width="20" height="14" rx="2" />
-          <line x1="2" y1="10" x2="22" y2="10" />
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M3 9l2-6h14l2 6" />
+          <path d="M3 9v11a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V9" />
+          <path d="M3 9h18" />
+          <path d="M9 21V13h6v8" />
+        </svg>
+      );
+    case "truck":
+      return (
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="1" y="6" width="14" height="11" rx="1" />
+          <path d="M15 9h4l3 3v5h-7V9z" />
+          <circle cx="5.5" cy="18.5" r="2" />
+          <circle cx="18.5" cy="18.5" r="2" />
         </svg>
       );
     default: // shield
