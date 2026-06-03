@@ -1,9 +1,6 @@
 /**
  * Route catch-all flat — sert toutes les landing pages SEO :
  *   /matelas-140x190, /matelas-memoire-de-forme, /matelas-mal-de-dos, etc.
- *
- * Pages exclues (gérées par d'autres routes spécifiques) :
- *   /matelas (pilier), /magazine, /comparatifs, /glossaire, /magasins, /marque…
  */
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -18,6 +15,9 @@ import { siteSettingsQuery } from "@/lib/sanity/queries";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { Sections } from "@/components/landing/blocks";
+import { LandingHero } from "@/components/landing/landing-hero";
+import { ContextualProducts } from "@/components/landing/contextual-products";
+import { TrustBar } from "@/components/trust-bar";
 import { buildMetadata } from "@/lib/seo/metadata";
 import {
   JsonLd,
@@ -26,25 +26,10 @@ import {
   organizationSchema,
 } from "@/lib/seo/jsonld";
 
-// Liste des slugs à exclure (routes dédiées)
 const RESERVED = new Set([
-  "matelas",
-  "magazine",
-  "comparatifs",
-  "glossaire",
-  "magasins",
-  "marque",
-  "panier",
-  "checkout",
-  "compte",
-  "aide",
-  "studio",
-  "api",
-  "debug",
-  "test",
-  "robots.txt",
-  "sitemap.xml",
-  "favicon.ico",
+  "matelas", "magazine", "comparatifs", "glossaire", "magasins", "marque",
+  "panier", "checkout", "compte", "aide", "studio", "api", "debug", "test",
+  "robots.txt", "sitemap.xml", "favicon.ico",
 ]);
 
 type Params = { slug: string };
@@ -110,9 +95,17 @@ export default async function LandingPageRoute({ params }: { params: Promise<Par
     { name: page.h1 || page.name, url: `/${slug}` },
   ];
 
+  // Détecte si l'éditeur a déjà placé un productsGrid pour éviter le doublon
+  const hasManualProductsGrid = page.sections?.some(
+    (s: any) => s._type === "productsGrid"
+  );
+
   return (
     <>
       <Header settings={siteSettings} />
+
+      {/* TrustBar pleine largeur sous le header */}
+      <TrustBar />
 
       <main className="mx-auto max-w-site px-8 py-12 md:py-16">
         {/* Breadcrumbs visibles */}
@@ -131,29 +124,38 @@ export default async function LandingPageRoute({ params }: { params: Promise<Par
           ))}
         </nav>
 
-        {/* H1 + intro (réponse directe pour AI) */}
-        <header className="mb-12 max-w-3xl">
-          {page.editorialAngle && (
-            <div className="eyebrow mb-3">{page.editorialAngle}</div>
-          )}
-          <h1 className="font-sora text-4xl font-semibold leading-tight tracking-tight text-ink md:text-5xl lg:text-6xl">
-            {page.h1}
-          </h1>
-          <p className="mt-6 text-lg leading-relaxed text-pierre md:text-xl">{page.intro}</p>
-        </header>
+        {/* Hero zone enrichi (texte + visuel ou OG image) */}
+        <LandingHero
+          editorialAngle={page.editorialAngle}
+          h1={page.h1}
+          intro={page.intro}
+          focusKeyword={page.focusKeyword}
+          ogImage={page.ogImage}
+        />
 
+        {/* Produits contextuels auto (uniquement si pas déjà placés manuellement) */}
+        <div className="my-16">
+          <ContextualProducts
+            pageType={page.pageType}
+            slug={slug}
+            alreadyHasProductsGrid={hasManualProductsGrid}
+          />
+        </div>
       </main>
 
-      {/* Sections composables — full-bleed avec shells alternés */}
+      {/* Sections composables — full-bleed avec shells alternés selon layout */}
       <Sections sections={page.sections} layout={page.layout || "editorial"} withShells />
 
       <main className="mx-auto max-w-site px-8 py-12 md:py-16">
         {/* Maillage interne automatique (tags) */}
         {relatedPages.length > 0 && (
-          <section className="mt-20 border-t border-border pt-12">
-            <h2 className="mb-6 font-sora text-2xl font-semibold tracking-tight text-ink">
+          <section className="mt-4 border-t border-border pt-12">
+            <h2 className="mb-2 font-sora text-2xl font-semibold tracking-tight text-ink">
               Explorez aussi
             </h2>
+            <p className="mb-6 max-w-xl text-pierre">
+              Approfondissez votre choix avec ces autres univers DreamsFly.
+            </p>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {relatedPages.map((p: any) => (
                 <Link
@@ -175,8 +177,32 @@ export default async function LandingPageRoute({ params }: { params: Promise<Par
           </section>
         )}
 
-        {/* E-E-A-T : date + auteur si dispo */}
-        {(page.lastReviewedAt || page.author?.name) && (
+        {/* CTA final vers la collection */}
+        <section className="mt-16 rounded-3xl bg-midnight p-12 text-center text-white">
+          <h2 className="font-sora text-3xl font-semibold tracking-tight md:text-4xl">
+            Pas encore décidé ?
+          </h2>
+          <p className="mx-auto mt-3 max-w-md text-lg text-white/85">
+            Explorez l'intégralité de notre collection ou contactez nos conseillers.
+          </p>
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-4">
+            <Link
+              href="/matelas"
+              className="inline-flex items-center gap-2 rounded-pill bg-ivoire px-7 py-3.5 font-sans text-base font-semibold text-midnight transition-all hover:bg-aurora hover:-translate-y-px"
+            >
+              Voir tous les matelas →
+            </Link>
+            <Link
+              href="/aide/contact"
+              className="text-sm font-medium text-white/80 hover:text-aurora"
+            >
+              Parler à un conseiller
+            </Link>
+          </div>
+        </section>
+
+        {/* E-E-A-T footer */}
+        {(page.lastReviewedAt || (page.author?.name && !page.author?.isPlaceholder)) && (
           <footer className="mt-16 border-t border-border pt-6 text-sm text-pierre">
             {page.author?.name && !page.author?.isPlaceholder && (
               <p>
@@ -206,7 +232,6 @@ export default async function LandingPageRoute({ params }: { params: Promise<Par
 
       <Footer settings={siteSettings} />
 
-      {/* JSON-LD */}
       <JsonLd data={organizationSchema({ name: "DreamsFly" })} />
       <JsonLd data={breadcrumbSchema(breadcrumbs)} />
       <JsonLd
