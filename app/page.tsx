@@ -5,6 +5,9 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { UspStrip } from "@/components/usp-strip";
 import { BestSellers } from "@/components/best-sellers";
+import { MosaicCollections } from "@/components/home/mosaic-collections";
+import { QuizCTA } from "@/components/home/quiz-cta";
+import { Newsletter } from "@/components/home/newsletter";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { JsonLd, organizationSchema, websiteSchema } from "@/lib/seo/jsonld";
 import type { Metadata } from "next";
@@ -41,6 +44,9 @@ export default async function HomePage() {
         <Hero hero={homepage?.hero} heroSecondary={homepage?.heroSecondary} />
         <UspStrip items={homepage?.uspStrip} />
         <BestSellers />
+        <MosaicCollections cards={homepage?.mosaicCollections} />
+        <QuizCTA data={homepage?.quizCta} />
+        <Newsletter />
       </main>
       <Footer settings={siteSettings} />
 
