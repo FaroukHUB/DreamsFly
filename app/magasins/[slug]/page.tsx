@@ -1,0 +1,234 @@
+import { notFound } from "next/navigation";
+import type { Metadata } from "next";
+import Link from "next/link";
+import Image from "next/image";
+import { PortableText } from "@portabletext/react";
+import { sanityClient } from "@/lib/sanity/client";
+import {
+  showroomBySlugQuery,
+  allShowroomSlugsQuery,
+} from "@/lib/sanity/extra-queries";
+import { siteSettingsQuery } from "@/lib/sanity/queries";
+import { Header } from "@/components/header";
+import { Footer } from "@/components/footer";
+import { buildMetadata } from "@/lib/seo/metadata";
+import {
+  JsonLd,
+  breadcrumbSchema,
+  localBusinessSchema,
+  organizationSchema,
+} from "@/lib/seo/jsonld";
+import { urlFor } from "@/lib/sanity/image";
+
+export const revalidate = 600;
+
+type Params = { slug: string };
+
+export async function generateStaticParams() {
+  if (!sanityClient) return [];
+  try {
+    const slugs = await sanityClient.fetch<{ slug: string }[]>(allShowroomSlugsQuery);
+    return slugs.map((s) => ({ slug: s.slug }));
+  } catch {
+    return [];
+  }
+}
+
+export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
+  const { slug } = await params;
+  if (!sanityClient) return buildMetadata({ path: `/magasins/${slug}` });
+  const s = await sanityClient.fetch<any>(showroomBySlugQuery, { slug }).catch(() => null);
+  if (!s) return buildMetadata({ path: `/magasins/${slug}`, noindex: true });
+
+  return buildMetadata({
+    title: `${s.name} — Showroom DreamsFly`,
+    description: `Venez tester nos matelas DreamsFly au showroom ${s.address?.city}. ${s.address?.street}, ${s.address?.postalCode} ${s.address?.city}.`,
+    path: `/magasins/${slug}`,
+    image: s.images?.[0] ? urlFor(s.images[0]).width(1200).height(630).url() : undefined,
+  });
+}
+
+const DAYS_ORDER = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
+
+export default async function ShowroomPage({ params }: { params: Promise<Params> }) {
+  const { slug } = await params;
+  if (!sanityClient) notFound();
+
+  const [s, siteSettings] = await Promise.all([
+    sanityClient.fetch<any>(showroomBySlugQuery, { slug }).catch(() => null),
+    sanityClient.fetch<any>(siteSettingsQuery).catch(() => null),
+  ]);
+
+  if (!s) notFound();
+
+  const breadcrumbs = [
+    { name: "Accueil", url: "/" },
+    { name: "Showrooms", url: "/magasins" },
+    { name: s.name, url: `/magasins/${slug}` },
+  ];
+
+  // Trier les horaires
+  const sortedHours =
+    s.openingHours
+      ?.slice()
+      .sort((a: any, b: any) => DAYS_ORDER.indexOf(a.day) - DAYS_ORDER.indexOf(b.day)) || [];
+
+  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://dreams-fly.vercel.app";
+
+  return (
+    <>
+      <Header settings={siteSettings} />
+      <main className="mx-auto max-w-site px-8 py-12 md:py-16">
+        <nav className="mb-8 flex flex-wrap items-center gap-1.5 text-sm text-pierre">
+          <Link href="/" className="hover:text-midnight">Accueil</Link>
+          <span className="text-brume">/</span>
+          <Link href="/magasins" className="hover:text-midnight">Showrooms</Link>
+          <span className="text-brume">/</span>
+          <span className="font-medium text-ink">{s.name}</span>
+        </nav>
+
+        <header className="mb-12">
+          <div className="eyebrow mb-3">Showroom DreamsFly</div>
+          <h1 className="font-sora text-4xl font-semibold leading-tight tracking-tight text-ink md:text-5xl">
+            {s.name}
+          </h1>
+          {s.address?.city && (
+            <p className="mt-3 text-lg text-pierre">
+              {s.address.street} · {s.address.postalCode} {s.address.city}
+            </p>
+          )}
+        </header>
+
+        <div className="grid gap-10 lg:grid-cols-[1.6fr_1fr]">
+          {/* Images */}
+          <div>
+            {s.images && s.images.length > 0 ? (
+              <div className="grid gap-3">
+                <div className="relative aspect-[16/10] overflow-hidden rounded-3xl bg-sable">
+                  <Image
+                    src={urlFor(s.images[0]).width(1200).quality(85).url()}
+                    alt={s.name}
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 60vw"
+                    priority
+                    className="object-cover"
+                  />
+                </div>
+                {s.images.length > 1 && (
+                  <div className="grid grid-cols-3 gap-3">
+                    {s.images.slice(1, 4).map((img: any, i: number) => (
+                      <div key={i} className="relative aspect-square overflow-hidden rounded-xl bg-sable">
+                        <Image
+                          src={urlFor(img).width(400).url()}
+                          alt={`${s.name} ${i + 2}`}
+                          fill
+                          sizes="20vw"
+                          className="object-cover"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="flex aspect-[16/10] items-center justify-center rounded-3xl bg-sable text-7xl opacity-30">
+                🏬
+              </div>
+            )}
+
+            {/* Description */}
+            {s.description && (
+              <div className="prose-content mt-10 max-w-3xl">
+                <PortableText value={s.description} />
+              </div>
+            )}
+          </div>
+
+          {/* Infos pratiques */}
+          <aside className="lg:sticky lg:top-24 lg:self-start">
+            <div className="rounded-3xl border border-border bg-ivoire p-6">
+              <h2 className="mb-5 font-sora text-xl font-semibold tracking-tight text-ink">
+                Infos pratiques
+              </h2>
+
+              {s.address && (
+                <div className="mb-5">
+                  <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-pierre">Adresse</div>
+                  <address className="not-italic text-[15px] leading-relaxed text-ink">
+                    {s.address.street}<br />
+                    {s.address.postalCode} {s.address.city}
+                  </address>
+                </div>
+              )}
+
+              {s.phone && (
+                <div className="mb-5">
+                  <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-pierre">Téléphone</div>
+                  <a href={`tel:${s.phone.replace(/\s/g, "")}`} className="text-[15px] font-semibold text-midnight hover:text-midnight-dark">
+                    {s.phone}
+                  </a>
+                </div>
+              )}
+
+              {s.email && (
+                <div className="mb-5">
+                  <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-pierre">Email</div>
+                  <a href={`mailto:${s.email}`} className="text-[15px] text-midnight hover:underline">
+                    {s.email}
+                  </a>
+                </div>
+              )}
+
+              {sortedHours.length > 0 && (
+                <div className="mb-5">
+                  <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-pierre">Horaires</div>
+                  <ul className="space-y-1 text-[14px]">
+                    {sortedHours.map((h: any) => (
+                      <li key={h.day} className="flex justify-between">
+                        <span className="text-pierre">{h.day}</span>
+                        <span className="font-medium text-ink">
+                          {h.closed ? "Fermé" : `${h.open} – ${h.close}`}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {s.coordinates?.lat && s.coordinates?.lng && (
+                <a
+                  href={`https://www.google.com/maps?q=${s.coordinates.lat},${s.coordinates.lng}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-pill bg-midnight px-5 py-3 font-sora text-sm font-semibold text-white transition-colors hover:bg-midnight-dark"
+                >
+                  📍 Itinéraire Google Maps
+                </a>
+              )}
+            </div>
+          </aside>
+        </div>
+      </main>
+      <Footer settings={siteSettings} />
+
+      <JsonLd data={organizationSchema({ name: "DreamsFly" })} />
+      <JsonLd data={breadcrumbSchema(breadcrumbs)} />
+      <JsonLd
+        data={localBusinessSchema({
+          name: `DreamsFly ${s.name}`,
+          url: `${SITE_URL}/magasins/${slug}`,
+          street: s.address?.street,
+          postalCode: s.address?.postalCode,
+          city: s.address?.city,
+          country: s.address?.country,
+          phone: s.phone,
+          email: s.email,
+          lat: s.coordinates?.lat,
+          lng: s.coordinates?.lng,
+          openingHours: s.openingHours,
+          images: s.images?.map((img: any) => urlFor(img).width(1200).url()).slice(0, 3),
+        })}
+      />
+    </>
+  );
+}
