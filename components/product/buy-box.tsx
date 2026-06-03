@@ -2,6 +2,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { urlFor } from "@/lib/sanity/image";
+import { useCart } from "@/lib/cart/store";
 
 type Variant = {
   _key: string;
@@ -10,23 +11,21 @@ type Variant = {
   price?: number;
   compareAtPrice?: number;
   stockStatus?: string;
+  stripePriceId?: string;
 };
 
-type Image = { asset?: any; alt?: string };
+type SanityImage = { asset?: any; alt?: string };
 
-/**
- * Composant client du tunnel produit :
- * - Galerie images (main + thumbnails)
- * - Sélecteur de variante (taille)
- * - Prix dynamique
- * - CTA panier (placeholder Zustand, sera branché Étape 3)
- */
 export function ProductBuyBox({
+  productId,
+  productSlug,
   images,
   variants,
   name,
 }: {
-  images?: Image[];
+  productId: string;
+  productSlug: string;
+  images?: SanityImage[];
   variants?: Variant[];
   name: string;
 }) {
@@ -34,12 +33,34 @@ export function ProductBuyBox({
   const [selectedVariantKey, setSelectedVariantKey] = useState<string | null>(
     variants?.[0]?._key || null
   );
+  const { add } = useCart();
+  const [adding, setAdding] = useState(false);
 
   const variant = variants?.find((v) => v._key === selectedVariantKey) || variants?.[0];
   const price = variant?.price;
   const compareAtPrice = variant?.compareAtPrice;
   const discount = compareAtPrice && price ? Math.round(((compareAtPrice - price) / compareAtPrice) * 100) : null;
   const inStock = variant?.stockStatus !== "rupture";
+
+  const imageUrl = images?.[selectedImage] ? urlFor(images[selectedImage]).width(400).url() : undefined;
+
+  async function handleAdd() {
+    if (!variant || !price) return;
+    setAdding(true);
+    add({
+      productId,
+      productSlug,
+      productName: name,
+      variantKey: variant._key,
+      variantSize: variant.size,
+      sku: variant.sku,
+      unitPrice: price,
+      compareAtPrice,
+      image: imageUrl,
+      stripePriceId: variant.stripePriceId,
+    });
+    setTimeout(() => setAdding(false), 800);
+  }
 
   return (
     <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1.1fr_1fr]">
@@ -68,13 +89,7 @@ export function ProductBuyBox({
                 }`}
                 aria-label={`Voir image ${i + 1}`}
               >
-                <Image
-                  src={urlFor(img).width(200).url()}
-                  alt={img.alt || ""}
-                  fill
-                  sizes="80px"
-                  className="object-cover"
-                />
+                <Image src={urlFor(img).width(200).url()} alt={img.alt || ""} fill sizes="80px" className="object-cover" />
               </button>
             ))}
           </div>
@@ -83,12 +98,9 @@ export function ProductBuyBox({
 
       {/* Buy box */}
       <div className="lg:sticky lg:top-24 lg:self-start">
-        {/* Variantes (tailles) */}
         {variants && variants.length > 1 && (
           <div className="mb-6">
-            <div className="mb-3 text-sm font-semibold uppercase tracking-wide text-pierre">
-              Taille
-            </div>
+            <div className="mb-3 text-sm font-semibold uppercase tracking-wide text-pierre">Taille</div>
             <div className="grid grid-cols-3 gap-2">
               {variants.map((v) => (
                 <button
@@ -107,7 +119,6 @@ export function ProductBuyBox({
           </div>
         )}
 
-        {/* Prix */}
         <div className="mb-6 flex items-baseline gap-3 border-y border-border py-5">
           {discount !== null && discount > 0 && (
             <span className="rounded bg-discount px-2 py-1 text-xs font-bold uppercase tracking-wide text-white">
@@ -120,7 +131,6 @@ export function ProductBuyBox({
           )}
         </div>
 
-        {/* Statut stock */}
         <div className="mb-6 flex items-center gap-2 text-sm">
           <span className={`inline-block h-2.5 w-2.5 rounded-full ${inStock ? "bg-success" : "bg-error"}`} />
           <span className="font-medium text-ink">
@@ -128,25 +138,20 @@ export function ProductBuyBox({
           </span>
         </div>
 
-        {/* CTA */}
         <div className="space-y-3">
           <button
-            disabled={!inStock}
+            onClick={handleAdd}
+            disabled={!inStock || !price || adding}
             className="flex w-full items-center justify-center gap-2 rounded-pill bg-midnight px-7 py-4 font-sora text-base font-semibold text-white transition-all hover:bg-midnight-dark hover:-translate-y-px disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Ajouter au panier
-          </button>
-          <button className="w-full rounded-pill border border-midnight bg-ivoire px-7 py-4 font-sora text-base font-semibold text-midnight transition-all hover:bg-sable">
-            Acheter maintenant
+            {adding ? "✓ Ajouté !" : "Ajouter au panier"}
           </button>
         </div>
 
-        {/* Paiement 4× */}
         <p className="mt-4 text-center text-sm text-pierre">
           ou <strong className="text-ink">{Math.round((price || 0) / 4)} €</strong> × 4 sans frais avec Alma
         </p>
 
-        {/* Réassurance compacte */}
         <ul className="mt-8 space-y-3 border-t border-border pt-6 text-sm">
           <ReassuranceItem icon="🚚" title="Livraison à domicile" subtitle="Dès 39 € · partout en France" />
           <ReassuranceItem icon="🏬" title="3 magasins physiques" subtitle="Venez tester en boutique" />

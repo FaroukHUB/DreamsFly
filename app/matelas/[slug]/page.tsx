@@ -118,7 +118,13 @@ export default async function ProductPage({ params }: { params: Promise<Params> 
 
         {/* Buy box (client) */}
         <div id="buy-box">
-          <ProductBuyBox images={product.images} variants={product.variants} name={product.name} />
+          <ProductBuyBox
+            productId={product._id}
+            productSlug={product.slug}
+            images={product.images}
+            variants={product.variants}
+            name={product.name}
+          />
         </div>
 
         {/* Contenu détaillé */}

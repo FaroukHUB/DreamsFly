@@ -27,24 +27,18 @@ export default defineConfig({
               .title("⚙️ Paramètres du site")
               .child(S.editor().schemaType("siteSettings").documentId("siteSettings")),
             S.divider(),
-
-            // Catalogue
             S.documentTypeListItem("product").title("🛏️ Matelas (catalogue)"),
             S.documentTypeListItem("landingPage").title("📐 Pages SEO (silos)"),
-
             S.divider(),
-
-            // Éditorial
             S.documentTypeListItem("guide").title("📰 Magazine"),
             S.documentTypeListItem("comparison").title("⚖️ Comparatifs"),
             S.documentTypeListItem("glossary").title("📚 Glossaire"),
-
             S.divider(),
-
-            // Marque & magasins
             S.documentTypeListItem("showroom").title("🏬 Showrooms"),
             S.documentTypeListItem("author").title("👤 Auteurs & experts"),
             S.documentTypeListItem("review").title("⭐ Avis clients"),
+            S.divider(),
+            S.documentTypeListItem("order").title("💳 Commandes"),
           ]),
     }),
     visionTool({ defaultApiVersion: apiVersion }),

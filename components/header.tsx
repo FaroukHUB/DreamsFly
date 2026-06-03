@@ -1,17 +1,29 @@
+"use client";
 import Link from "next/link";
 import { Logo } from "./logo";
+import { useCart } from "@/lib/cart/store";
+import { useEffect, useState } from "react";
 
 type MenuItem = { label?: string; link?: string; highlight?: boolean };
 
 export function Header({ settings }: { settings?: any }) {
   const topbar = settings?.topbar;
   const menu: MenuItem[] = settings?.mainMenu || DEFAULT_MENU;
+  const { toggle, count } = useCart();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   return (
     <>
       {topbar?.enabled !== false && topbar?.message && (
         <div className="bg-midnight px-5 py-2.5 text-center text-[13px] font-medium text-white">
-          {topbar.message}
+          {topbar.link ? (
+            <Link href={topbar.link} className="hover:text-aurora">
+              {topbar.message}
+            </Link>
+          ) : (
+            topbar.message
+          )}
         </div>
       )}
 
@@ -45,11 +57,15 @@ export function Header({ settings }: { settings?: any }) {
             <button aria-label="Compte" className="p-2 text-ink transition-colors hover:text-midnight">
               <UserIcon />
             </button>
-            <button className="flex items-center gap-1.5 p-2 text-sm font-medium text-ink hover:text-midnight">
+            <button
+              onClick={toggle}
+              aria-label="Ouvrir le panier"
+              className="flex items-center gap-1.5 p-2 text-sm font-medium text-ink hover:text-midnight"
+            >
               <BagIcon />
               <span className="hidden sm:inline">Panier</span>
               <span className="rounded-pill bg-midnight px-2 py-0.5 text-[11px] font-semibold text-white">
-                0
+                {mounted ? count() : 0}
               </span>
             </button>
           </div>
@@ -65,8 +81,8 @@ const DEFAULT_MENU: MenuItem[] = [
   { label: "Sommiers", link: "/sommiers" },
   { label: "Oreillers", link: "/oreillers" },
   { label: "Linge de lit", link: "/linge-de-lit" },
-  { label: "Packs", link: "/packs" },
-  { label: "Guides", link: "/guides" },
+  { label: "Magazine", link: "/magazine" },
+  { label: "Magasins", link: "/magasins" },
 ];
 
 function SearchIcon() {

@@ -9,6 +9,7 @@ import { landingPage } from "./landingPage";
 import { glossary } from "./glossary";
 import { comparison } from "./comparison";
 import { showroom } from "./showroom";
+import { order } from "./order";
 
 export const schemaTypes = [
   // Singletons
@@ -21,9 +22,11 @@ export const schemaTypes = [
   comparison,
   glossary,
   showroom,
-  // Catégories legacy (à supprimer plus tard si non utilisé)
+  // Catégories legacy
   category,
   // E-E-A-T
   author,
   review,
+  // E-commerce
+  order,
 ];

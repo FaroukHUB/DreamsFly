@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Sora, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
+import { CartDrawer } from "@/components/cart/cart-drawer";
 
 const sora = Sora({
   subsets: ["latin"],
@@ -45,7 +46,10 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr" className={`${sora.variable} ${jakarta.variable}`}>
-      <body>{children}</body>
+      <body>
+        {children}
+        <CartDrawer />
+      </body>
     </html>
   );
 }
