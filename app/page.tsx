@@ -4,6 +4,7 @@ import { Hero } from "@/components/hero";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { UspStrip } from "@/components/usp-strip";
+import { BestSellers } from "@/components/best-sellers";
 
 export const revalidate = 60;
 
@@ -29,6 +30,7 @@ export default async function HomePage() {
       <main>
         <Hero hero={homepage?.hero} heroSecondary={homepage?.heroSecondary} />
         <UspStrip items={homepage?.uspStrip} />
+        <BestSellers />
       </main>
       <Footer settings={siteSettings} />
     </>

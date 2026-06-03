@@ -9,16 +9,16 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // ─── Fonds chauds (cocooning) ───
-        ivoire: "#FBF9F4",
-        sable: "#F4EFE6",
-        lin: "#EBE3D3",
-        "beige-profond": "#D4C9B5",
+        // ─── Fonds (blanc + gris clairs cool) ───
+        ivoire: "#FFFFFF",        // blanc pur
+        sable: "#F6F7F9",         // gris très très clair (sections alternées)
+        lin: "#EEF0F4",           // gris clair (cards, hover)
+        "beige-profond": "#D9DDE4", // gris medium (séparateurs forts)
         // ─── Textes ───
-        ink: "#1C1B1F",
-        pierre: "#57534E",
-        brume: "#A8A29E",
-        // ─── Accents (issus du logo) ───
+        ink: "#0F172A",           // texte principal — slate 900
+        pierre: "#475569",        // sous-titres — slate 600
+        brume: "#94A3B8",         // métadonnées — slate 400
+        // ─── Accents (issus du logo, conservés) ───
         midnight: {
           DEFAULT: "#172554",
           dark: "#0F1B47",
@@ -30,11 +30,11 @@ const config: Config = {
           dark: "#A8884E",
         },
         // ─── Système ───
-        border: "#E8E1D0",
-        success: "#6B9B5E",
-        warning: "#D4A574",
-        error: "#C45D4A",
-        discount: "#C45D4A",
+        border: "#E2E8F0",        // slate 200
+        success: "#10B981",
+        warning: "#F59E0B",
+        error: "#EF4444",
+        discount: "#DC2626",
       },
       fontFamily: {
         sora: ["var(--font-sora)", "system-ui", "sans-serif"],
