@@ -7,6 +7,7 @@ import { siteSettingsQuery } from "@/lib/sanity/queries";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { ProductBuyBox } from "@/components/product/buy-box";
+import { StickyMobileCTA } from "@/components/product/sticky-mobile-cta";
 import {
   ProductComposition,
   ProductSpecs,
@@ -116,7 +117,9 @@ export default async function ProductPage({ params }: { params: Promise<Params> 
         </div>
 
         {/* Buy box (client) */}
-        <ProductBuyBox images={product.images} variants={product.variants} name={product.name} />
+        <div id="buy-box">
+          <ProductBuyBox images={product.images} variants={product.variants} name={product.name} />
+        </div>
 
         {/* Contenu détaillé */}
         <div className="mt-20 space-y-20 max-w-5xl">
@@ -134,6 +137,13 @@ export default async function ProductPage({ params }: { params: Promise<Params> 
       </main>
 
       <Footer settings={siteSettings} />
+
+      {/* Sticky CTA mobile */}
+      <StickyMobileCTA
+        productName={product.name}
+        price={minPrice}
+        compareAtPrice={maxComparePrice > minPrice ? maxComparePrice : undefined}
+      />
 
       {/* JSON-LD */}
       <JsonLd data={organizationSchema({ name: "DreamsFly" })} />

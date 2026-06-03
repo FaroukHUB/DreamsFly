@@ -31,13 +31,49 @@ const portableTextComponents: PortableTextComponents = {
   },
 };
 
-export function Sections({ sections }: { sections?: Block[] }) {
+import { getShellClasses } from "./section-shells";
+
+type LayoutVariant = "editorial" | "comparative" | "showcase" | "tutorial" | "compact";
+
+export function Sections({
+  sections,
+  layout = "editorial",
+  withShells = false,
+}: {
+  sections?: Block[];
+  layout?: LayoutVariant;
+  /** Si true, chaque section reçoit un shell coloré (utilisé sur les landing). */
+  withShells?: boolean;
+}) {
   if (!sections?.length) return null;
+
+  if (!withShells) {
+    return (
+      <div className="space-y-16">
+        {sections.map((b, i) => (
+          <BlockRenderer key={`${b._type}-${i}`} block={b} />
+        ))}
+      </div>
+    );
+  }
+
+  // Avec shells : alternance de fonds et de containers selon le layout
   return (
-    <div className="space-y-16">
-      {sections.map((b, i) => (
-        <BlockRenderer key={`${b._type}-${i}`} block={b} />
-      ))}
+    <div className="-mx-8">
+      {sections.map((b, i) => {
+        const { outer, inner } = getShellClasses({
+          layout,
+          index: i,
+          blockType: b._type,
+        });
+        return (
+          <section key={`${b._type}-${i}`} className={outer}>
+            <div className={inner}>
+              <BlockRenderer block={b} />
+            </div>
+          </section>
+        );
+      })}
     </div>
   );
 }

@@ -4,9 +4,26 @@ import { Hero } from "@/components/hero";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { UspStrip } from "@/components/usp-strip";
+import { TrustBar } from "@/components/trust-bar";
 import { BestSellers } from "@/components/best-sellers";
+import { QuickChooser } from "@/components/quick-chooser";
+import { WhyDreamsFly } from "@/components/why-dreamsfly";
+import { buildMetadata } from "@/lib/seo/metadata";
+import {
+  JsonLd,
+  organizationSchema,
+  websiteSchema,
+} from "@/lib/seo/jsonld";
+import type { Metadata } from "next";
 
 export const revalidate = 60;
+
+export const metadata: Metadata = buildMetadata({
+  title: "Matelas premium conçus en France",
+  description:
+    "DreamsFly : matelas mémoire de forme, hybrides, ressorts ensachés et mousse. Confection française, livraison à domicile, paiement en plusieurs fois. + 5 000 clients satisfaits.",
+  path: "/",
+});
 
 async function safeFetch<T>(query: string): Promise<T | null> {
   if (!sanityClient) return null;
@@ -29,10 +46,16 @@ export default async function HomePage() {
       <Header settings={siteSettings} />
       <main>
         <Hero hero={homepage?.hero} heroSecondary={homepage?.heroSecondary} />
+        <TrustBar />
         <UspStrip items={homepage?.uspStrip} />
         <BestSellers />
+        <QuickChooser />
+        <WhyDreamsFly />
       </main>
       <Footer settings={siteSettings} />
+
+      <JsonLd data={organizationSchema({ name: "DreamsFly" })} />
+      <JsonLd data={websiteSchema()} />
     </>
   );
 }

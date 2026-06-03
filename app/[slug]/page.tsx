@@ -142,9 +142,12 @@ export default async function LandingPageRoute({ params }: { params: Promise<Par
           <p className="mt-6 text-lg leading-relaxed text-pierre md:text-xl">{page.intro}</p>
         </header>
 
-        {/* Sections composables */}
-        <Sections sections={page.sections} />
+      </main>
 
+      {/* Sections composables — full-bleed avec shells alternés */}
+      <Sections sections={page.sections} layout={page.layout || "editorial"} withShells />
+
+      <main className="mx-auto max-w-site px-8 py-12 md:py-16">
         {/* Maillage interne automatique (tags) */}
         {relatedPages.length > 0 && (
           <section className="mt-20 border-t border-border pt-12">
