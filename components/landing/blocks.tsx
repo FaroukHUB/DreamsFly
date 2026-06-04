@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import { urlFor } from "@/lib/sanity/image";
+import { sanityClient } from "@/lib/sanity/client";
 import { JsonLd, faqSchema, definedTermSchema } from "@/lib/seo/jsonld";
 import { getShellClasses } from "./section-shells";
 
@@ -321,10 +322,49 @@ function RecommendationBlock({ data }: { data: Block }) {
 }
 
 // ───────────────────────────────────────
-// PRODUITS GRID — déjà visuel, on garde
+// PRODUITS GRID — fetch auto selon filter (all/memoire/mousse/ressorts/hybride)
 // ───────────────────────────────────────
-function ProductsGridBlock({ data }: { data: Block }) {
-  const products = data.manualProducts || [];
+async function ProductsGridBlock({ data }: { data: Block }) {
+  let products: any[] = data.manualProducts || [];
+
+  // Si pas de sélection manuelle, fetch automatique selon le filter
+  if (!products.length && sanityClient) {
+    const filter = data.filter || "all";
+    const max = (data.maxItems || 4) - 1;
+
+    const typeMap: Record<string, string> = {
+      memoire: "memoire-ressorts",
+      mousse: "mousse-polyurethane",
+      ressorts: "mousse-ressorts",
+      hybride: "memoire-ressorts",
+    };
+    const typeMatch = typeMap[filter];
+
+    try {
+      products = await sanityClient.fetch(
+        typeMatch
+          ? `*[_type == "product" && type == $type] | order(name asc) [0..${max}]{
+              _id, name, title, "slug": slug.current, tagline,
+              "image": images[0],
+              "minPrice": variants[0].price,
+              "compareAtPrice": variants[0].compareAtPrice,
+              badges
+            }`
+          : `*[_type == "product"] | order(name asc) [0..${max}]{
+              _id, name, title, "slug": slug.current, tagline,
+              "image": images[0],
+              "minPrice": variants[0].price,
+              "compareAtPrice": variants[0].compareAtPrice,
+              badges
+            }`,
+        typeMatch ? { type: typeMatch } : {}
+      );
+    } catch (err) {
+      console.error("[ProductsGridBlock] fetch failed:", err);
+      products = [];
+    }
+  }
+
   if (!products.length) return null;
   return (
     <section>
@@ -337,25 +377,39 @@ function ProductsGridBlock({ data }: { data: Block }) {
         </div>
       )}
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-        {products.slice(0, data.maxItems || 4).map((p: any) => (
-          <Link
-            key={p._id}
-            href={`/matelas/${p.slug}`}
-            className="group flex flex-col rounded-2xl border border-border bg-ivoire p-4 transition-all hover:-translate-y-1 hover:border-midnight"
-          >
-            <div className="relative mb-4 aspect-[5/4] overflow-hidden rounded-xl bg-sable">
-              {p.image && (
-                <Image src={urlFor(p.image).width(500).url()} alt={p.name} fill sizes="(max-width:768px) 100vw, 25vw" className="object-cover transition-transform duration-500 group-hover:scale-105" />
-              )}
-            </div>
-            <h3 className="font-sora text-lg font-semibold text-ink">{p.name}</h3>
-            <p className="mb-3 text-[13px] text-pierre">{p.tagline}</p>
-            <div className="mt-auto flex items-baseline gap-2 border-t border-border pt-3">
-              <span className="text-[11px] text-brume">Dès</span>
-              <span className="font-sora text-lg font-bold text-discount">{p.minPrice} €</span>
-            </div>
-          </Link>
-        ))}
+        {products.slice(0, data.maxItems || 4).map((p: any) => {
+          const discount =
+            p.compareAtPrice && p.minPrice
+              ? Math.round(((p.compareAtPrice - p.minPrice) / p.compareAtPrice) * 100)
+              : null;
+          return (
+            <Link
+              key={p._id}
+              href={`/matelas/${p.slug}`}
+              className="group flex flex-col rounded-2xl border border-border bg-ivoire p-4 transition-all hover:-translate-y-1 hover:border-midnight"
+            >
+              <div className="relative mb-4 aspect-[5/4] overflow-hidden rounded-xl bg-sable">
+                {p.image && (
+                  <Image src={urlFor(p.image).width(500).url()} alt={p.name} fill sizes="(max-width:768px) 100vw, 25vw" className="object-cover transition-transform duration-500 group-hover:scale-105" />
+                )}
+                {discount !== null && discount > 0 && (
+                  <span className="absolute left-3 top-3 rounded bg-discount px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider text-white">
+                    -{discount}%
+                  </span>
+                )}
+              </div>
+              <h3 className="font-sora text-lg font-semibold text-ink">{p.name}</h3>
+              <p className="mb-3 line-clamp-2 text-[13px] text-pierre">{p.tagline}</p>
+              <div className="mt-auto flex items-baseline gap-2 border-t border-border pt-3">
+                <span className="text-[11px] text-brume">Dès</span>
+                <span className="font-sora text-lg font-bold text-discount">{p.minPrice} €</span>
+                {p.compareAtPrice && p.compareAtPrice > p.minPrice && (
+                  <span className="text-xs text-brume line-through">{p.compareAtPrice} €</span>
+                )}
+              </div>
+            </Link>
+          );
+        })}
       </div>
     </section>
   );
