@@ -40,10 +40,13 @@ export function Sections({
   sections,
   layout = "editorial",
   withShells = false,
+  pageSlug,
 }: {
   sections?: Block[];
   layout?: LayoutVariant;
   withShells?: boolean;
+  /** Slug de la page pour le filtrage contextuel des produits (ex. matelas-140x190) */
+  pageSlug?: string;
 }) {
   if (!sections?.length) return null;
 
@@ -51,7 +54,7 @@ export function Sections({
     return (
       <div className="space-y-16">
         {sections.map((b, i) => (
-          <BlockRenderer key={`${b._type}-${i}`} block={b} />
+          <BlockRenderer key={`${b._type}-${i}`} block={b} pageSlug={pageSlug} />
         ))}
       </div>
     );
@@ -64,7 +67,7 @@ export function Sections({
         return (
           <section key={`${b._type}-${i}`} className={outer}>
             <div className={inner}>
-              <BlockRenderer block={b} />
+              <BlockRenderer block={b} pageSlug={pageSlug} />
             </div>
           </section>
         );
@@ -73,12 +76,12 @@ export function Sections({
   );
 }
 
-function BlockRenderer({ block: b }: { block: Block }) {
+function BlockRenderer({ block: b, pageSlug }: { block: Block; pageSlug?: string }) {
   switch (b._type) {
     case "definitionBlock": return <DefinitionBlock data={b} />;
     case "comparisonTable": return <ComparisonTable data={b} />;
     case "recommendationBlock": return <RecommendationBlock data={b} />;
-    case "productsGrid": return <ProductsGridBlock data={b} />;
+    case "productsGrid": return <ProductsGridBlock data={b} pageSlug={pageSlug} />;
     case "useCaseBlock": return <UseCaseBlock data={b} />;
     case "faqBlock": return <FaqBlock data={b} />;
     case "tipsBlock": return <TipsBlock data={b} />;
@@ -322,15 +325,19 @@ function RecommendationBlock({ data }: { data: Block }) {
 }
 
 // ───────────────────────────────────────
-// PRODUITS GRID — fetch auto selon filter (all/memoire/mousse/ressorts/hybride)
+// PRODUITS GRID — fetch auto par technologie OU par taille du slug
+// + dédup par nom de produit (évite BERLIN 1 place + BERLIN 2 places)
 // ───────────────────────────────────────
-async function ProductsGridBlock({ data }: { data: Block }) {
+async function ProductsGridBlock({ data, pageSlug }: { data: Block; pageSlug?: string }) {
   let products: any[] = data.manualProducts || [];
 
-  // Si pas de sélection manuelle, fetch automatique selon le filter
+  // Détecte la taille depuis le slug (matelas-140x190, matelas-160x200, etc.)
+  const sizeMatch = pageSlug?.match(/(\d{2,3})x(\d{2,3})/i);
+  const sizePattern = sizeMatch ? `${sizeMatch[1]} x ${sizeMatch[2]}` : null;
+
   if (!products.length && sanityClient) {
     const filter = data.filter || "all";
-    const max = (data.maxItems || 4) - 1;
+    const max = (data.maxItems || 4) * 3 - 1; // fetch large puis dédup
 
     const typeMap: Record<string, string> = {
       memoire: "memoire-ressorts",
@@ -341,24 +348,47 @@ async function ProductsGridBlock({ data }: { data: Block }) {
     const typeMatch = typeMap[filter];
 
     try {
-      products = await sanityClient.fetch(
-        typeMatch
-          ? `*[_type == "product" && type == $type] | order(name asc) [0..${max}]{
-              _id, name, title, "slug": slug.current, tagline,
-              "image": images[0],
-              "minPrice": variants[0].price,
-              "compareAtPrice": variants[0].compareAtPrice,
-              badges
-            }`
-          : `*[_type == "product"] | order(name asc) [0..${max}]{
-              _id, name, title, "slug": slug.current, tagline,
-              "image": images[0],
-              "minPrice": variants[0].price,
-              "compareAtPrice": variants[0].compareAtPrice,
-              badges
-            }`,
-        typeMatch ? { type: typeMatch } : {}
-      );
+      let query: string;
+      let params: any = {};
+
+      if (sizePattern && filter === "all") {
+        // Sur une page taille : produits avec variante matching cette taille
+        query = `*[_type == "product" && count(variants[size match $size]) > 0] | order(name asc) [0..${max}]{
+          _id, name, title, "slug": slug.current, tagline,
+          "image": images[0],
+          "minPrice": variants[size match $size][0].price,
+          "compareAtPrice": variants[size match $size][0].compareAtPrice,
+          badges
+        }`;
+        params.size = `*${sizePattern}*`;
+      } else if (typeMatch) {
+        query = `*[_type == "product" && type == $type] | order(name asc) [0..${max}]{
+          _id, name, title, "slug": slug.current, tagline,
+          "image": images[0],
+          "minPrice": variants[0].price,
+          "compareAtPrice": variants[0].compareAtPrice,
+          badges
+        }`;
+        params.type = typeMatch;
+      } else {
+        query = `*[_type == "product"] | order(name asc) [0..${max}]{
+          _id, name, title, "slug": slug.current, tagline,
+          "image": images[0],
+          "minPrice": variants[0].price,
+          "compareAtPrice": variants[0].compareAtPrice,
+          badges
+        }`;
+      }
+
+      products = await sanityClient.fetch(query, params);
+
+      // Dédup par nom (BERLIN 1 place vs BERLIN 2 places = 1 seul affiché)
+      const seenNames = new Set<string>();
+      products = products.filter((p: any) => {
+        if (seenNames.has(p.name)) return false;
+        seenNames.add(p.name);
+        return true;
+      });
     } catch (err) {
       console.error("[ProductsGridBlock] fetch failed:", err);
       products = [];

@@ -140,7 +140,7 @@ export default async function LandingPageRoute({ params }: { params: Promise<Par
       </main>
 
       {/* Sections composables — full-bleed avec shells alternés selon layout */}
-      <Sections sections={page.sections} layout={page.layout || "editorial"} withShells />
+      <Sections sections={page.sections} layout={page.layout || "editorial"} withShells pageSlug={slug} />
 
       <main className="mx-auto max-w-site px-8 py-12 md:py-16">
         {/* Maillage interne automatique (tags) */}
