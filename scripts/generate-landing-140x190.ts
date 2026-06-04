@@ -1,6 +1,7 @@
 /**
- * Génère le NDJSON Sanity pour le draft landing /matelas-140x190.
- * Le doc est créé sans publishedAt → reste en draft jusqu'à publication manuelle.
+ * Régénère le NDJSON Sanity pour /matelas-140x190 avec :
+ * - 9 sections riches dont images en situation Unsplash
+ * - 1 conseil DreamsFly humain
  */
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -14,6 +15,15 @@ function block(text: string) {
     children: [{ _type: "span", _key: "s1", text, marks: [] }],
   };
 }
+
+// Photos Unsplash libres pour usage commercial (à remplacer par vos photos)
+const PHOTOS = {
+  coupleBedroom: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=1400&q=80",
+  cozyBed: "https://images.unsplash.com/photo-1540518614846-7eded433c457?w=1400&q=80",
+  modernBedroom: "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=1400&q=80",
+  sleepingPerson: "https://images.unsplash.com/photo-1520206183501-b80df61043c2?w=1400&q=80",
+  mattressClose: "https://images.unsplash.com/photo-1631049035634-c00b7be73f50?w=1400&q=80",
+};
 
 const doc: any = {
   _id: "landingPage-matelas-140x190",
@@ -49,10 +59,29 @@ const doc: any = {
       definition:
         "Le matelas 140×190 cm, aussi appelé « deux places standard » en France, mesure 140 centimètres de largeur sur 190 centimètres de longueur. C'est le format de couchage le plus vendu en France pour deux personnes, particulièrement adapté aux chambres de taille moyenne (10 à 15 m²) et aux couples souhaitant un confort partagé sans monopoliser l'espace.",
     },
-    // 2. Recommandations
+
+    // 2. Image en situation — couple en chambre
+    {
+      _type: "lifestyleImageBlock",
+      _key: "k02img",
+      layout: "image-left",
+      fallbackUrl: PHOTOS.coupleBedroom,
+      tag: "En appartement",
+      title: "Le format pensé pour la vie à deux",
+      description: [
+        block(
+          "Avec 140 cm de largeur, chacun dispose d'environ 70 cm de couchage personnel — l'équivalent d'un lit simple. C'est suffisant pour la majorité des couples qui partagent une chambre standard en appartement, sans empiéter sur l'espace de circulation autour du lit."
+        ),
+        block(
+          "Si vous êtes très souvent en co-dodo avec un enfant ou si vous êtes deux personnes très grandes (> 1,85 m), pensez plutôt au 160×200."
+        ),
+      ],
+    },
+
+    // 3. Recommandations
     {
       _type: "recommendationBlock",
-      _key: "k02",
+      _key: "k03",
       heading: "À qui s'adresse le matelas 140×190 cm ?",
       items: [
         {
@@ -81,26 +110,33 @@ const doc: any = {
         },
       ],
     },
-    // 3. Grille produits
+
+    // 4. Grille produits
     {
       _type: "productsGrid",
-      _key: "k03",
+      _key: "k04",
       heading: "Nos matelas 140×190 recommandés",
       filter: "all",
       maxItems: 4,
     },
-    // 4. Tableau comparatif technologies
+
+    // 5. CONSEIL DREAMSFLY (humain)
+    {
+      _type: "conseilDreamsFly",
+      _key: "k05",
+      label: "Le conseil DreamsFly",
+      title: "Mesurez votre chambre AVANT de choisir la taille",
+      advice:
+        "L'erreur que font 8 clients sur 10 : choisir la taille d'abord, mesurer la chambre ensuite. Faites l'inverse. Règle simple : il vous faut au minimum 60 cm de circulation de chaque côté du lit pour faire le lit sans rage, brancher une lampe sans contorsion et passer l'aspirateur. En dessous, vous regretterez votre achat dans les 6 mois.",
+      signature: "Lucas, conseiller literie DreamsFly",
+    },
+
+    // 6. Tableau comparatif
     {
       _type: "comparisonTable",
-      _key: "k04",
+      _key: "k06",
       title: "Quelle technologie de matelas 140×190 choisir ?",
-      columns: [
-        "Critère",
-        "Mousse polyuréthane",
-        "Mémoire de forme",
-        "Hybride (mousse + ressorts)",
-        "Latex",
-      ],
+      columns: ["Critère", "Mousse polyuréthane", "Mémoire de forme", "Hybride (mousse + ressorts)", "Latex"],
       rows: [
         {
           _key: "row1",
@@ -139,10 +175,26 @@ const doc: any = {
         },
       ],
     },
-    // 5. Cas d'usage
+
+    // 7. Image pleine largeur — chambre moderne
+    {
+      _type: "lifestyleImageBlock",
+      _key: "k07img",
+      layout: "image-full",
+      fallbackUrl: PHOTOS.modernBedroom,
+      tag: "Inspiration chambre",
+      title: "Une chambre, un sanctuaire.",
+      description: [
+        block(
+          "Le matelas 140×190 trouve sa place naturelle au cœur de votre chambre. Privilégiez une tête de lit douce, des chevets simples et une couette claire pour ouvrir l'espace visuellement."
+        ),
+      ],
+    },
+
+    // 8. Cas d'usage
     {
       _type: "useCaseBlock",
-      _key: "k05",
+      _key: "k08",
       heading: "Comment intégrer un 140×190 dans votre chambre",
       content: [
         block(
@@ -152,17 +204,18 @@ const doc: any = {
           "Sommier compatible : tous les sommiers 140×190 standard du marché conviennent. Privilégiez un sommier à lattes pour la ventilation des matelas mousse et mémoire de forme, ou un sommier tapissier pour un look plus traditionnel."
         ),
         block(
-          "Couette adaptée : pour un lit 140×190, choisissez une couette 240×220 cm (ce qu'on appelle « couette deux places »). Elle dépasse suffisamment de chaque côté pour éviter la guerre nocturne avec votre partenaire."
+          "Couette adaptée : pour un lit 140×190, choisissez une couette 240×220 cm (« couette deux places »). Elle dépasse suffisamment de chaque côté pour éviter la guerre nocturne avec votre partenaire."
         ),
         block(
           "Drap-housse : taille standard 140×190 avec bonnet de 25 à 30 cm selon l'épaisseur de votre matelas."
         ),
       ],
     },
-    // 6. Conseils numérotés
+
+    // 9. Conseils numérotés
     {
       _type: "tipsBlock",
-      _key: "k06",
+      _key: "k09",
       heading: "5 conseils pour bien choisir votre matelas 140×190",
       tips: [
         "Mesurez votre chambre avant l'achat. Vérifiez qu'il vous reste au moins 60 cm de circulation sur les côtés.",
@@ -172,10 +225,29 @@ const doc: any = {
         "Vérifiez la garantie. Un bon matelas 140×190 doit durer au minimum 7 ans. Chez DreamsFly, garantie 2 ans incluse + essai en showroom.",
       ],
     },
-    // 7. FAQ
+
+    // 10. Image en situation — gros plan sommeil
+    {
+      _type: "lifestyleImageBlock",
+      _key: "k10img",
+      layout: "image-right",
+      fallbackUrl: PHOTOS.sleepingPerson,
+      tag: "Le bon sommeil",
+      title: "Le vrai luxe, c'est de dormir profondément.",
+      description: [
+        block(
+          "Un matelas adapté à votre morphologie maintient votre colonne dans son alignement naturel, sans creux ni cambrure forcée. C'est ce qui fait la différence entre se lever en pleine forme et se traîner à 7h du matin."
+        ),
+        block(
+          "Pour un essai sans pression, venez tester nos modèles en showroom. Vous repartez avec celui qui vous correspond, pas celui qu'on essaie de vous vendre."
+        ),
+      ],
+    },
+
+    // 11. FAQ
     {
       _type: "faqBlock",
-      _key: "k07",
+      _key: "k11",
       heading: "Questions fréquentes sur le matelas 140×190",
       questions: [
         {
@@ -228,17 +300,19 @@ const doc: any = {
         },
       ],
     },
-    // 8. Maillage interne auto
+
+    // 12. Maillage interne
     {
       _type: "relatedPagesBlock",
-      _key: "k08",
+      _key: "k12",
       heading: "Découvrez les autres formats DreamsFly",
       mode: "auto",
     },
-    // 9. CTA midnight final
+
+    // 13. CTA final
     {
       _type: "ctaBlock",
-      _key: "k09",
+      _key: "k13",
       heading: "Convaincu par le format 140×190 ?",
       subtitle:
         "Découvrez les modèles disponibles dans cette taille et bénéficiez de la livraison à domicile partout en France.",
@@ -249,11 +323,9 @@ const doc: any = {
   ],
 };
 
-// publishedAt vide intentionnellement → draft tant que tu n'as pas relu
-
 const outPath = join(process.cwd(), "data/landing-drafts/matelas-140x190.ndjson");
 writeFileSync(outPath, JSON.stringify(doc), "utf8");
-console.log("✓ NDJSON généré : " + outPath);
-console.log("  1 document landingPage avec 9 sections variées");
-console.log("\nImport command:");
-console.log("  npx sanity@latest dataset import matelas-140x190.ndjson production --project-id qqxvd0fj");
+console.log("✓ NDJSON régénéré : " + outPath);
+console.log("  Sections : " + doc.sections.length);
+console.log("\nÀ importer :");
+console.log("  npx sanity@latest dataset import matelas140x190.ndjson --dataset production --project-id qqxvd0fj --replace");

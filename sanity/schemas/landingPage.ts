@@ -546,6 +546,60 @@ export const landingPage = defineType({
           },
         }),
 
+        // 🆕 Image en situation (lifestyle)
+        defineArrayMember({
+          name: "lifestyleImageBlock",
+          type: "object",
+          title: "📸 Image en situation (lifestyle)",
+          fields: [
+            {
+              name: "layout",
+              title: "Disposition",
+              type: "string",
+              options: {
+                list: [
+                  { title: "Image à gauche · texte à droite", value: "image-left" },
+                  { title: "Image à droite · texte à gauche", value: "image-right" },
+                  { title: "Image pleine largeur + overlay", value: "image-full" },
+                  { title: "Image seule centrée", value: "image-solo" },
+                ],
+              },
+              initialValue: "image-left",
+            },
+            {
+              name: "image",
+              title: "Image (upload)",
+              type: "image",
+              options: { hotspot: true },
+              fields: [
+                { name: "alt", type: "string", title: "Alt SEO (obligatoire)" },
+              ],
+            },
+            {
+              name: "fallbackUrl",
+              title: "URL image (si pas d'upload, ex. Unsplash)",
+              type: "url",
+              description: "Pratique pour pré-remplir avec une photo libre avant ta vraie photo.",
+            },
+            { name: "tag", type: "string", title: "Tag visuel (ex. « En appartement »)" },
+            { name: "title", type: "string", title: "Titre (optionnel)" },
+            {
+              name: "description",
+              type: "array",
+              title: "Description (optionnelle)",
+              of: [{ type: "block" }],
+            },
+          ],
+          preview: {
+            select: { title: "title", layout: "layout", media: "image" },
+            prepare: ({ title, layout, media }: any) => ({
+              title: title || "Image en situation",
+              subtitle: `📸 Layout : ${layout || "image-left"}`,
+              media,
+            }),
+          },
+        }),
+
         // 🆕 Conseil DreamsFly — bloc humain et chaleureux
         defineArrayMember({
           name: "conseilDreamsFly",

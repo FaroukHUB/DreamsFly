@@ -87,8 +87,109 @@ function BlockRenderer({ block: b }: { block: Block }) {
     case "ctaBlock": return <CtaBlock data={b} />;
     case "relatedPagesBlock": return <RelatedPagesBlock data={b} />;
     case "conseilDreamsFly": return <ConseilDreamsFly data={b} />;
+    case "lifestyleImageBlock": return <LifestyleImageBlock data={b} />;
     default: return null;
   }
+}
+
+// ───────────────────────────────────────
+// 📸 IMAGE EN SITUATION — 4 layouts
+// ───────────────────────────────────────
+function LifestyleImageBlock({ data }: { data: Block }) {
+  const layout = data.layout || "image-left";
+  const imageSrc = data.image?.asset
+    ? urlFor(data.image).width(1400).quality(85).url()
+    : data.fallbackUrl;
+  const alt = data.image?.alt || data.title || "Image lifestyle DreamsFly";
+
+  if (!imageSrc) return null;
+
+  if (layout === "image-solo") {
+    return (
+      <figure className="relative overflow-hidden rounded-3xl shadow-[0_20px_60px_rgba(15,23,42,0.12)]">
+        <Image
+          src={imageSrc}
+          alt={alt}
+          width={1400}
+          height={800}
+          className="h-auto w-full"
+        />
+        {data.tag && (
+          <span className="absolute left-5 top-5 rounded-pill bg-ivoire/95 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-midnight backdrop-blur-sm">
+            {data.tag}
+          </span>
+        )}
+        {data.title && (
+          <figcaption className="mt-4 text-center text-sm italic text-brume">{data.title}</figcaption>
+        )}
+      </figure>
+    );
+  }
+
+  if (layout === "image-full") {
+    return (
+      <section className="relative overflow-hidden rounded-3xl shadow-[0_24px_60px_rgba(15,23,42,0.15)] min-h-[440px]">
+        <Image
+          src={imageSrc}
+          alt={alt}
+          fill
+          sizes="100vw"
+          className="object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/30 to-transparent" />
+        <div className="relative z-10 flex h-full min-h-[440px] flex-col justify-end p-8 text-white md:p-12">
+          {data.tag && (
+            <span className="mb-3 inline-block w-fit rounded-pill bg-aurora/30 px-3 py-1 text-xs font-bold uppercase tracking-widest text-aurora backdrop-blur-sm">
+              {data.tag}
+            </span>
+          )}
+          {data.title && (
+            <h2 className="max-w-2xl font-sora text-3xl font-semibold leading-tight tracking-tight md:text-4xl">
+              {data.title}
+            </h2>
+          )}
+          {data.description && (
+            <div className="mt-4 max-w-xl text-[16px] leading-relaxed text-white/90 [&>p]:mb-2">
+              <PortableText value={data.description} />
+            </div>
+          )}
+        </div>
+      </section>
+    );
+  }
+
+  // image-left ou image-right
+  const isRight = layout === "image-right";
+  return (
+    <section className={`grid items-center gap-10 lg:grid-cols-2 ${isRight ? "lg:grid-flow-col-dense" : ""}`}>
+      <div className={`relative aspect-[4/3] overflow-hidden rounded-2xl shadow-[0_18px_48px_rgba(15,23,42,0.12)] ${isRight ? "lg:col-start-2" : ""}`}>
+        <Image
+          src={imageSrc}
+          alt={alt}
+          fill
+          sizes="(max-width: 1024px) 100vw, 50vw"
+          className="object-cover"
+        />
+        {data.tag && (
+          <span className="absolute left-4 top-4 rounded-pill bg-ivoire/95 px-3 py-1 text-[11px] font-bold uppercase tracking-widest text-midnight backdrop-blur-sm">
+            {data.tag}
+          </span>
+        )}
+      </div>
+      <div className={isRight ? "lg:col-start-1 lg:row-start-1" : ""}>
+        {data.title && (
+          <h2 className="mb-4 font-sora text-3xl font-semibold leading-tight tracking-tight text-ink md:text-4xl">
+            {data.title}
+          </h2>
+        )}
+        {data.description && (
+          <div className="prose-content text-[16.5px] leading-relaxed text-pierre">
+            <PortableText value={data.description} />
+          </div>
+        )}
+      </div>
+    </section>
+  );
 }
 
 // ───────────────────────────────────────
