@@ -545,6 +545,43 @@ export const landingPage = defineType({
             }),
           },
         }),
+
+        // 🆕 Conseil DreamsFly — bloc humain et chaleureux
+        defineArrayMember({
+          name: "conseilDreamsFly",
+          type: "object",
+          title: "💎 Le conseil DreamsFly (bloc humain signé)",
+          fields: [
+            {
+              name: "label",
+              type: "string",
+              title: "Label (sur-titre)",
+              initialValue: "Le conseil DreamsFly",
+            },
+            { name: "title", type: "string", title: "Titre du conseil (optionnel)" },
+            {
+              name: "advice",
+              type: "text",
+              rows: 4,
+              title: "Conseil (texte chaleureux à la 1ère personne)",
+              description:
+                "Parle directement à l'utilisateur. Ex: « Si vous hésitez entre 140×190 et 160×200, mesurez d'abord votre chambre. Une règle simple : il faut 60 cm de circulation de chaque côté du lit. »",
+            },
+            {
+              name: "signature",
+              type: "string",
+              title: "Signature (optionnelle)",
+              description: "Ex: « L'équipe DreamsFly », « Lucas, conseiller literie »",
+            },
+          ],
+          preview: {
+            select: { title: "title", label: "label" },
+            prepare: ({ title, label }: any) => ({
+              title: title || label || "Conseil DreamsFly",
+              subtitle: "💎 Voix humaine signée",
+            }),
+          },
+        }),
       ],
       options: { sortable: true },
     }),
