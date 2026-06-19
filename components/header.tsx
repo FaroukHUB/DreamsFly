@@ -11,16 +11,15 @@ export function Header({ settings }: { settings?: any }) {
   const menu: MenuItem[] = settings?.mainMenu || DEFAULT_MENU;
   const { toggle, count } = useCart();
   const [mounted, setMounted] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   useEffect(() => setMounted(true), []);
 
   return (
     <>
       {topbar?.enabled !== false && topbar?.message && (
-        <div className="bg-midnight px-5 py-2.5 text-center text-[13px] font-medium text-white">
+        <div className="bg-midnight px-4 py-2.5 text-center text-[12px] font-medium text-white md:text-[13px]">
           {topbar.link ? (
-            <Link href={topbar.link} className="hover:text-aurora">
-              {topbar.message}
-            </Link>
+            <Link href={topbar.link} className="hover:text-aurora">{topbar.message}</Link>
           ) : (
             topbar.message
           )}
@@ -28,20 +27,33 @@ export function Header({ settings }: { settings?: any }) {
       )}
 
       <header className="sticky top-0 z-50 border-b border-border bg-ivoire/95 backdrop-blur-md">
-        <div className="mx-auto flex max-w-site items-center justify-between px-8 py-4">
+        <div className="mx-auto flex max-w-site items-center justify-between px-4 py-3 md:px-8 md:py-4">
+          {/* Hamburger mobile */}
+          <button
+            onClick={() => setMobileOpen(true)}
+            aria-label="Ouvrir le menu"
+            className="flex h-10 w-10 items-center justify-center rounded-lg text-ink hover:bg-sable lg:hidden"
+          >
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          </button>
+
+          {/* Logo */}
           <Link href="/" aria-label="DreamsFly — accueil" className="text-ink">
-            <Logo size={28} />
+            <Logo size={26} />
           </Link>
 
+          {/* Nav desktop */}
           <nav>
             <ul className="hidden items-center gap-7 lg:flex">
               {menu.map((item, i) => (
                 <li key={i}>
                   <Link
                     href={item.link || "#"}
-                    className={`text-sm font-medium transition-colors ${
-                      item.highlight ? "text-discount font-semibold" : "text-ink hover:text-midnight"
-                    }`}
+                    className={`text-sm font-medium transition-colors ${item.highlight ? "text-discount font-semibold" : "text-ink hover:text-midnight"}`}
                   >
                     {item.label}
                   </Link>
@@ -50,11 +62,12 @@ export function Header({ settings }: { settings?: any }) {
             </ul>
           </nav>
 
-          <div className="flex items-center gap-3">
-            <button aria-label="Recherche" className="p-2 text-ink transition-colors hover:text-midnight">
+          {/* Actions droite */}
+          <div className="flex items-center gap-1.5 md:gap-3">
+            <button aria-label="Recherche" className="hidden p-2 text-ink transition-colors hover:text-midnight md:block">
               <SearchIcon />
             </button>
-            <button aria-label="Compte" className="p-2 text-ink transition-colors hover:text-midnight">
+            <button aria-label="Compte" className="hidden p-2 text-ink transition-colors hover:text-midnight md:block">
               <UserIcon />
             </button>
             <button
@@ -63,14 +76,82 @@ export function Header({ settings }: { settings?: any }) {
               className="flex items-center gap-1.5 p-2 text-sm font-medium text-ink hover:text-midnight"
             >
               <BagIcon />
-              <span className="hidden sm:inline">Panier</span>
-              <span className="rounded-pill bg-midnight px-2 py-0.5 text-[11px] font-semibold text-white">
+              <span className="hidden md:inline">Panier</span>
+              <span className="rounded-pill bg-midnight px-2 py-0.5 text-[10px] font-semibold text-white md:text-[11px]">
                 {mounted ? count() : 0}
               </span>
             </button>
           </div>
         </div>
       </header>
+
+      {/* Menu mobile drawer */}
+      <MobileMenu open={mobileOpen} onClose={() => setMobileOpen(false)} menu={menu} />
+    </>
+  );
+}
+
+function MobileMenu({ open, onClose, menu }: { open: boolean; onClose: () => void; menu: MenuItem[] }) {
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [open]);
+
+  return (
+    <>
+      <div
+        className={`fixed inset-0 z-[60] bg-ink/40 backdrop-blur-sm transition-opacity lg:hidden ${open ? "opacity-100" : "pointer-events-none opacity-0"}`}
+        onClick={onClose}
+      />
+      <aside
+        aria-label="Menu"
+        className={`fixed inset-y-0 left-0 z-[70] flex w-full max-w-sm flex-col bg-ivoire shadow-2xl transition-transform duration-300 lg:hidden ${open ? "translate-x-0" : "-translate-x-full"}`}
+      >
+        <header className="flex items-center justify-between border-b border-border p-5">
+          <div className="text-ink"><Logo size={24} /></div>
+          <button onClick={onClose} aria-label="Fermer" className="rounded-full p-2 hover:bg-sable">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </header>
+
+        <nav className="flex-1 overflow-y-auto px-5 py-6">
+          <ul className="space-y-1">
+            {menu.map((item, i) => (
+              <li key={i}>
+                <Link
+                  href={item.link || "#"}
+                  onClick={onClose}
+                  className={`block rounded-xl px-4 py-3.5 font-sora text-lg font-semibold transition-colors ${item.highlight ? "bg-discount/10 text-discount" : "text-ink hover:bg-sable"}`}
+                >
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+
+          <div className="mt-8 border-t border-border pt-6">
+            <div className="mb-3 text-xs font-semibold uppercase tracking-widest text-pierre">Aide</div>
+            <ul className="space-y-1">
+              <li><Link href="/aide/contact" onClick={onClose} className="block rounded-xl px-4 py-2.5 text-base text-ink hover:bg-sable">Contact</Link></li>
+              <li><Link href="/aide/faq" onClick={onClose} className="block rounded-xl px-4 py-2.5 text-base text-ink hover:bg-sable">FAQ</Link></li>
+              <li><Link href="/services/livraison" onClick={onClose} className="block rounded-xl px-4 py-2.5 text-base text-ink hover:bg-sable">Livraison</Link></li>
+              <li><Link href="/services/garantie" onClick={onClose} className="block rounded-xl px-4 py-2.5 text-base text-ink hover:bg-sable">Garantie</Link></li>
+              <li><Link href="/magasins" onClick={onClose} className="block rounded-xl px-4 py-2.5 text-base text-ink hover:bg-sable">Showrooms</Link></li>
+            </ul>
+          </div>
+        </nav>
+
+        <footer className="border-t border-border bg-sable p-5">
+          <div className="text-xs text-pierre">
+            <a href="tel:0785889260" className="font-semibold text-midnight">07 85 88 92 60</a>
+            <span className="mx-2 text-brume">·</span>
+            <a href="mailto:contact@dreamsfly.fr" className="text-midnight underline">contact@dreamsfly.fr</a>
+          </div>
+        </footer>
+      </aside>
     </>
   );
 }
@@ -80,7 +161,7 @@ const DEFAULT_MENU: MenuItem[] = [
   { label: "Matelas", link: "/matelas" },
   { label: "Sommiers", link: "/sommiers" },
   { label: "Oreillers", link: "/oreillers" },
-  { label: "Linge de lit", link: "/linge-de-lit" },
+  { label: "Lits", link: "/lits" },
   { label: "Magazine", link: "/magazine" },
   { label: "Magasins", link: "/magasins" },
 ];

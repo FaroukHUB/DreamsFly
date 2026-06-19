@@ -38,6 +38,8 @@ export default defineConfig({
             S.documentTypeListItem("author").title("👤 Auteurs & experts"),
             S.documentTypeListItem("review").title("⭐ Avis clients"),
             S.divider(),
+            S.documentTypeListItem("staticPage").title("📄 Pages statiques (aide, légal…)"),
+            S.divider(),
             S.documentTypeListItem("order").title("💳 Commandes"),
           ]),
     }),

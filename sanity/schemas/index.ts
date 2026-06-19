@@ -10,6 +10,7 @@ import { glossary } from "./glossary";
 import { comparison } from "./comparison";
 import { showroom } from "./showroom";
 import { order } from "./order";
+import { staticPage } from "./staticPage";
 
 export const schemaTypes = [
   // Singletons
@@ -29,4 +30,6 @@ export const schemaTypes = [
   review,
   // E-commerce
   order,
+  // Pages statiques
+  staticPage,
 ];
