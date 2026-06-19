@@ -28,11 +28,21 @@ export const homepageQuery = groq`
       badges,
       rating
     },
-    mosaicCollections,
-    quizCta,
-    categoryTiles,
+    quizCta {
+      ...,
+      backgroundImage{ ..., asset->{...} }
+    },
+    categoryTiles[]{
+      ...,
+      image{ ..., asset->{...} }
+    },
+    mosaicCollections[]{
+      ...,
+      image{ ..., asset->{...} }
+    },
     awards,
     brandStatement,
+    advantages,
     seo
   }
 `;

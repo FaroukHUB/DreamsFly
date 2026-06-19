@@ -252,6 +252,13 @@ export const homepage = defineType({
         { name: "subtitle", title: "Sous-titre", type: "text", rows: 2 },
         { name: "ctaLabel", title: "Texte du bouton", type: "string", initialValue: "Faire le quiz" },
         { name: "ctaLink", title: "Lien", type: "string", initialValue: "/quiz" },
+        {
+          name: "backgroundImage",
+          title: "Image d'arrière-plan (recommandé 1920×1080)",
+          type: "image",
+          options: { hotspot: true },
+          description: "L'image s'affichera avec un overlay sombre pour la lisibilité du texte.",
+        },
       ],
     }),
 
