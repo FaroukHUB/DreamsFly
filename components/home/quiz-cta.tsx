@@ -21,7 +21,7 @@ export function QuizCTA({ data }: { data?: QuizCtaData }) {
   const subtitle =
     data?.subtitle ||
     "Notre algorithme vous recommande le modèle DreamsFly parfait selon votre morphologie, votre position de sommeil et vos préférences.";
-  const ctaLabel = data?.ctaLabel || "Faire le quiz";
+  const ctaLabel = data?.ctaLabel || "Faire le test";
   const ctaLink = data?.ctaLink || "/quiz";
   const bgUrl = data?.backgroundImage
     ? urlFor(data.backgroundImage).width(1920).quality(85).url()

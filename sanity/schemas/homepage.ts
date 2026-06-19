@@ -250,7 +250,7 @@ export const homepage = defineType({
         { name: "eyebrow", title: "Sur-titre", type: "string", initialValue: "Quiz en 1 minute" },
         { name: "title", title: "Titre", type: "string" },
         { name: "subtitle", title: "Sous-titre", type: "text", rows: 2 },
-        { name: "ctaLabel", title: "Texte du bouton", type: "string", initialValue: "Faire le quiz" },
+        { name: "ctaLabel", title: "Texte du bouton", type: "string", initialValue: "Faire le test" },
         { name: "ctaLink", title: "Lien", type: "string", initialValue: "/quiz" },
         {
           name: "backgroundImage",
