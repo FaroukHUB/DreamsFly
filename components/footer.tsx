@@ -51,6 +51,7 @@ const DEFAULT_COLUMNS = [
     title: "Produits",
     links: [
       { label: "Matelas", link: "/matelas" },
+      { label: "Lits", link: "/lits" },
       { label: "Sommiers", link: "/sommiers" },
       { label: "Oreillers", link: "/oreillers" },
       { label: "Linge de lit", link: "/linge-de-lit" },
