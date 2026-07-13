@@ -18,6 +18,25 @@ export const product = defineType({
   ],
   fields: [
     defineField({
+      name: "productType",
+      title: "Catégorie",
+      type: "string",
+      group: "main",
+      options: {
+        list: [
+          { title: "🛏️ Matelas", value: "matelas" },
+          { title: "🛋️ Lit", value: "lit" },
+          { title: "🪑 Sommier", value: "sommier" },
+          { title: "🌙 Oreiller", value: "oreiller" },
+          { title: "🧣 Linge de lit", value: "linge" },
+          { title: "📦 Pack (matelas + …)", value: "pack" },
+        ],
+        layout: "dropdown",
+      },
+      initialValue: "matelas",
+      validation: (r) => r.required(),
+    }),
+    defineField({
       name: "name",
       title: "Nom court (ex. « MILAN »)",
       type: "string",
@@ -238,6 +257,7 @@ export const product = defineType({
   orderings: [
     { title: "Nom A → Z", name: "nameAsc", by: [{ field: "name", direction: "asc" }] },
     { title: "Prix croissant", name: "priceAsc", by: [{ field: "variants[0].price", direction: "asc" }] },
+    { title: "Catégorie", name: "productTypeAsc", by: [{ field: "productType", direction: "asc" }, { field: "name", direction: "asc" }] },
   ],
   preview: {
     select: {
@@ -245,11 +265,23 @@ export const product = defineType({
       subtitle: "tagline",
       media: "images.0",
       price: "variants.0.price",
+      pType: "productType",
     },
-    prepare: ({ title, subtitle, media, price }) => ({
-      title,
-      subtitle: [subtitle, price ? `${price} €` : null].filter(Boolean).join(" · "),
-      media,
-    }),
+    prepare: ({ title, subtitle, media, price, pType }) => {
+      const typeEmoji: Record<string, string> = {
+        matelas: "🛏️",
+        lit: "🛋️",
+        sommier: "🪑",
+        oreiller: "🌙",
+        linge: "🧣",
+        pack: "📦",
+      };
+      const emoji = typeEmoji[pType] || "🏷️";
+      return {
+        title: `${emoji} ${title || "(sans nom)"}`,
+        subtitle: [subtitle, price ? `${price} €` : null].filter(Boolean).join(" · "),
+        media,
+      };
+    },
   },
 });

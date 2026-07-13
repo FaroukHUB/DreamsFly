@@ -26,20 +26,96 @@ export default defineConfig({
             S.listItem()
               .title("⚙️ Paramètres du site")
               .child(S.editor().schemaType("siteSettings").documentId("siteSettings")),
+
             S.divider(),
-            S.documentTypeListItem("product").title("🛏️ Matelas (catalogue)"),
+
+            // ─── Catalogue segmenté par catégorie ───
+            S.listItem()
+              .title("🛍️ Catalogue")
+              .child(
+                S.list()
+                  .title("Catalogue")
+                  .items([
+                    S.listItem()
+                      .title("🛏️ Matelas")
+                      .child(
+                        S.documentList()
+                          .title("Matelas")
+                          .filter('_type == "product" && productType == "matelas"')
+                          .defaultOrdering([{ field: "name", direction: "asc" }])
+                      ),
+                    S.listItem()
+                      .title("🛋️ Lits")
+                      .child(
+                        S.documentList()
+                          .title("Lits")
+                          .filter('_type == "product" && productType == "lit"')
+                          .defaultOrdering([{ field: "name", direction: "asc" }])
+                      ),
+                    S.listItem()
+                      .title("🪑 Sommiers")
+                      .child(
+                        S.documentList()
+                          .title("Sommiers")
+                          .filter('_type == "product" && productType == "sommier"')
+                          .defaultOrdering([{ field: "name", direction: "asc" }])
+                      ),
+                    S.listItem()
+                      .title("🌙 Oreillers")
+                      .child(
+                        S.documentList()
+                          .title("Oreillers")
+                          .filter('_type == "product" && productType == "oreiller"')
+                          .defaultOrdering([{ field: "name", direction: "asc" }])
+                      ),
+                    S.listItem()
+                      .title("🧣 Linge de lit")
+                      .child(
+                        S.documentList()
+                          .title("Linge de lit")
+                          .filter('_type == "product" && productType == "linge"')
+                          .defaultOrdering([{ field: "name", direction: "asc" }])
+                      ),
+                    S.listItem()
+                      .title("📦 Packs")
+                      .child(
+                        S.documentList()
+                          .title("Packs")
+                          .filter('_type == "product" && productType == "pack"')
+                          .defaultOrdering([{ field: "name", direction: "asc" }])
+                      ),
+                    S.divider(),
+                    S.listItem()
+                      .title("📋 Tous les produits")
+                      .child(
+                        S.documentList()
+                          .title("Tous les produits")
+                          .filter('_type == "product"')
+                          .defaultOrdering([{ field: "productType", direction: "asc" }, { field: "name", direction: "asc" }])
+                      ),
+                  ])
+              ),
+
             S.documentTypeListItem("landingPage").title("📐 Pages SEO (silos)"),
+
             S.divider(),
+
             S.documentTypeListItem("guide").title("📰 Magazine"),
             S.documentTypeListItem("comparison").title("⚖️ Comparatifs"),
             S.documentTypeListItem("glossary").title("📚 Glossaire"),
+
             S.divider(),
+
             S.documentTypeListItem("showroom").title("🏬 Showrooms"),
             S.documentTypeListItem("author").title("👤 Auteurs & experts"),
             S.documentTypeListItem("review").title("⭐ Avis clients"),
+
             S.divider(),
+
             S.documentTypeListItem("staticPage").title("📄 Pages statiques (aide, légal…)"),
+
             S.divider(),
+
             S.documentTypeListItem("order").title("💳 Commandes"),
           ]),
     }),
