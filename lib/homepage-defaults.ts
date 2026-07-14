@@ -186,16 +186,10 @@ export const defaultTestimonials: {
   averageRating: 4.9,
   totalReviews: 1167,
   moreReviewsUrl:
-    "https://www.google.com/search?q=Magasin+de+meubles+-+Canap%C3%A9+-+Matelas+%7C+TRUST+INDUSTRIE+Avis",
+    "https://www.google.com/search?sca_esv=26fe8ce32570a73a&sxsrf=APpeQnuRcAkp9r5hktDd23vEapZKaK7wrg:1784041005716&si=APenkKm7iecQ4G6P-TsbSMFKIQtv3EFIqRAFw-i8uEbk55Z-_zzlHRevGzIzhQwhU2OVmYt0tbteQE4Nl1bY8lFwmY0ZnfbeI86Zbebb2s2NtbnzXkWPTgR9aBkwPbNsdNlhUXOjYXgqCOV9hOV_AynW8hbdxIt_PrZsJANOz8ND4vif4jlfHVOBjrEpb455kFf6Xjm9UHAI&q=Magasin+de+meubles+-+Canap%C3%A9+-+Matelas+%7C+TRUST+INDUSTRIE+Avis",
   moreReviewsLabel: "Voir tous les avis Google",
-  items: [
-    { name: "Sophie L.", location: "Lyon", rating: 5, text: "Livraison rapide, matelas parfait, essai 30 nuits qui a rassuré. Je recommande vraiment.", productBought: "Matelas MILAN 160×200", date: "2026-05-22" },
-    { name: "Marc T.", location: "Bordeaux", rating: 5, text: "Le service client a répondu à mes questions en 30 min. Rare de nos jours. Bravo.", productBought: "Lit ATHÈNE 140×190", date: "2026-04-18" },
-    { name: "Claire P.", location: "Paris", rating: 5, text: "J'avais peur d'acheter un matelas en ligne. Résultat : meilleur sommeil depuis 5 ans.", productBought: "Matelas BERLIN 140×190", date: "2026-05-30" },
-    { name: "Julien R.", location: "Nantes", rating: 5, text: "Le lit coffre nous change la vie dans notre 45m². Vérins impeccables même après 6 mois.", productBought: "Lit COCO 160×200", date: "2026-03-12" },
-    { name: "Amélie D.", location: "Toulouse", rating: 4, text: "Excellent produit, seul bémol : livraison à 8 jours au lieu de 5 annoncés. Mais parfaitement emballé et livreurs très pros.", productBought: "Sommier DreamsFly", date: "2026-06-02" },
-    { name: "Nicolas B.", location: "Marseille", rating: 5, text: "Testé en showroom avant commande, décision facile. Le conseiller connaissait vraiment son sujet.", productBought: "Matelas LONDRES 180×200", date: "2026-04-05" },
-  ],
+  // Aucun avis par défaut — à remplir depuis Sanity avec de vrais avis Google
+  items: [],
 };
 
 type BrandLogoItem = { name?: string; logo?: any; url?: string };

@@ -77,10 +77,10 @@ export function Testimonials({ data }: { data?: Data }) {
           </div>
         </div>
 
-        <TestimonialsSlider items={d.items} />
+        {d.items.length > 0 && <TestimonialsSlider items={d.items} />}
 
         {d.moreReviewsUrl && (
-          <div className="mt-10 text-center md:mt-12">
+          <div className={`text-center ${d.items.length > 0 ? "mt-10 md:mt-12" : "mt-8"}`}>
             <a
               href={d.moreReviewsUrl}
               target="_blank"
