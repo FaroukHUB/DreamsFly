@@ -16,6 +16,8 @@ type Data = {
   subtitle?: string;
   averageRating?: number;
   totalReviews?: number;
+  moreReviewsUrl?: string;
+  moreReviewsLabel?: string;
   items?: Item[];
 };
 
@@ -49,6 +51,8 @@ export function Testimonials({ data }: { data?: Data }) {
     subtitle: data?.subtitle || defaultTestimonials.subtitle,
     averageRating: data?.averageRating ?? defaultTestimonials.averageRating,
     totalReviews: data?.totalReviews ?? defaultTestimonials.totalReviews,
+    moreReviewsUrl: data?.moreReviewsUrl || defaultTestimonials.moreReviewsUrl,
+    moreReviewsLabel: data?.moreReviewsLabel || defaultTestimonials.moreReviewsLabel,
     items: data?.items?.length ? data.items : defaultTestimonials.items,
   };
 
@@ -74,6 +78,21 @@ export function Testimonials({ data }: { data?: Data }) {
         </div>
 
         <TestimonialsSlider items={d.items} />
+
+        {d.moreReviewsUrl && (
+          <div className="mt-10 text-center md:mt-12">
+            <a
+              href={d.moreReviewsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-3 rounded-full border border-border bg-white px-6 py-3.5 font-sora text-sm font-semibold text-ink shadow-sm transition-all hover:-translate-y-px hover:border-midnight md:text-base"
+            >
+              <GoogleG size={18} />
+              {d.moreReviewsLabel}
+              <span aria-hidden>↗</span>
+            </a>
+          </div>
+        )}
       </div>
     </section>
   );

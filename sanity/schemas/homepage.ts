@@ -658,6 +658,18 @@ export const homepage = defineType({
         { name: "averageRating", type: "number", title: "Note moyenne (sur 5)", validation: (r) => r.min(0).max(5) },
         { name: "totalReviews", type: "number", title: "Nombre total d'avis" },
         {
+          name: "moreReviewsUrl",
+          type: "url",
+          title: "Lien « Voir tous les avis » (Google, Trustpilot…)",
+          description: "URL vers ta page d'avis Google publique. S'affiche en bas de la section.",
+        },
+        {
+          name: "moreReviewsLabel",
+          type: "string",
+          title: "Texte du bouton « Voir tous les avis »",
+          initialValue: "Voir tous les avis Google",
+        },
+        {
           name: "items",
           type: "array",
           of: [

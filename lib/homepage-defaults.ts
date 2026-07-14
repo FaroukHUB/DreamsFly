@@ -176,6 +176,8 @@ export const defaultTestimonials: {
   subtitle: string;
   averageRating: number;
   totalReviews: number;
+  moreReviewsUrl: string;
+  moreReviewsLabel: string;
   items: TestimonialItem[];
 } = {
   eyebrow: "Ils nous font confiance",
@@ -183,6 +185,9 @@ export const defaultTestimonials: {
   subtitle: "Ce que nos clients disent après leur achat — extraits vérifiés Google.",
   averageRating: 4.9,
   totalReviews: 1167,
+  moreReviewsUrl:
+    "https://www.google.com/search?q=Magasin+de+meubles+-+Canap%C3%A9+-+Matelas+%7C+TRUST+INDUSTRIE+Avis",
+  moreReviewsLabel: "Voir tous les avis Google",
   items: [
     { name: "Sophie L.", location: "Lyon", rating: 5, text: "Livraison rapide, matelas parfait, essai 30 nuits qui a rassuré. Je recommande vraiment.", productBought: "Matelas MILAN 160×200", date: "2026-05-22" },
     { name: "Marc T.", location: "Bordeaux", rating: 5, text: "Le service client a répondu à mes questions en 30 min. Rare de nos jours. Bravo.", productBought: "Lit ATHÈNE 140×190", date: "2026-04-18" },
