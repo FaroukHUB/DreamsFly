@@ -168,16 +168,22 @@ export function ProductBuyBox({
           {currentItem?.type === "video" && currentItem.video.file?.asset?.url && (
             <video
               key={currentItem.key}
-              src={currentItem.video.file.asset.url}
               poster={currentItem.video.poster?.asset ? urlFor(currentItem.video.poster).width(1000).url() : undefined}
-              autoPlay={currentItem.video.autoplay !== false}
               muted
               loop
               playsInline
               controls
+              preload="metadata"
               aria-label={currentItem.video.alt || `Vidéo de présentation ${name}`}
               className="absolute inset-0 h-full w-full object-cover"
-            />
+              onError={(e) => {
+                // eslint-disable-next-line no-console
+                console.warn("[BuyBox] Video failed to load", e, currentItem.video.file?.asset?.url);
+              }}
+            >
+              <source src={currentItem.video.file.asset.url} type={currentItem.video.file.asset.mimeType || "video/mp4"} />
+              Votre navigateur ne supporte pas la lecture vidéo.
+            </video>
           )}
         </div>
         {gallery.length > 1 && (
