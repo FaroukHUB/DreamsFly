@@ -127,9 +127,12 @@ export function ProductBuyBox({
 
   const currentItem = gallery[selectedImage];
   // Pour le panier : on stocke l'URL de la 1re image dispo (jamais une vidéo)
-  const cartImageSource: SanityImage | undefined =
-    currentItem?.type === "image" ? currentItem.image : gallery.find((g) => g.type === "image") as any;
-  const imageUrl = cartImageSource ? urlFor(cartImageSource).width(400).url() : undefined;
+  const cartImageSource: SanityImage | undefined = (() => {
+    if (currentItem?.type === "image") return currentItem.image;
+    const firstImage = gallery.find((g) => g.type === "image");
+    return firstImage?.type === "image" ? firstImage.image : undefined;
+  })();
+  const imageUrl = cartImageSource?.asset ? urlFor(cartImageSource).width(400).url() : undefined;
 
   async function handleAdd() {
     if (!variant || !price) return;
