@@ -457,6 +457,253 @@ export const homepage = defineType({
       ],
     }),
 
+    // ═══════════════════════════════════════════════════════════
+    // NOUVELLES SECTIONS SEO (toutes éditables)
+    // ═══════════════════════════════════════════════════════════
+
+    defineField({
+      name: "whyUs",
+      title: "🏆 Pourquoi DreamsFly ? (piliers de confiance)",
+      type: "object",
+      fields: [
+        { name: "eyebrow", type: "string", title: "Sur-titre", initialValue: "Notre différence" },
+        { name: "title", type: "string", title: "Titre H2" },
+        { name: "subtitle", type: "text", rows: 2, title: "Introduction" },
+        { name: "image", type: "image", title: "Image d'ambiance", options: { hotspot: true }, fields: [{ name: "alt", type: "string", title: "Alt" }] },
+        {
+          name: "pillars",
+          type: "array",
+          title: "Piliers (icône + titre + texte court)",
+          of: [
+            defineArrayMember({
+              type: "object",
+              fields: [
+                { name: "icon", type: "string", title: "Emoji" },
+                { name: "title", type: "string", title: "Titre" },
+                { name: "text", type: "text", rows: 2, title: "Description (1-2 phrases)" },
+              ],
+              preview: { select: { title: "title", subtitle: "text" } },
+            }),
+          ],
+        },
+      ],
+    }),
+
+    defineField({
+      name: "buyingGuide",
+      title: "📖 Guide d'achat (comment choisir…)",
+      type: "object",
+      fields: [
+        { name: "eyebrow", type: "string", initialValue: "Guide d'achat" },
+        { name: "title", type: "string", title: "Titre H2" },
+        { name: "subtitle", type: "text", rows: 2 },
+        {
+          name: "guides",
+          type: "array",
+          title: "Guides (chaque bloc)",
+          of: [
+            defineArrayMember({
+              type: "object",
+              fields: [
+                { name: "icon", type: "string", title: "Emoji" },
+                { name: "title", type: "string", title: "Titre (ex. « Comment choisir son matelas ? »)" },
+                { name: "text", type: "text", rows: 3, title: "Résumé (2-3 phrases)" },
+                { name: "ctaLabel", type: "string", title: "Texte du bouton", initialValue: "Lire le guide" },
+                { name: "ctaLink", type: "string", title: "Lien vers le guide" },
+                { name: "image", type: "image", title: "Image (optionnelle)", options: { hotspot: true }, fields: [{ name: "alt", type: "string" }] },
+              ],
+              preview: { select: { title: "title", subtitle: "text", media: "image" } },
+            }),
+          ],
+        },
+      ],
+    }),
+
+    defineField({
+      name: "commitments",
+      title: "🤝 Nos engagements (illustré)",
+      type: "object",
+      fields: [
+        { name: "eyebrow", type: "string", initialValue: "Nos engagements" },
+        { name: "title", type: "string", title: "Titre H2" },
+        { name: "subtitle", type: "text", rows: 2 },
+        {
+          name: "items",
+          type: "array",
+          of: [
+            defineArrayMember({
+              type: "object",
+              fields: [
+                { name: "icon", type: "string", title: "Emoji" },
+                { name: "title", type: "string", title: "Nom de l'engagement" },
+                { name: "text", type: "text", rows: 2, title: "Description" },
+                { name: "image", type: "image", title: "Image (optionnelle)", options: { hotspot: true }, fields: [{ name: "alt", type: "string" }] },
+              ],
+              preview: { select: { title: "title", subtitle: "text", media: "image" } },
+            }),
+          ],
+        },
+      ],
+    }),
+
+    defineField({
+      name: "homepageFaq",
+      title: "❓ FAQ page d'accueil (20 questions min)",
+      type: "object",
+      fields: [
+        { name: "eyebrow", type: "string", initialValue: "Questions fréquentes" },
+        { name: "title", type: "string", title: "Titre H2" },
+        { name: "subtitle", type: "text", rows: 2 },
+        {
+          name: "questions",
+          type: "array",
+          of: [
+            defineArrayMember({
+              type: "object",
+              fields: [
+                {
+                  name: "category",
+                  type: "string",
+                  title: "Catégorie (pour regrouper)",
+                  options: {
+                    list: [
+                      { title: "Produit", value: "produit" },
+                      { title: "Livraison", value: "livraison" },
+                      { title: "Paiement", value: "paiement" },
+                      { title: "Garantie", value: "garantie" },
+                      { title: "Entretien", value: "entretien" },
+                      { title: "SAV & Retour", value: "sav" },
+                      { title: "Autre", value: "autre" },
+                    ],
+                  },
+                  initialValue: "produit",
+                },
+                { name: "question", type: "string", title: "Question", validation: (r) => r.required() },
+                { name: "answer", type: "text", rows: 4, title: "Réponse", validation: (r) => r.required() },
+              ],
+              preview: { select: { title: "question", subtitle: "answer" } },
+            }),
+          ],
+        },
+      ],
+    }),
+
+    defineField({
+      name: "guidesSection",
+      title: "📰 Nos guides (mise en avant)",
+      type: "object",
+      fields: [
+        { name: "eyebrow", type: "string", initialValue: "Nos guides" },
+        { name: "title", type: "string" },
+        { name: "subtitle", type: "text", rows: 2 },
+        {
+          name: "items",
+          type: "array",
+          of: [
+            defineArrayMember({
+              type: "object",
+              fields: [
+                { name: "image", type: "image", options: { hotspot: true }, fields: [{ name: "alt", type: "string" }] },
+                { name: "title", type: "string", title: "Titre du guide" },
+                { name: "summary", type: "text", rows: 2, title: "Résumé" },
+                { name: "ctaLabel", type: "string", initialValue: "Lire" },
+                { name: "ctaLink", type: "string" },
+              ],
+              preview: { select: { title: "title", subtitle: "summary", media: "image" } },
+            }),
+          ],
+        },
+      ],
+    }),
+
+    defineField({
+      name: "latestArticles",
+      title: "📰 Derniers articles (blog / magazine)",
+      type: "object",
+      fields: [
+        { name: "eyebrow", type: "string", initialValue: "Notre magazine" },
+        { name: "title", type: "string" },
+        { name: "subtitle", type: "text", rows: 2 },
+        {
+          name: "items",
+          type: "array",
+          of: [
+            defineArrayMember({
+              type: "object",
+              fields: [
+                { name: "image", type: "image", options: { hotspot: true }, fields: [{ name: "alt", type: "string" }] },
+                { name: "category", type: "string", title: "Rubrique (ex. « Conseils sommeil »)" },
+                { name: "title", type: "string", title: "Titre article" },
+                { name: "excerpt", type: "text", rows: 2, title: "Extrait" },
+                { name: "date", type: "date", title: "Date de publication" },
+                { name: "link", type: "string", title: "Lien vers l'article" },
+              ],
+              preview: {
+                select: { title: "title", subtitle: "category", media: "image" },
+              },
+            }),
+          ],
+        },
+      ],
+    }),
+
+    defineField({
+      name: "testimonials",
+      title: "⭐ Avis clients",
+      type: "object",
+      fields: [
+        { name: "eyebrow", type: "string", initialValue: "Ils nous font confiance" },
+        { name: "title", type: "string" },
+        { name: "subtitle", type: "text", rows: 2 },
+        { name: "averageRating", type: "number", title: "Note moyenne (sur 5)", validation: (r) => r.min(0).max(5) },
+        { name: "totalReviews", type: "number", title: "Nombre total d'avis" },
+        {
+          name: "items",
+          type: "array",
+          of: [
+            defineArrayMember({
+              type: "object",
+              fields: [
+                { name: "photo", type: "image", title: "Photo client (optionnel)", options: { hotspot: true } },
+                { name: "name", type: "string", title: "Prénom + initiale (ex. Sophie L.)" },
+                { name: "location", type: "string", title: "Ville / région (optionnel)" },
+                { name: "rating", type: "number", title: "Note (sur 5)", validation: (r) => r.min(1).max(5), initialValue: 5 },
+                { name: "text", type: "text", rows: 4, title: "Avis" },
+                { name: "productBought", type: "string", title: "Produit acheté (optionnel)" },
+                { name: "date", type: "date", title: "Date de l'avis (optionnel)" },
+              ],
+              preview: { select: { title: "name", subtitle: "text", media: "photo" } },
+            }),
+          ],
+        },
+      ],
+    }),
+
+    defineField({
+      name: "brandLogos",
+      title: "🏷️ Marques / partenaires (logos)",
+      type: "object",
+      fields: [
+        { name: "eyebrow", type: "string", initialValue: "Marques partenaires" },
+        { name: "title", type: "string" },
+        {
+          name: "items",
+          type: "array",
+          of: [
+            defineArrayMember({
+              type: "object",
+              fields: [
+                { name: "name", type: "string", title: "Nom de la marque" },
+                { name: "logo", type: "image", title: "Logo (SVG ou PNG transparent recommandé)" },
+                { name: "url", type: "url", title: "Site web (optionnel)" },
+              ],
+              preview: { select: { title: "name", media: "logo" } },
+            }),
+          ],
+        },
+      ],
+    }),
+
     // ─────────────────────────────────────────────────
     // SEO
     // ─────────────────────────────────────────────────

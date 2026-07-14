@@ -58,6 +58,39 @@ export const homepageQuery = groq`
     awards,
     brandStatement,
     advantages,
+    whyUs {
+      ...,
+      image{ ..., asset->{...} },
+      pillars[]{ _key, icon, title, text }
+    },
+    buyingGuide {
+      ...,
+      guides[]{ _key, icon, title, text, ctaLabel, ctaLink, image{ ..., asset->{...} } }
+    },
+    commitments {
+      ...,
+      items[]{ _key, icon, title, text, image{ ..., asset->{...} } }
+    },
+    homepageFaq {
+      ...,
+      questions[]{ _key, category, question, answer }
+    },
+    guidesSection {
+      ...,
+      items[]{ _key, title, summary, ctaLabel, ctaLink, image{ ..., asset->{...} } }
+    },
+    latestArticles {
+      ...,
+      items[]{ _key, category, title, excerpt, date, link, image{ ..., asset->{...} } }
+    },
+    testimonials {
+      ...,
+      items[]{ _key, name, location, rating, text, productBought, date, photo{ ..., asset->{...} } }
+    },
+    brandLogos {
+      ...,
+      items[]{ _key, name, url, logo{ ..., asset->{...} } }
+    },
     seo
   }
 `;
