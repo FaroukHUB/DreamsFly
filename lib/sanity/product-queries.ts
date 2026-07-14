@@ -6,6 +6,8 @@ export const productBySlugFullQuery = groq`
     ...,
     "slug": slug.current,
     lifestyleImage{ ..., asset->{...} },
+    compositionImage{ ..., asset->{...} },
+    compositionVideo{ asset->{url} },
     images[]{ ..., asset->{...}, "alt": coalesce(alt, ^.name) },
     colors[]{
       _key, name, hex, isDefault,
@@ -86,6 +88,8 @@ export const litBySlugQuery = groq`
     ...,
     "slug": slug.current,
     lifestyleImage{ ..., asset->{...} },
+    compositionImage{ ..., asset->{...} },
+    compositionVideo{ asset->{url} },
     images[]{ ..., asset->{...}, "alt": coalesce(alt, ^.name) },
     colors[]{
       _key, name, hex, isDefault,

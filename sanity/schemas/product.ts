@@ -347,6 +347,25 @@ export const product = defineType({
       ],
       description: "Chaque ligne décrit une couche du matelas. Ordre du haut (housse) vers le bas (base).",
     }),
+    defineField({
+      name: "compositionImage",
+      title: "Photo de coupe transversale",
+      type: "image",
+      group: "composition",
+      hidden: ({ document }) => document?.productType !== "matelas" && !!document?.productType,
+      description: "Photo qui montre les couches du matelas coupé. Affichée à côté de la liste des couches. Sinon un schéma illustratif s'affiche par défaut.",
+      options: { hotspot: true },
+      fields: [{ name: "alt", title: "Alt SEO", type: "string" }],
+    }),
+    defineField({
+      name: "compositionVideo",
+      title: "Vidéo de démonstration composition",
+      type: "file",
+      group: "composition",
+      hidden: ({ document }) => document?.productType !== "matelas" && !!document?.productType,
+      description: "Vidéo courte (10-30 s) qui montre les couches. Prioritaire sur la photo si les deux sont remplis.",
+      options: { accept: "video/mp4,video/webm" },
+    }),
 
     // ─── COULEURS disponibles (optionnel) ───
     defineField({
