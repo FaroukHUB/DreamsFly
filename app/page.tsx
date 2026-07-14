@@ -82,8 +82,13 @@ export default async function HomePage() {
         {/* 9. Quiz CTA — préservé */}
         <QuizCTA data={homepage?.quizCta} />
 
-        {/* 10. Avis clients — NEW */}
-        <Testimonials data={homepage?.testimonials} />
+        {/* 10. Avis clients — NEW (source : documents 'review' Sanity) */}
+        <Testimonials
+          data={{
+            ...homepage?.testimonials,
+            items: homepage?.reviewDocs?.length ? homepage.reviewDocs : homepage?.testimonials?.items,
+          }}
+        />
 
         {/* 11. Derniers articles magazine — NEW */}
         <LatestArticles data={homepage?.latestArticles} />

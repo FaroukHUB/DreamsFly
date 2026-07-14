@@ -87,6 +87,16 @@ export const homepageQuery = groq`
       ...,
       items[]{ _key, name, location, rating, text, productBought, date, photo{ ..., asset->{...} } }
     },
+    "reviewDocs": *[_type == "review"] | order(coalesce(date, _createdAt) desc) [0..11] {
+      _id,
+      "name": author,
+      "location": city,
+      rating,
+      text,
+      "date": coalesce(date, _createdAt),
+      "productBought": product->name,
+      "photo": null
+    },
     brandLogos {
       ...,
       items[]{ _key, name, url, logo{ ..., asset->{...} } }
