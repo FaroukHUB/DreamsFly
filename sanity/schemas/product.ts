@@ -73,6 +73,14 @@ export const product = defineType({
       description: "Affichée sous le nom sur les cartes produit. Ex : « Mémoire de forme + ressorts · 7 zones »",
     }),
     defineField({
+      name: "featured",
+      title: "⭐ Mettre en avant sur la home",
+      type: "boolean",
+      group: "main",
+      initialValue: false,
+      description: "Coche pour afficher ce produit dans la section Best-sellers de la page d'accueil.",
+    }),
+    defineField({
       name: "description",
       title: "Description (texte riche)",
       type: "array",
@@ -265,9 +273,12 @@ export const product = defineType({
       subtitle: "tagline",
       media: "images.0",
       price: "variants.0.price",
+      compareAt: "variants.0.compareAtPrice",
       pType: "productType",
+      featured: "featured",
+      stock: "variants.0.stockStatus",
     },
-    prepare: ({ title, subtitle, media, price, pType }) => {
+    prepare: ({ title, subtitle, media, price, compareAt, pType, featured, stock }) => {
       const typeEmoji: Record<string, string> = {
         matelas: "🛏️",
         lit: "🛋️",
@@ -277,9 +288,12 @@ export const product = defineType({
         pack: "📦",
       };
       const emoji = typeEmoji[pType] || "🏷️";
+      const star = featured ? "⭐ " : "";
+      const stockLabel = stock === "rupture" ? " · Rupture" : stock === "precommande" ? " · Précommande" : "";
+      const priceLabel = price ? `${price} €${compareAt && compareAt > price ? ` (au lieu de ${compareAt} €)` : ""}` : "";
       return {
-        title: `${emoji} ${title || "(sans nom)"}`,
-        subtitle: [subtitle, price ? `${price} €` : null].filter(Boolean).join(" · "),
+        title: `${star}${emoji} ${title || "(sans nom)"}`,
+        subtitle: [subtitle, priceLabel, stockLabel].filter(Boolean).join(" · "),
         media,
       };
     },

@@ -43,9 +43,9 @@ export default async function HomePage() {
     <>
       <Header settings={siteSettings} />
       <main>
-        <Hero hero={homepage?.hero} heroSecondary={homepage?.heroSecondary} />
+        <Hero hero={homepage?.hero} heroSecondary={homepage?.heroSecondary} slides={homepage?.heroSlides} />
         <UspStrip items={homepage?.uspStrip} />
-        <BestSellers />
+        <BestSellers manualProducts={homepage?.bestSellers} />
         <MosaicCollections cards={homepage?.mosaicCollections} />
         <QuizCTA data={homepage?.quizCta} />
         <CategoryTiles tiles={homepage?.categoryTiles} />

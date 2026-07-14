@@ -3,16 +3,29 @@ import Link from "next/link";
 import { sanityClient } from "@/lib/sanity/client";
 import { urlFor } from "@/lib/sanity/image";
 
-const bestSellersQuery = `
-  *[_type == "product"] | order(_createdAt desc) [0..3] {
-    _id,
-    name,
-    title,
-    "slug": slug.current,
-    tagline,
-    type,
-    firmness,
-    thicknessCm,
+/**
+ * Sélection hiérarchique :
+ *  1. Si homepage.bestSellers[] a des refs → on les prend (contrôle manuel)
+ *  2. Sinon on prend les matelas featured==true (via ce query)
+ *  3. Sinon fallback : matelas les plus récents
+ * Le tout filtre productType == "matelas" || undefined pour éviter que
+ * les lits importés récemment ne prennent la place des matelas.
+ */
+const featuredMatelasQuery = `
+  *[_type == "product" && featured == true && (productType == "matelas" || !defined(productType))]
+    | order(name asc) [0..3] {
+    _id, name, title, "slug": slug.current, tagline, type, firmness, thicknessCm,
+    "image": images[0],
+    "minPrice": variants[0].price,
+    "compareAtPrice": variants[0].compareAtPrice,
+    badges
+  }
+`;
+
+const fallbackMatelasQuery = `
+  *[_type == "product" && (productType == "matelas" || !defined(productType))]
+    | order(_createdAt desc) [0..3] {
+    _id, name, title, "slug": slug.current, tagline, type, firmness, thicknessCm,
     "image": images[0],
     "minPrice": variants[0].price,
     "compareAtPrice": variants[0].compareAtPrice,
@@ -35,23 +48,32 @@ type Product = {
   badges?: string[];
 };
 
-export async function BestSellers() {
-  let products: Product[] = [];
-  if (sanityClient) {
+export async function BestSellers({ manualProducts }: { manualProducts?: Product[] }) {
+  let products: Product[] = manualProducts?.filter(Boolean) ?? [];
+
+  if (!products.length && sanityClient) {
     try {
-      products = (await sanityClient.fetch<Product[]>(bestSellersQuery)) ?? [];
+      products = (await sanityClient.fetch<Product[]>(featuredMatelasQuery)) ?? [];
     } catch (err) {
-      console.error("[BestSellers] Sanity fetch failed:", err);
+      console.error("[BestSellers] featured fetch failed:", err);
+    }
+  }
+
+  if (!products.length && sanityClient) {
+    try {
+      products = (await sanityClient.fetch<Product[]>(fallbackMatelasQuery)) ?? [];
+    } catch (err) {
+      console.error("[BestSellers] fallback fetch failed:", err);
     }
   }
 
   if (!products.length) return null;
 
   return (
-    <section className="mx-auto max-w-site px-8 py-24">
-      <div className="mb-12 text-center">
+    <section className="mx-auto max-w-site px-6 py-16 md:px-8 md:py-24">
+      <div className="mb-10 text-center md:mb-12">
         <div className="eyebrow mb-3">Notre collection signature</div>
-        <h2 className="font-sora text-4xl font-semibold tracking-tight text-ink md:text-5xl">
+        <h2 className="font-sora text-3xl font-semibold tracking-tight text-ink md:text-5xl">
           Le sommeil porte un nom.
         </h2>
         <p className="mx-auto mt-4 max-w-md text-pierre">

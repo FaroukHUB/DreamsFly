@@ -1,10 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { urlFor } from "@/lib/sanity/image";
+import { HeroSlider } from "@/components/hero-slider";
 
 type CTA = { label?: string; link?: string };
 
-type HeroData = {
+export type HeroSlideData = {
   type: "video" | "image" | "promo";
   videoFile?: { asset?: { url?: string } };
   videoPoster?: any;
@@ -28,40 +29,47 @@ type HeroSecondaryData = {
   cta?: CTA;
 };
 
-/**
- * Hero modulaire — mobile full-width edge-to-edge, desktop avec margins.
- */
 export function Hero({
   hero,
   heroSecondary,
+  slides,
 }: {
-  hero?: HeroData;
+  hero?: HeroSlideData;
   heroSecondary?: HeroSecondaryData;
+  slides?: HeroSlideData[];
 }) {
-  if (!hero) return <HeroFallback />;
+  const effectiveSlides = slides && slides.length > 0 ? slides : hero ? [hero] : [];
+  if (effectiveSlides.length === 0) return <HeroFallback />;
 
   const showSecondary = heroSecondary?.enabled !== false && heroSecondary?.title;
   const gridCols = showSecondary ? "lg:grid-cols-[1.5fr_1fr]" : "lg:grid-cols-1";
 
   return (
     <section className={`mx-auto mt-0 grid max-w-site grid-cols-1 gap-4 px-0 md:mt-6 md:px-8 ${gridCols}`}>
-      <div className="relative min-h-[480px] overflow-hidden bg-midnight md:min-h-[420px] md:rounded-3xl">
-        {hero.type === "video" && <HeroVideo hero={hero} />}
-        {hero.type === "image" && <HeroImage hero={hero} />}
-        {hero.type === "promo" && <HeroPromo hero={hero} />}
-        <HeroOverlay hero={hero} />
-      </div>
+      {effectiveSlides.length > 1 ? (
+        <HeroSlider slides={effectiveSlides} />
+      ) : (
+        <div className="relative min-h-[480px] overflow-hidden bg-midnight md:min-h-[420px] md:rounded-3xl">
+          <HeroSlideMedia slide={effectiveSlides[0]} priority />
+          <HeroSlideOverlay slide={effectiveSlides[0]} />
+        </div>
+      )}
       {showSecondary && <HeroSecondary data={heroSecondary} />}
     </section>
   );
 }
 
-function HeroVideo({ hero }: { hero: HeroData }) {
-  const videoUrl = hero.videoFile?.asset?.url;
-  const posterUrl = hero.videoPoster ? urlFor(hero.videoPoster).width(1920).quality(80).url() : undefined;
+/** Rendu media + overlay d'UN slide — utilisé par le slider ET par le mode simple. */
+export function HeroSlideMedia({ slide, priority }: { slide: HeroSlideData; priority?: boolean }) {
+  if (slide.type === "video") return <HeroVideo slide={slide} />;
+  if (slide.type === "image") return <HeroImage slide={slide} priority={priority} />;
+  return <HeroPromo slide={slide} />;
+}
 
+function HeroVideo({ slide }: { slide: HeroSlideData }) {
+  const videoUrl = slide.videoFile?.asset?.url;
+  const posterUrl = slide.videoPoster ? urlFor(slide.videoPoster).width(1920).quality(80).url() : undefined;
   if (!videoUrl) return <div className="absolute inset-0 bg-gradient-to-br from-midnight via-midnight-dark to-midnight" />;
-
   return (
     <video
       src={videoUrl}
@@ -73,45 +81,45 @@ function HeroVideo({ hero }: { hero: HeroData }) {
   );
 }
 
-function HeroImage({ hero }: { hero: HeroData }) {
-  if (!hero.image) return null;
+function HeroImage({ slide, priority }: { slide: HeroSlideData; priority?: boolean }) {
+  if (!slide.image) return null;
   return (
     <Image
-      src={urlFor(hero.image).width(1920).quality(85).url()}
-      alt={hero.image.alt || hero.title || ""}
+      src={urlFor(slide.image).width(1920).quality(85).url()}
+      alt={slide.image.alt || slide.title || ""}
       fill sizes="(max-width:1024px) 100vw, 60vw"
-      className="object-cover" priority
+      className="object-cover" priority={priority}
     />
   );
 }
 
-function HeroPromo({ hero }: { hero: HeroData }) {
+function HeroPromo({ slide }: { slide: HeroSlideData }) {
   return (
     <div className="absolute inset-0 bg-gradient-to-br from-midnight to-[#1E2F6B]">
-      {hero.promoImage && (
+      {slide.promoImage && (
         <div className="absolute right-0 top-0 h-full w-1/2">
-          <Image src={urlFor(hero.promoImage).width(800).quality(85).url()} alt="" fill sizes="50vw" className="object-contain object-right" />
+          <Image src={urlFor(slide.promoImage).width(800).quality(85).url()} alt="" fill sizes="50vw" className="object-contain object-right" />
         </div>
       )}
-      {hero.promoPrice && (
-        <div className="absolute bottom-6 right-6 rounded-pill bg-or px-5 py-3 font-sora text-sm font-bold text-ink">{hero.promoPrice}</div>
+      {slide.promoPrice && (
+        <div className="absolute bottom-6 right-6 rounded-pill bg-or px-5 py-3 font-sora text-sm font-bold text-ink">{slide.promoPrice}</div>
       )}
     </div>
   );
 }
 
-function HeroOverlay({ hero }: { hero: HeroData }) {
+export function HeroSlideOverlay({ slide }: { slide: HeroSlideData }) {
   return (
     <div className="relative z-10 flex h-full min-h-[480px] flex-col justify-center p-6 text-white md:min-h-[420px] md:p-12">
-      {(hero.type === "promo" || hero.promoBadge) && hero.promoBadge && (
+      {slide.promoBadge && (
         <span className="mb-3 inline-block w-fit rounded-pill bg-sky px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-midnight md:mb-4 md:text-xs">
-          {hero.promoBadge}
+          {slide.promoBadge}
         </span>
       )}
 
-      {hero.title && (
+      {slide.title && (
         <h1 className="mb-4 max-w-xl font-sora text-4xl font-semibold leading-[1.05] tracking-tight md:mb-6 md:text-6xl lg:text-7xl">
-          {hero.title.split("\n").map((line, i) => (
+          {slide.title.split("\n").map((line, i) => (
             <span key={i} className="block">
               {i % 2 === 1 ? <span className="italic text-aurora">{line}</span> : line}
             </span>
@@ -119,32 +127,32 @@ function HeroOverlay({ hero }: { hero: HeroData }) {
         </h1>
       )}
 
-      {hero.subtitle && <p className="mb-6 max-w-md text-base text-white/85 md:mb-8 md:text-lg">{hero.subtitle}</p>}
+      {slide.subtitle && <p className="mb-6 max-w-md text-base text-white/85 md:mb-8 md:text-lg">{slide.subtitle}</p>}
 
       <div className="flex flex-wrap items-center gap-3 md:gap-5">
-        {hero.ctaPrimary?.link && hero.ctaPrimary.label && (
+        {slide.ctaPrimary?.link && slide.ctaPrimary.label && (
           <Link
-            href={hero.ctaPrimary.link}
+            href={slide.ctaPrimary.link}
             className="inline-flex items-center gap-2 rounded-pill bg-ivoire px-6 py-3 font-sans text-sm font-semibold text-midnight transition-all hover:bg-aurora hover:-translate-y-px md:px-7 md:py-3.5 md:text-base"
           >
-            {hero.ctaPrimary.label}
+            {slide.ctaPrimary.label}
             <ArrowRight />
           </Link>
         )}
-        {hero.ctaSecondary?.link && hero.ctaSecondary.label && (
+        {slide.ctaSecondary?.link && slide.ctaSecondary.label && (
           <Link
-            href={hero.ctaSecondary.link}
+            href={slide.ctaSecondary.link}
             className="border-b border-white/40 pb-0.5 text-sm font-medium text-white transition-colors hover:border-aurora hover:text-aurora"
           >
-            {hero.ctaSecondary.label}
+            {slide.ctaSecondary.label}
           </Link>
         )}
       </div>
 
-      {hero.trustNote && (
+      {slide.trustNote && (
         <p className="mt-6 flex items-center gap-2 text-xs text-white/75 md:mt-8 md:text-sm">
           <span className="text-or">★★★★★</span>
-          {hero.trustNote}
+          {slide.trustNote}
         </p>
       )}
     </div>

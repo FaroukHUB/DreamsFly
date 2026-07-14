@@ -140,6 +140,114 @@ export const homepage = defineType({
     }),
 
     // ─────────────────────────────────────────────────
+    // HERO SLIDER — plusieurs slides qui défilent (prioritaire sur `hero`)
+    // ─────────────────────────────────────────────────
+    defineField({
+      name: "heroSlides",
+      title: "🎞️ Slides du hero (carrousel)",
+      type: "array",
+      description:
+        "Si tu ajoutes 2 slides ou plus, le hero devient un carrousel qui défile toutes les 6 secondes. Sinon le champ « Hero principal » ci-dessus est utilisé.",
+      of: [
+        defineArrayMember({
+          type: "object",
+          fields: [
+            defineField({
+              name: "type",
+              title: "Type de slide",
+              type: "string",
+              options: {
+                list: [
+                  { title: "🎥 Vidéo", value: "video" },
+                  { title: "🖼️ Image fixe", value: "image" },
+                  { title: "🏷️ Bannière promo", value: "promo" },
+                ],
+                layout: "radio",
+              },
+              initialValue: "image",
+              validation: (r) => r.required(),
+            }),
+            defineField({
+              name: "videoFile",
+              title: "Vidéo (.mp4)",
+              type: "file",
+              options: { accept: "video/mp4,video/webm" },
+              hidden: ({ parent }) => parent?.type !== "video",
+            }),
+            defineField({
+              name: "videoPoster",
+              title: "Poster vidéo",
+              type: "image",
+              options: { hotspot: true },
+              hidden: ({ parent }) => parent?.type !== "video",
+            }),
+            defineField({
+              name: "image",
+              title: "Image",
+              type: "image",
+              options: { hotspot: true },
+              fields: [{ name: "alt", title: "Alt SEO", type: "string" }],
+              hidden: ({ parent }) => parent?.type !== "image",
+            }),
+            defineField({
+              name: "promoBadge",
+              title: "Badge (ex. « -40% »)",
+              type: "string",
+              hidden: ({ parent }) => parent?.type !== "promo",
+            }),
+            defineField({
+              name: "promoImage",
+              title: "Image produit (promo)",
+              type: "image",
+              options: { hotspot: true },
+              hidden: ({ parent }) => parent?.type !== "promo",
+            }),
+            defineField({
+              name: "promoPrice",
+              title: "Prix « dès »",
+              type: "string",
+              hidden: ({ parent }) => parent?.type !== "promo",
+            }),
+            defineField({
+              name: "title",
+              title: "Titre principal",
+              type: "string",
+              description: "Retour à la ligne pour accentuer un mot en italique aurora.",
+            }),
+            defineField({ name: "subtitle", title: "Sous-titre", type: "text", rows: 2 }),
+            defineField({
+              name: "ctaPrimary",
+              title: "Bouton principal",
+              type: "object",
+              fields: [
+                { name: "label", type: "string", title: "Texte" },
+                { name: "link", type: "string", title: "Lien" },
+              ],
+            }),
+            defineField({
+              name: "ctaSecondary",
+              title: "Bouton secondaire",
+              type: "object",
+              fields: [
+                { name: "label", type: "string", title: "Texte" },
+                { name: "link", type: "string", title: "Lien" },
+              ],
+            }),
+            defineField({ name: "trustNote", title: "Note de réassurance", type: "string" }),
+          ],
+          preview: {
+            select: { title: "title", subtitle: "subtitle", media: "image", type: "type" },
+            prepare: ({ title, subtitle, media, type }) => ({
+              title: title ? title.split("\n")[0] : "(sans titre)",
+              subtitle: `${type === "video" ? "🎥" : type === "image" ? "🖼️" : "🏷️"} ${subtitle || ""}`.trim(),
+              media,
+            }),
+          },
+        }),
+      ],
+    }),
+
+    // ─────────────────────────────────────────────────
     // HERO SECONDAIRE — bannière de droite (dual hero Emma)
     // ─────────────────────────────────────────────────
     defineField({

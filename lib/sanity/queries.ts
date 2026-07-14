@@ -17,6 +17,20 @@ export const homepageQuery = groq`
       ctaSecondary,
       trustNote
     },
+    heroSlides[]{
+      type,
+      videoFile { asset->{url, originalFilename} },
+      videoPoster { ..., asset->{...} },
+      image { ..., asset->{...}, alt },
+      promoBadge,
+      promoImage { ..., asset->{...} },
+      promoPrice,
+      title,
+      subtitle,
+      ctaPrimary,
+      ctaSecondary,
+      trustNote
+    },
     heroSecondary,
     uspStrip,
     trustCounter,
