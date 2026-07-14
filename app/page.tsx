@@ -12,7 +12,6 @@ import { Newsletter } from "@/components/home/newsletter";
 import { Advantages } from "@/components/home/advantages";
 import { WhyUs } from "@/components/home/why-us";
 import { BuyingGuide } from "@/components/home/buying-guide";
-import { Commitments } from "@/components/home/commitments";
 import { HomepageFaq } from "@/components/home/homepage-faq";
 import { LatestArticles } from "@/components/home/latest-articles";
 import { Testimonials } from "@/components/home/testimonials";
@@ -79,9 +78,6 @@ export default async function HomePage() {
 
         {/* 7. Guide d'achat — NEW */}
         <BuyingGuide data={homepage?.buyingGuide} />
-
-        {/* 8. Nos engagements — NEW */}
-        <Commitments data={homepage?.commitments} />
 
         {/* 9. Quiz CTA — préservé */}
         <QuizCTA data={homepage?.quizCta} />
