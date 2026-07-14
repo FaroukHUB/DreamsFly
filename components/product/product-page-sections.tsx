@@ -24,6 +24,7 @@ import {
   defaultFaq,
   defaultExtraCta,
   defaultWarranty,
+  deliveryInfo as defaultDelivery,
 } from "@/lib/product-defaults";
 
 /**
@@ -40,14 +41,18 @@ export function ProductPageSections({
   const productType = product?.productType || "matelas";
   const productTypeLabel = getProductTypeLabel(product);
 
+  // Sanity toujours prioritaire, fallback intelligent sinon
   const highlights = product.highlights?.length > 0 ? product.highlights : defaultHighlights(productType, product);
-  const advantages = defaultAdvantages(productType);
-  const audiences = defaultAudiences(productType, product);
+  const advantages = product.advantages?.length > 0 ? product.advantages : defaultAdvantages(productType);
+  const audiences = product.audiences?.length > 0 ? product.audiences : defaultAudiences(productType, product);
   const tips = product.tips?.length > 0 ? product.tips : defaultTips(productType);
-  const careSteps = defaultCareSteps(productType);
+  const careSteps = product.careSteps?.length > 0 ? product.careSteps : defaultCareSteps(productType);
   const faq = product.productFaq?.length > 0 ? product.productFaq : defaultFaq(productType, product);
   const extraCta = product.extraCta?.title ? product.extraCta : defaultExtraCta(productType);
-  const warranty = defaultWarranty(productType, product);
+  const warranty = product.warrantyOverride?.duration
+    ? product.warrantyOverride
+    : defaultWarranty(productType, product);
+  const delivery = product.deliveryOverride?.price ? product.deliveryOverride : defaultDelivery;
 
   return (
     <>
@@ -127,7 +132,7 @@ export function ProductPageSections({
 
       {/* 10. LIVRAISON — encart horizontal */}
       <div className="mt-16 md:mt-20">
-        <ProductDelivery />
+        <ProductDelivery delivery={delivery} />
       </div>
 
       {/* 11. GARANTIE — 2 colonnes couvert/exclu */}

@@ -241,8 +241,13 @@ export function ProductExtraCta({
   );
 }
 
-/** LIVRAISON — encart factuel. */
-export function ProductDelivery() {
+/** LIVRAISON — encart factuel (accepte override Sanity). */
+export function ProductDelivery({ delivery }: { delivery?: { price?: string; delay?: string; perks?: string[] } }) {
+  const d = {
+    price: delivery?.price || deliveryInfo.price,
+    delay: delivery?.delay || deliveryInfo.delay,
+    perks: delivery?.perks?.length ? delivery.perks : deliveryInfo.perks,
+  };
   return (
     <section className="grid gap-4 rounded-3xl border border-border bg-ivoire p-6 md:grid-cols-[auto_1fr] md:gap-8 md:p-10">
       <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-midnight text-3xl text-white md:h-20 md:w-20 md:text-4xl">
@@ -251,10 +256,10 @@ export function ProductDelivery() {
       <div>
         <div className="eyebrow mb-2">Livraison</div>
         <h2 className="mb-3 font-sora text-xl font-semibold tracking-tight text-ink md:text-2xl">
-          {deliveryInfo.price} · {deliveryInfo.delay}
+          {d.price} · {d.delay}
         </h2>
         <ul className="grid gap-2 text-sm text-pierre md:grid-cols-2 md:text-base">
-          {deliveryInfo.perks.map((p, i) => (
+          {d.perks.map((p, i) => (
             <li key={i} className="flex items-start gap-2">
               <span aria-hidden className="mt-0.5 text-vert-menthe">✓</span>
               <span>{p}</span>

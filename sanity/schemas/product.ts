@@ -448,10 +448,10 @@ export const product = defineType({
     // ─── Contenu éditorial (SEO + confiance client) ───
     defineField({
       name: "highlights",
-      title: "⚡ Points forts (3 à 5)",
+      title: "⚡ Points forts (badges)",
       type: "array",
       group: "content",
-      description: "Affichés en badges sur la fiche produit — 3 à 5 arguments courts et percutants.",
+      description: "Chips affichés sous la buy box — 3 à 5 arguments courts et percutants.",
       of: [
         defineArrayMember({
           type: "object",
@@ -465,6 +465,42 @@ export const product = defineType({
       validation: (r) => r.max(6),
     }),
     defineField({
+      name: "advantages",
+      title: "🌟 Avantages produit (grille 6 tuiles)",
+      type: "array",
+      group: "content",
+      description: "6 avantages courts avec icône — affichés en grille (confort, soutien, respirabilité…).",
+      of: [
+        defineArrayMember({
+          type: "object",
+          fields: [
+            { name: "icon", type: "string", title: "Emoji" },
+            { name: "title", type: "string", title: "Titre court" },
+            { name: "text", type: "text", rows: 2, title: "Phrase d'explication (1 ligne)" },
+          ],
+          preview: { select: { title: "title", subtitle: "text", media: "icon" } },
+        }),
+      ],
+    }),
+    defineField({
+      name: "audiences",
+      title: "👥 Pour qui ? (cartes)",
+      type: "array",
+      group: "content",
+      description: "Profils d'utilisateurs cibles — adulte, couple, étudiant, senior, chambre d'ami…",
+      of: [
+        defineArrayMember({
+          type: "object",
+          fields: [
+            { name: "icon", type: "string", title: "Emoji" },
+            { name: "title", type: "string", title: "Type d'utilisateur" },
+            { name: "text", type: "text", rows: 2, title: "Pourquoi ça leur convient" },
+          ],
+          preview: { select: { title: "title", subtitle: "text" } },
+        }),
+      ],
+    }),
+    defineField({
       name: "lifestyleImage",
       title: "🖼️ Image en situation (lifestyle)",
       type: "image",
@@ -475,29 +511,81 @@ export const product = defineType({
     }),
     defineField({
       name: "tips",
-      title: "💡 Conseils d'expert (astuces d'usage)",
+      title: "💡 Conseils d'expert (avec source)",
       type: "array",
       group: "content",
-      description: "3 à 6 conseils DreamsFly — usage, entretien, installation. Contenu 100% original recommandé pour le SEO.",
+      description: "3 à 6 conseils. Chacun peut citer sa source (INSV, INSERM, ANSES…) pour le score EEAT Google.",
       of: [
         defineArrayMember({
           type: "object",
           fields: [
+            { name: "icon", type: "string", title: "Emoji" },
             { name: "title", type: "string", title: "Titre du conseil" },
             { name: "text", type: "text", rows: 3, title: "Explication (1-3 phrases)" },
-            { name: "icon", type: "string", title: "Emoji" },
+            {
+              name: "source",
+              type: "object",
+              title: "Source citée (optionnel)",
+              fields: [
+                { name: "label", type: "string", title: "Nom de la source (ex. « INSV »)" },
+                { name: "url", type: "url", title: "URL (optionnel)" },
+              ],
+            },
           ],
           preview: { select: { title: "title", subtitle: "text" } },
         }),
       ],
     }),
     defineField({
-      name: "careGuide",
-      title: "🧺 Guide d'entretien",
+      name: "careSteps",
+      title: "🧺 Entretien en étapes (cartes)",
       type: "array",
       group: "content",
-      description: "Portable text — instructions détaillées d'entretien (nettoyage, retournement, fréquence…).",
+      description: "3 à 4 gestes courts avec fréquence. Ex : Chaque jour → Aérez → 1 phrase.",
+      of: [
+        defineArrayMember({
+          type: "object",
+          fields: [
+            { name: "icon", type: "string", title: "Emoji" },
+            { name: "frequency", type: "string", title: "Fréquence (ex. « Chaque mois »)" },
+            { name: "title", type: "string", title: "Action" },
+            { name: "text", type: "text", rows: 2, title: "Comment faire (1 phrase)" },
+          ],
+          preview: { select: { title: "title", subtitle: "frequency" } },
+        }),
+      ],
+    }),
+    defineField({
+      name: "careGuide",
+      title: "🧺 Guide d'entretien détaillé (portable text — optionnel)",
+      type: "array",
+      group: "content",
+      description: "Texte long si tu veux compléter les étapes ci-dessus avec plus de détails.",
       of: [{ type: "block" }],
+    }),
+    defineField({
+      name: "deliveryOverride",
+      title: "🚚 Livraison — spécifique à ce produit (optionnel)",
+      type: "object",
+      group: "content",
+      description: "Laisse vide pour utiliser les infos livraison standard DreamsFly.",
+      fields: [
+        { name: "price", type: "string", title: "Ex. « Livraison offerte dès 39 € »" },
+        { name: "delay", type: "string", title: "Ex. « 5 à 7 jours ouvrés »" },
+        { name: "perks", type: "array", of: [{ type: "string" }], title: "Perks (liste ✓)" },
+      ],
+    }),
+    defineField({
+      name: "warrantyOverride",
+      title: "🛡️ Garantie — spécifique à ce produit (optionnel)",
+      type: "object",
+      group: "content",
+      description: "Laisse vide pour utiliser la garantie standard selon le type de produit.",
+      fields: [
+        { name: "duration", type: "string", title: "Durée (ex. « 5 ans structure · 8 ans vérins »)" },
+        { name: "covers", type: "array", of: [{ type: "string" }], title: "Ce qui est couvert" },
+        { name: "excludes", type: "array", of: [{ type: "string" }], title: "Ce qui est exclu" },
+      ],
     }),
     defineField({
       name: "productFaq",
