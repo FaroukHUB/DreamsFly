@@ -365,7 +365,29 @@ export const homepage = defineType({
           title: "Image d'arrière-plan (recommandé 1920×1080)",
           type: "image",
           options: { hotspot: true },
-          description: "L'image s'affichera avec un overlay sombre pour la lisibilité du texte.",
+          description:
+            "L'image s'affichera avec un overlay sombre pour la lisibilité du texte. 💡 Astuce : après upload, clique sur l'image pour ouvrir l'éditeur → drag le petit rond bleu (hotspot) sur la partie importante de l'image → cette zone restera visible même quand l'image est recadrée.",
+        },
+        {
+          name: "imagePosition",
+          title: "🎯 Position de l'image (si le hotspot ne suffit pas)",
+          type: "string",
+          description:
+            "Override manuel du recadrage. Utilise 'center' par défaut. Si le sujet est trop haut, essaie 'top'. Si trop bas, 'bottom'.",
+          options: {
+            list: [
+              { title: "Centre (défaut)", value: "center" },
+              { title: "Haut", value: "top" },
+              { title: "Bas", value: "bottom" },
+              { title: "Gauche", value: "left" },
+              { title: "Droite", value: "right" },
+              { title: "Haut-gauche", value: "top left" },
+              { title: "Haut-droite", value: "top right" },
+              { title: "Bas-gauche", value: "bottom left" },
+              { title: "Bas-droite", value: "bottom right" },
+            ],
+          },
+          initialValue: "center",
         },
       ],
     }),

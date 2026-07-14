@@ -44,7 +44,8 @@ export const homepageQuery = groq`
     },
     quizCta {
       ...,
-      backgroundImage{ ..., asset->{...} }
+      imagePosition,
+      backgroundImage{ ..., asset->{...}, hotspot, crop }
     },
     categoryTiles[]{
       ...,

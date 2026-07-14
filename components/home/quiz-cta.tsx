@@ -23,9 +23,17 @@ export function QuizCTA({ data }: { data?: QuizCtaData }) {
     "Notre algorithme vous recommande le modèle DreamsFly parfait selon votre morphologie, votre position de sommeil et vos préférences.";
   const ctaLabel = data?.ctaLabel || "Faire le test";
   const ctaLink = data?.ctaLink || "/quiz";
+  // Hotspot respecté : Sanity recadre autour du point focal défini dans Studio
   const bgUrl = data?.backgroundImage
-    ? urlFor(data.backgroundImage).width(1920).quality(85).url()
+    ? urlFor(data.backgroundImage)
+        .width(1920)
+        .height(720)
+        .fit("crop")
+        .crop("focalpoint")
+        .quality(85)
+        .url()
     : null;
+  const objectPos = data?.imagePosition || "center";
 
   return (
     <section className="relative overflow-hidden bg-midnight">
@@ -37,6 +45,7 @@ export function QuizCTA({ data }: { data?: QuizCtaData }) {
           fill
           sizes="100vw"
           className="object-cover"
+          style={{ objectPosition: objectPos }}
           aria-hidden="true"
         />
       ) : (
