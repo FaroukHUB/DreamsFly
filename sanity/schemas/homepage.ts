@@ -383,6 +383,26 @@ export const homepage = defineType({
             { name: "promo", title: "Promo affichée (ex. « Jusqu'à -40% »)", type: "string" },
             { name: "link", title: "Lien", type: "string" },
             { name: "image", title: "Image", type: "image", options: { hotspot: true } },
+            {
+              name: "overlay",
+              title: "🎨 Overlay pour lisibilité du texte",
+              type: "string",
+              description:
+                "L'overlay est un voile de couleur qui recouvre l'image pour que le texte blanc reste lisible. Choisis selon la luminosité de ton image : image claire → overlay foncé, image sombre → overlay léger.",
+              options: {
+                list: [
+                  { title: "🌑 Foncé — dégradé noir (par défaut, image claire)", value: "dark" },
+                  { title: "🌒 Extra foncé — pour images très lumineuses", value: "extra-dark" },
+                  { title: "🌌 Midnight — bleu nuit DreamsFly", value: "midnight" },
+                  { title: "🌇 Or — chaud, doré", value: "gold" },
+                  { title: "🌊 Aurora — bleu clair", value: "aurora" },
+                  { title: "🪶 Léger — voile transparent (pour images déjà sombres)", value: "light" },
+                  { title: "⬛ Aucun — pas d'overlay (image très sombre)", value: "none" },
+                ],
+                layout: "dropdown",
+              },
+              initialValue: "dark",
+            },
           ],
           preview: { select: { title: "name", subtitle: "promo", media: "image" } },
         }),

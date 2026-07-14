@@ -2,19 +2,32 @@ import Image from "next/image";
 import Link from "next/link";
 import { urlFor } from "@/lib/sanity/image";
 
+type OverlayKind = "dark" | "extra-dark" | "midnight" | "gold" | "aurora" | "light" | "none";
+
 type Tile = {
   name?: string;
   promo?: string;
   link?: string;
   image?: any;
+  overlay?: OverlayKind;
 };
 
 const FALLBACK_TILES: Tile[] = [
-  { name: "Matelas", promo: "Jusqu'à -40%", link: "/matelas" },
-  { name: "Lits", promo: "Design & confort", link: "/lits" },
-  { name: "Sommiers", promo: "Jusqu'à -30%", link: "/sommiers" },
-  { name: "Oreillers", promo: "Confort cervical", link: "/oreillers" },
+  { name: "Matelas", promo: "Jusqu'à -40%", link: "/matelas", overlay: "dark" },
+  { name: "Lits", promo: "Design & confort", link: "/lits", overlay: "dark" },
+  { name: "Sommiers", promo: "Jusqu'à -30%", link: "/sommiers", overlay: "dark" },
+  { name: "Oreillers", promo: "Confort cervical", link: "/oreillers", overlay: "dark" },
 ];
+
+const OVERLAY_CLASSES: Record<OverlayKind, string> = {
+  dark: "bg-gradient-to-t from-ink/85 via-ink/25 to-transparent",
+  "extra-dark": "bg-gradient-to-t from-black/90 via-black/50 to-black/15",
+  midnight: "bg-gradient-to-t from-midnight/90 via-midnight/40 to-transparent",
+  gold: "bg-gradient-to-t from-or/85 via-or/30 to-transparent",
+  aurora: "bg-gradient-to-t from-midnight/80 via-aurora/40 to-transparent",
+  light: "bg-gradient-to-t from-black/40 via-transparent to-transparent",
+  none: "",
+};
 
 /**
  * Tuiles catégories — image plein cadre + overlay + tag promo + flèche.
@@ -62,8 +75,10 @@ export function CategoryTiles({ tiles }: { tiles?: Tile[] }) {
                   <PlaceholderIllustration category={t.name || ""} index={i} />
                 )}
 
-                {/* Overlay sombre */}
-                <div className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/15 to-transparent" />
+                {/* Overlay (choix Sanity par card) */}
+                {imgUrl && (t.overlay || "dark") !== "none" && (
+                  <div className={`absolute inset-0 ${OVERLAY_CLASSES[(t.overlay || "dark") as OverlayKind]}`} />
+                )}
 
                 {/* Halo or décoratif top */}
                 <div

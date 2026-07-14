@@ -74,10 +74,10 @@ const MOSAIC_CARDS = [
 ];
 
 const CATEGORY_TILES = [
-  { _key: k(), name: "Matelas", promo: "Jusqu'à -40%", link: "/matelas" },
-  { _key: k(), name: "Lits", promo: "Design & confort", link: "/lits" },
-  { _key: k(), name: "Sommiers", promo: "Jusqu'à -30%", link: "/sommiers" },
-  { _key: k(), name: "Oreillers", promo: "Confort cervical", link: "/oreillers" },
+  { _key: k(), name: "Matelas", promo: "Jusqu'à -40%", link: "/matelas", overlay: "dark" },
+  { _key: k(), name: "Lits", promo: "Design & confort", link: "/lits", overlay: "dark" },
+  { _key: k(), name: "Sommiers", promo: "Jusqu'à -30%", link: "/sommiers", overlay: "dark" },
+  { _key: k(), name: "Oreillers", promo: "Confort cervical", link: "/oreillers", overlay: "dark" },
 ];
 
 // ─────────────────────────────────────────────────────────────
