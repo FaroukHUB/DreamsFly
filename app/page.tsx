@@ -14,10 +14,8 @@ import { WhyUs } from "@/components/home/why-us";
 import { BuyingGuide } from "@/components/home/buying-guide";
 import { Commitments } from "@/components/home/commitments";
 import { HomepageFaq } from "@/components/home/homepage-faq";
-import { GuidesSection } from "@/components/home/guides-section";
 import { LatestArticles } from "@/components/home/latest-articles";
 import { Testimonials } from "@/components/home/testimonials";
-import { BrandLogos } from "@/components/home/brand-logos";
 import { buildMetadata } from "@/lib/seo/metadata";
 import {
   JsonLd,
@@ -91,19 +89,13 @@ export default async function HomePage() {
         {/* 10. Avis clients — NEW */}
         <Testimonials data={homepage?.testimonials} />
 
-        {/* 11. Nos guides éditoriaux — NEW */}
-        <GuidesSection data={homepage?.guidesSection} />
-
-        {/* 12. Derniers articles blog — NEW */}
+        {/* 11. Derniers articles magazine — NEW */}
         <LatestArticles data={homepage?.latestArticles} />
 
-        {/* 13. FAQ SEO 20+ questions — NEW */}
+        {/* 12. FAQ SEO 20+ questions — NEW */}
         <HomepageFaq data={homepage?.homepageFaq} />
 
-        {/* 14. Marques / partenaires — NEW */}
-        <BrandLogos data={homepage?.brandLogos} />
-
-        {/* 15. Advantages + Newsletter — préservé */}
+        {/* 13. Advantages + Newsletter — préservé */}
         <Advantages items={homepage?.advantages} />
         <Newsletter />
       </main>
