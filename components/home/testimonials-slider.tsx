@@ -37,13 +37,22 @@ function Stars({ n }: { n: number }) {
   );
 }
 
-function formatDate(iso?: string) {
+function formatRelative(iso?: string): string {
   if (!iso) return "";
-  try {
-    return new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "short", year: "numeric" }).format(new Date(iso));
-  } catch {
-    return "";
-  }
+  const then = new Date(iso).getTime();
+  if (Number.isNaN(then)) return "";
+  const diffMs = Date.now() - then;
+  const day = 24 * 60 * 60 * 1000;
+  const diffDays = Math.floor(diffMs / day);
+  if (diffDays < 1) return "aujourd'hui";
+  if (diffDays === 1) return "hier";
+  if (diffDays < 7) return `il y a ${diffDays} jours`;
+  const diffWeeks = Math.floor(diffDays / 7);
+  if (diffWeeks < 4) return diffWeeks === 1 ? "il y a 1 semaine" : `il y a ${diffWeeks} semaines`;
+  const diffMonths = Math.floor(diffDays / 30);
+  if (diffMonths < 12) return diffMonths <= 1 ? "il y a 1 mois" : `il y a ${diffMonths} mois`;
+  const diffYears = Math.floor(diffDays / 365);
+  return diffYears === 1 ? "il y a 1 an" : `il y a ${diffYears} ans`;
 }
 
 const AUTOPLAY_MS = 5000;
@@ -165,7 +174,7 @@ function ReviewCard({ item }: { item: Item }) {
       {/* Note + date */}
       <div className="mt-4 flex items-center justify-between">
         <Stars n={rating} />
-        {item.date && <time dateTime={item.date} className="text-[11px] text-brume">{formatDate(item.date)}</time>}
+        {item.date && <time dateTime={item.date} className="text-[11px] text-brume">{formatRelative(item.date)}</time>}
       </div>
 
       {/* Texte */}
