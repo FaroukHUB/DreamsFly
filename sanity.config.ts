@@ -2,6 +2,7 @@ import { defineConfig } from "sanity";
 import { structureTool } from "sanity/structure";
 import { visionTool } from "@sanity/vision";
 import { schemaTypes } from "./sanity/schemas";
+import { ProductGalleryPane } from "./sanity/components/product-gallery-pane";
 
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || "";
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || "production";
@@ -16,8 +17,14 @@ export default defineConfig({
   basePath: "/studio",
   plugins: [
     structureTool({
-      structure: (S) =>
-        S.list()
+      structure: (S) => {
+        const galleryPane = (opts: { productType?: string; includeLegacy?: boolean; title: string }) =>
+          S.component(ProductGalleryPane as any)
+            .id(`gallery-${opts.productType || "all"}${opts.includeLegacy ? "-legacy" : ""}`)
+            .title(opts.title)
+            .options(opts);
+
+        return S.list()
           .title("Contenu")
           .items([
             S.listItem()
@@ -29,7 +36,7 @@ export default defineConfig({
 
             S.divider(),
 
-            // ─── Catalogue segmenté par catégorie ───
+            // ─── Catalogue segmenté par catégorie — vraie grille galerie ───
             S.listItem()
               .title("🛍️ Catalogue")
               .child(
@@ -42,72 +49,39 @@ export default defineConfig({
                         S.documentList()
                           .title("Produits mis en avant sur la home")
                           .filter('_type == "product" && featured == true')
-                          .defaultLayout("media")
+                          .defaultLayout("detail")
                           .defaultOrdering([{ field: "productType", direction: "asc" }, { field: "name", direction: "asc" }])
                       ),
                     S.divider(),
                     S.listItem()
                       .title("🛏️ Matelas")
-                      .child(
-                        S.documentList()
-                          .title("Matelas")
-                          .filter('_type == "product" && (productType == "matelas" || !defined(productType))')
-                          .defaultLayout("media")
-                          .defaultOrdering([{ field: "name", direction: "asc" }])
-                      ),
+                      .child(galleryPane({ productType: "matelas", includeLegacy: true, title: "Galerie Matelas" })),
                     S.listItem()
                       .title("🛋️ Lits")
-                      .child(
-                        S.documentList()
-                          .title("Lits")
-                          .filter('_type == "product" && productType == "lit"')
-                          .defaultLayout("media")
-                          .defaultOrdering([{ field: "name", direction: "asc" }])
-                      ),
+                      .child(galleryPane({ productType: "lit", title: "Galerie Lits" })),
                     S.listItem()
                       .title("🪑 Sommiers")
-                      .child(
-                        S.documentList()
-                          .title("Sommiers")
-                          .filter('_type == "product" && productType == "sommier"')
-                          .defaultLayout("media")
-                          .defaultOrdering([{ field: "name", direction: "asc" }])
-                      ),
+                      .child(galleryPane({ productType: "sommier", title: "Galerie Sommiers" })),
                     S.listItem()
                       .title("🌙 Oreillers")
-                      .child(
-                        S.documentList()
-                          .title("Oreillers")
-                          .filter('_type == "product" && productType == "oreiller"')
-                          .defaultLayout("media")
-                          .defaultOrdering([{ field: "name", direction: "asc" }])
-                      ),
+                      .child(galleryPane({ productType: "oreiller", title: "Galerie Oreillers" })),
                     S.listItem()
                       .title("🧣 Linge de lit")
-                      .child(
-                        S.documentList()
-                          .title("Linge de lit")
-                          .filter('_type == "product" && productType == "linge"')
-                          .defaultLayout("media")
-                          .defaultOrdering([{ field: "name", direction: "asc" }])
-                      ),
+                      .child(galleryPane({ productType: "linge", title: "Galerie Linge de lit" })),
                     S.listItem()
                       .title("📦 Packs")
-                      .child(
-                        S.documentList()
-                          .title("Packs")
-                          .filter('_type == "product" && productType == "pack"')
-                          .defaultLayout("media")
-                          .defaultOrdering([{ field: "name", direction: "asc" }])
-                      ),
+                      .child(galleryPane({ productType: "pack", title: "Galerie Packs" })),
                     S.divider(),
                     S.listItem()
-                      .title("📋 Tous les produits")
+                      .title("🖼️ Tous les produits (galerie)")
+                      .child(galleryPane({ title: "Galerie complète" })),
+                    S.listItem()
+                      .title("📋 Tous les produits (liste)")
                       .child(
                         S.documentList()
                           .title("Tous les produits")
                           .filter('_type == "product"')
-                          .defaultLayout("media")
+                          .defaultLayout("detail")
                           .defaultOrdering([{ field: "productType", direction: "asc" }, { field: "name", direction: "asc" }])
                       ),
                   ])
@@ -134,7 +108,8 @@ export default defineConfig({
             S.divider(),
 
             S.documentTypeListItem("order").title("💳 Commandes"),
-          ]),
+          ]);
+      },
     }),
     visionTool({ defaultApiVersion: apiVersion }),
   ],
