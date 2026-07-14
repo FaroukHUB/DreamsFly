@@ -179,8 +179,8 @@ export function ProductBuyBox({
           )}
         </div>
         {gallery.length > 1 && (
-          <div className="mt-4 grid grid-cols-5 gap-3">
-            {gallery.slice(0, 5).map((item, i) => {
+          <div className="mt-4 flex gap-3 overflow-x-auto pb-1 [scrollbar-width:thin]">
+            {gallery.map((item, i) => {
               const isSel = i === selectedImage;
               const thumb =
                 item.type === "image"
@@ -192,7 +192,7 @@ export function ProductBuyBox({
                 <button
                   key={item.key}
                   onClick={() => setSelectedImage(i)}
-                  className={`group relative aspect-square overflow-hidden rounded-xl border-2 bg-sable transition-all ${
+                  className={`group relative aspect-square w-16 flex-none overflow-hidden rounded-xl border-2 bg-sable transition-all md:w-20 ${
                     isSel ? "border-midnight" : "border-transparent hover:border-border"
                   }`}
                   aria-label={item.type === "video" ? `Lire la vidéo ${i + 1}` : `Voir image ${i + 1}`}
