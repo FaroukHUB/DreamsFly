@@ -9,6 +9,7 @@ type QuizCtaData = {
   ctaLabel?: string;
   ctaLink?: string;
   backgroundImage?: any;
+  imagePosition?: string;
 };
 
 /**
