@@ -17,6 +17,7 @@ import {
   organizationSchema,
   faqSchema,
 } from "@/lib/seo/jsonld";
+import { defaultFaq } from "@/lib/product-defaults";
 import { urlFor } from "@/lib/sanity/image";
 
 export const revalidate = 60;
@@ -139,7 +140,13 @@ export default async function ProductPage({ params }: { params: Promise<Params> 
       {/* JSON-LD */}
       <JsonLd data={organizationSchema({ name: "DreamsFly" })} />
       <JsonLd data={breadcrumbSchema(breadcrumbs)} />
-      {product.productFaq?.length > 0 && <JsonLd data={faqSchema(product.productFaq)} />}
+      <JsonLd
+        data={faqSchema(
+          product.productFaq?.length > 0
+            ? product.productFaq
+            : defaultFaq(product.productType || "matelas", product)
+        )}
+      />
       <JsonLd
         data={productSchema({
           name: product.title,

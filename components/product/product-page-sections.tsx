@@ -10,11 +10,18 @@ import {
   ProductExtraCta,
   RelatedProducts,
 } from "@/components/product/product-details";
+import {
+  defaultHighlights,
+  defaultTips,
+  defaultFaq,
+  defaultCareGuide,
+  defaultExtraCta,
+} from "@/lib/product-defaults";
 
 /**
  * Sections enrichies affichées sous la buy box.
- * Chaque bloc ne s'affiche que si les données Sanity sont remplies —
- * pas de placeholder vide qui plombe le SEO.
+ * Chaque bloc : donnée Sanity si remplie, sinon fallback intelligent
+ * généré depuis productType — garantit contenu SEO sur toutes les fiches.
  */
 export function ProductPageSections({
   product,
@@ -24,13 +31,21 @@ export function ProductPageSections({
   basePath: string;
 }) {
   const productTypeLabel = getProductTypeLabel(product);
+  const productType = product?.productType || "matelas";
+
+  // Merge Sanity + défauts
+  const highlights = product.highlights?.length > 0 ? product.highlights : defaultHighlights(productType, product);
+  const tips = product.tips?.length > 0 ? product.tips : defaultTips(productType);
+  const faq = product.productFaq?.length > 0 ? product.productFaq : defaultFaq(productType, product);
+  const careGuide = product.careGuide?.length > 0 ? product.careGuide : defaultCareGuide(productType);
+  const extraCta = product.extraCta?.title ? product.extraCta : defaultExtraCta(productType);
 
   return (
     <>
       {/* Points forts (badges) — juste sous la buy box */}
-      {product.highlights?.length > 0 && (
+      {highlights?.length > 0 && (
         <div className="mt-10 md:mt-14">
-          <ProductHighlights highlights={product.highlights} />
+          <ProductHighlights highlights={highlights} />
         </div>
       )}
 
@@ -50,19 +65,19 @@ export function ProductPageSections({
           />
         )}
 
-        {product.tips?.length > 0 && <ProductTips tips={product.tips} />}
+        {tips?.length > 0 && <ProductTips tips={tips} />}
 
-        {product.composition?.length > 0 && product.productType === "matelas" && (
+        {product.composition?.length > 0 && productType === "matelas" && (
           <ProductComposition composition={product.composition} />
         )}
 
         <ProductSpecs product={product} />
 
-        {product.careGuide && <ProductCareGuide careGuide={product.careGuide} />}
+        {careGuide && careGuide.length > 0 && <ProductCareGuide careGuide={careGuide} />}
 
-        {product.productFaq?.length > 0 && <ProductFaq faq={product.productFaq} />}
+        {faq?.length > 0 && <ProductFaq faq={faq} />}
 
-        {product.extraCta?.title && <ProductExtraCta cta={product.extraCta} />}
+        {extraCta?.title && <ProductExtraCta cta={extraCta} />}
       </div>
 
       {/* Produits associés */}
