@@ -113,5 +113,46 @@ export default defineConfig({
     }),
     visionTool({ defaultApiVersion: apiVersion }),
   ],
-  schema: { types: schemaTypes },
+  schema: {
+    types: schemaTypes,
+    templates: (prev) => [
+      ...prev,
+      {
+        id: "product-matelas",
+        title: "🛏️ Nouveau matelas",
+        schemaType: "product",
+        value: { productType: "matelas" },
+      },
+      {
+        id: "product-lit",
+        title: "🛋️ Nouveau lit",
+        schemaType: "product",
+        value: { productType: "lit" },
+      },
+      {
+        id: "product-sommier",
+        title: "🪑 Nouveau sommier",
+        schemaType: "product",
+        value: { productType: "sommier" },
+      },
+      {
+        id: "product-oreiller",
+        title: "🌙 Nouveau oreiller",
+        schemaType: "product",
+        value: { productType: "oreiller" },
+      },
+      {
+        id: "product-linge",
+        title: "🧣 Nouveau linge de lit",
+        schemaType: "product",
+        value: { productType: "linge" },
+      },
+      {
+        id: "product-pack",
+        title: "📦 Nouveau pack",
+        schemaType: "product",
+        value: { productType: "pack" },
+      },
+    ],
+  },
 });

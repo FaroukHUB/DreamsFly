@@ -1,8 +1,9 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
 import { useClient } from "sanity";
+import { IntentLink } from "sanity/router";
 import { usePaneRouter } from "sanity/structure";
-import { Badge, Box, Card, Flex, Grid, Spinner, Stack, Text, TextInput } from "@sanity/ui";
+import { Badge, Box, Button, Card, Flex, Grid, Spinner, Stack, Text, TextInput } from "@sanity/ui";
 
 type ProductDoc = {
   _id: string;
@@ -123,11 +124,20 @@ export function ProductGalleryPane(props: { options?: Options }) {
         }}
       >
         <Stack space={3}>
-          <Flex align="center" justify="space-between" gap={3}>
-            <Text size={3} weight="semibold">
-              🖼️ {title || "Galerie produits"}
-            </Text>
-            <Badge tone="primary">{filtered.length} éléments</Badge>
+          <Flex align="center" justify="space-between" gap={3} wrap="wrap">
+            <Flex align="center" gap={2}>
+              <Text size={3} weight="semibold">
+                🖼️ {title || "Galerie produits"}
+              </Text>
+              <Badge tone="primary">{filtered.length} éléments</Badge>
+            </Flex>
+            <IntentLink
+              intent="create"
+              params={{ type: "product", ...(productType ? { template: `product-${productType}` } : {}) }}
+              style={{ textDecoration: "none" }}
+            >
+              <Button text="+ Créer un produit" tone="primary" mode="default" />
+            </IntentLink>
           </Flex>
           <TextInput
             placeholder="Rechercher par nom…"

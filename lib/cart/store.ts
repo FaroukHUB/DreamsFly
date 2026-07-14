@@ -8,6 +8,7 @@ export type CartLine = {
   productName: string;
   variantKey: string;
   variantSize?: string;
+  variantColor?: string;
   sku?: string;
   unitPrice: number;
   compareAtPrice?: number;

@@ -7,8 +7,12 @@ export const productBySlugFullQuery = groq`
     "slug": slug.current,
     lifestyleImage{ ..., asset->{...} },
     images[]{ ..., asset->{...}, "alt": coalesce(alt, ^.name) },
+    colors[]{
+      _key, name, hex, isDefault,
+      image{ ..., asset->{...} }
+    },
     variants[]{
-      _key, size, sku, price, compareAtPrice, weightKg, stockStatus, stripePriceId
+      _key, size, colorName, sku, price, compareAtPrice, weightKg, stockStatus, stripePriceId
     },
     relatedProducts[]->{
       _id, name, title, "slug": slug.current, tagline,
@@ -83,8 +87,12 @@ export const litBySlugQuery = groq`
     "slug": slug.current,
     lifestyleImage{ ..., asset->{...} },
     images[]{ ..., asset->{...}, "alt": coalesce(alt, ^.name) },
+    colors[]{
+      _key, name, hex, isDefault,
+      image{ ..., asset->{...} }
+    },
     variants[]{
-      _key, size, sku, price, compareAtPrice, weightKg, stockStatus, stripePriceId
+      _key, size, colorName, sku, price, compareAtPrice, weightKg, stockStatus, stripePriceId
     },
     relatedProducts[]->{
       _id, name, title, "slug": slug.current, tagline,

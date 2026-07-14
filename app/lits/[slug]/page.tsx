@@ -116,6 +116,7 @@ export default async function LitPage({ params }: { params: Promise<Params> }) {
             productSlug={product.slug}
             images={product.images}
             variants={product.variants}
+            colors={product.colors}
             name={product.name}
           />
         </div>

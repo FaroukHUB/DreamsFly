@@ -348,27 +348,79 @@ export const product = defineType({
       description: "Chaque ligne décrit une couche du matelas. Ordre du haut (housse) vers le bas (base).",
     }),
 
-    // ─── Variantes (tailles + prix) ───
+    // ─── COULEURS disponibles (optionnel) ───
     defineField({
-      name: "variants",
-      title: "Tailles disponibles",
+      name: "colors",
+      title: "🎨 Couleurs disponibles",
       type: "array",
       group: "variants",
+      description:
+        "Liste des couleurs. Chacune peut avoir sa propre photo. Sur la fiche produit, l'utilisateur clique sur une couleur → la galerie change + les tailles disponibles s'affichent. Laisse vide si le produit n'existe qu'en une seule couleur.",
       of: [
         defineArrayMember({
           type: "object",
           fields: [
-            { name: "size", title: "Taille (ex. 140 x 190 cm)", type: "string" },
-            { name: "sku", title: "SKU variante", type: "string" },
-            { name: "price", title: "Prix (€)", type: "number" },
-            { name: "compareAtPrice", title: "Prix barré (€)", type: "number" },
-            { name: "weightKg", title: "Poids (kg)", type: "number" },
-            { name: "stockStatus", title: "Statut stock", type: "string", options: { list: ["en-stock", "rupture", "precommande"] } },
-            { name: "stripePriceId", title: "Stripe Price ID (pour le checkout)", type: "string" },
+            { name: "name", title: "Nom (ex. « Beige sable »)", type: "string", validation: (r) => r.required() },
+            { name: "hex", title: "Code hexadécimal (pastille — ex. #D4B896)", type: "string" },
+            {
+              name: "image",
+              title: "Photo de cette couleur",
+              type: "image",
+              options: { hotspot: true },
+              fields: [{ name: "alt", title: "Alt SEO", type: "string" }],
+            },
+            { name: "isDefault", title: "Couleur affichée par défaut", type: "boolean", initialValue: false },
           ],
           preview: {
-            select: { title: "size", price: "price" },
-            prepare: ({ title, price }) => ({ title, subtitle: price ? `${price} €` : "" }),
+            select: { title: "name", subtitle: "hex", media: "image" },
+            prepare: ({ title, subtitle, media }) => ({
+              title,
+              subtitle: subtitle ? `Code ${subtitle}` : undefined,
+              media,
+            }),
+          },
+        }),
+      ],
+    }),
+
+    // ─── Variantes (tailles + prix) — chaque variante peut être liée à une couleur ───
+    defineField({
+      name: "variants",
+      title: "Tailles & prix",
+      type: "array",
+      group: "variants",
+      description:
+        "Une ligne = une combinaison Taille + (Couleur). Si tu as plusieurs couleurs, crée une ligne par taille × couleur. Sinon laisse le champ Couleur vide.",
+      of: [
+        defineArrayMember({
+          type: "object",
+          fields: [
+            { name: "size", title: "Taille (ex. 140 x 190 cm)", type: "string", validation: (r) => r.required() },
+            {
+              name: "colorName",
+              title: "🎨 Couleur (doit correspondre à un nom de la liste Couleurs ci-dessus)",
+              type: "string",
+              description: "Ex : « Beige sable ». Laisse vide si le produit n'a qu'une seule couleur.",
+            },
+            { name: "sku", title: "SKU variante", type: "string" },
+            { name: "price", title: "Prix (€)", type: "number", validation: (r) => r.required().positive() },
+            { name: "compareAtPrice", title: "Prix barré (€)", type: "number" },
+            { name: "weightKg", title: "Poids (kg)", type: "number" },
+            {
+              name: "stockStatus",
+              title: "Statut stock",
+              type: "string",
+              options: { list: ["en-stock", "rupture", "precommande"] },
+              initialValue: "en-stock",
+            },
+            { name: "stripePriceId", title: "Stripe Price ID (checkout)", type: "string" },
+          ],
+          preview: {
+            select: { size: "size", color: "colorName", price: "price", stock: "stockStatus" },
+            prepare: ({ size, color, price, stock }) => ({
+              title: [size, color].filter(Boolean).join(" · "),
+              subtitle: [price ? `${price} €` : null, stock === "rupture" ? "🚫 Rupture" : null].filter(Boolean).join(" · "),
+            }),
           },
         }),
       ],

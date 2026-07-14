@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Image from "next/image";
 import { urlFor } from "@/lib/sanity/image";
 import { useCart } from "@/lib/cart/store";
@@ -7,11 +7,20 @@ import { useCart } from "@/lib/cart/store";
 type Variant = {
   _key: string;
   size?: string;
+  colorName?: string;
   sku?: string;
   price?: number;
   compareAtPrice?: number;
   stockStatus?: string;
   stripePriceId?: string;
+};
+
+type ColorOption = {
+  _key: string;
+  name: string;
+  hex?: string;
+  isDefault?: boolean;
+  image?: SanityImage;
 };
 
 type SanityImage = { asset?: any; alt?: string };
@@ -21,20 +30,47 @@ export function ProductBuyBox({
   productSlug,
   images,
   variants,
+  colors,
   name,
 }: {
   productId: string;
   productSlug: string;
   images?: SanityImage[];
   variants?: Variant[];
+  colors?: ColorOption[];
   name: string;
 }) {
-  // Dédup par taille : garde la variante la moins chère par taille distincte,
-  // trie ensuite par taille croissante (90 → 180).
-  const uniqueVariants = (() => {
+  const { add } = useCart();
+  const [adding, setAdding] = useState(false);
+
+  // ─── Sélection couleur ─────────────────────────────────────
+  const hasColors = (colors?.length || 0) > 0;
+  const defaultColor = colors?.find((c) => c.isDefault)?.name || colors?.[0]?.name;
+  const [selectedColorName, setSelectedColorName] = useState<string | undefined>(defaultColor);
+  const selectedColor = colors?.find((c) => c.name === selectedColorName);
+
+  // ─── Galerie combinée (photos produit + photos couleurs) ──
+  const gallery: SanityImage[] = useMemo(() => {
+    const combined: SanityImage[] = [];
+    if (hasColors && selectedColor?.image) combined.push(selectedColor.image);
+    if (images?.length) combined.push(...images);
+    return combined.filter((img) => img?.asset);
+  }, [images, hasColors, selectedColor]);
+
+  const [selectedImage, setSelectedImage] = useState(0);
+
+  // Reset image quand on change de couleur
+  useMemo(() => setSelectedImage(0), [selectedColorName]);
+
+  // ─── Tailles dispo pour la couleur sélectionnée ──────────
+  const availableVariants = useMemo(() => {
     if (!variants?.length) return [];
+    const filtered = hasColors
+      ? variants.filter((v) => (v.colorName || "").trim() === (selectedColorName || "").trim())
+      : variants;
+    // Dédup par taille (garde la moins chère)
     const bySize = new Map<string, Variant>();
-    for (const v of variants) {
+    for (const v of filtered) {
       const size = (v.size || "").trim();
       if (!size) continue;
       const existing = bySize.get(size);
@@ -47,22 +83,23 @@ export function ProductBuyBox({
       return m ? parseInt(m[1], 10) : 9999;
     };
     return Array.from(bySize.values()).sort((a, b) => parseWidth(a.size!) - parseWidth(b.size!));
-  })();
+  }, [variants, hasColors, selectedColorName]);
 
-  const [selectedImage, setSelectedImage] = useState(0);
-  const [selectedVariantKey, setSelectedVariantKey] = useState<string | null>(
-    uniqueVariants[0]?._key || null
-  );
-  const { add } = useCart();
-  const [adding, setAdding] = useState(false);
+  const [selectedVariantKey, setSelectedVariantKey] = useState<string | null>(null);
 
-  const variant = uniqueVariants.find((v) => v._key === selectedVariantKey) || uniqueVariants[0];
+  // Reset variant quand la liste change (nouvelle couleur)
+  useMemo(() => {
+    setSelectedVariantKey(availableVariants[0]?._key || null);
+  }, [availableVariants]);
+
+  const variant = availableVariants.find((v) => v._key === selectedVariantKey) || availableVariants[0];
   const price = variant?.price;
   const compareAtPrice = variant?.compareAtPrice;
   const discount = compareAtPrice && price ? Math.round(((compareAtPrice - price) / compareAtPrice) * 100) : null;
   const inStock = variant?.stockStatus !== "rupture";
 
-  const imageUrl = images?.[selectedImage] ? urlFor(images[selectedImage]).width(400).url() : undefined;
+  const currentImage = gallery[selectedImage];
+  const imageUrl = currentImage ? urlFor(currentImage).width(400).url() : undefined;
 
   async function handleAdd() {
     if (!variant || !price) return;
@@ -73,6 +110,7 @@ export function ProductBuyBox({
       productName: name,
       variantKey: variant._key,
       variantSize: variant.size,
+      variantColor: variant.colorName,
       sku: variant.sku,
       unitPrice: price,
       compareAtPrice,
@@ -87,10 +125,10 @@ export function ProductBuyBox({
       {/* Galerie */}
       <div>
         <div className="relative aspect-square overflow-hidden rounded-3xl bg-sable">
-          {images?.[selectedImage] && (
+          {currentImage && (
             <Image
-              src={urlFor(images[selectedImage]).width(1000).quality(90).url()}
-              alt={images[selectedImage].alt || name}
+              src={urlFor(currentImage).width(1000).quality(90).url()}
+              alt={currentImage.alt || name}
               fill
               sizes="(max-width: 1024px) 100vw, 55vw"
               priority
@@ -98,9 +136,9 @@ export function ProductBuyBox({
             />
           )}
         </div>
-        {images && images.length > 1 && (
+        {gallery.length > 1 && (
           <div className="mt-4 grid grid-cols-5 gap-3">
-            {images.slice(0, 5).map((img, i) => (
+            {gallery.slice(0, 5).map((img, i) => (
               <button
                 key={i}
                 onClick={() => setSelectedImage(i)}
@@ -118,11 +156,60 @@ export function ProductBuyBox({
 
       {/* Buy box */}
       <div className="lg:sticky lg:top-24 lg:self-start">
-        {uniqueVariants.length > 1 && (
+        {/* Sélecteur COULEUR */}
+        {hasColors && colors && colors.length > 1 && (
           <div className="mb-6">
-            <div className="mb-3 text-sm font-semibold uppercase tracking-wide text-pierre">Taille</div>
+            <div className="mb-3 flex items-baseline gap-2 text-sm font-semibold uppercase tracking-wide text-pierre">
+              <span>Couleur</span>
+              <span className="text-ink normal-case">— {selectedColorName}</span>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              {colors.map((c) => {
+                const isSel = c.name === selectedColorName;
+                return (
+                  <button
+                    key={c._key}
+                    onClick={() => setSelectedColorName(c.name)}
+                    aria-label={c.name}
+                    title={c.name}
+                    className={`group relative flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl border-2 transition-all md:h-16 md:w-16 ${
+                      isSel ? "border-midnight shadow-md" : "border-border hover:border-midnight/50"
+                    }`}
+                  >
+                    {c.image?.asset ? (
+                      <Image
+                        src={urlFor(c.image).width(120).height(120).url()}
+                        alt={c.name}
+                        fill
+                        sizes="64px"
+                        className="object-cover"
+                      />
+                    ) : (
+                      <span
+                        aria-hidden
+                        className="block h-8 w-8 rounded-full border border-black/10"
+                        style={{ background: c.hex || "#EEE" }}
+                      />
+                    )}
+                    {isSel && (
+                      <span className="absolute inset-0 rounded-2xl ring-2 ring-midnight ring-offset-2 ring-offset-white" />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Sélecteur TAILLE */}
+        {availableVariants.length > 1 && (
+          <div className="mb-6">
+            <div className="mb-3 flex items-baseline gap-2 text-sm font-semibold uppercase tracking-wide text-pierre">
+              <span>Taille</span>
+              {variant?.size && <span className="text-ink normal-case">— {variant.size}</span>}
+            </div>
             <div className="grid grid-cols-3 gap-2">
-              {uniqueVariants.map((v) => (
+              {availableVariants.map((v) => (
                 <button
                   key={v._key}
                   onClick={() => setSelectedVariantKey(v._key)}
@@ -136,6 +223,12 @@ export function ProductBuyBox({
                 </button>
               ))}
             </div>
+          </div>
+        )}
+
+        {availableVariants.length === 0 && hasColors && (
+          <div className="mb-6 rounded-xl border border-brume/60 bg-sable px-4 py-3 text-sm text-pierre">
+            Aucune taille disponible dans cette couleur. Choisissez une autre couleur ci-dessus.
           </div>
         )}
 
