@@ -2,7 +2,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useClient } from "sanity";
 import { IntentLink } from "sanity/router";
-import { usePaneRouter } from "sanity/structure";
 import { Badge, Box, Button, Card, Flex, Grid, Spinner, Stack, Text, TextInput } from "@sanity/ui";
 
 type ProductDoc = {
@@ -33,7 +32,6 @@ type Options = {
 export function ProductGalleryPane(props: { options?: Options }) {
   const { productType, includeLegacy, title } = props.options || {};
   const client = useClient({ apiVersion: "2024-01-01" });
-  const paneRouter = usePaneRouter();
   const [products, setProducts] = useState<ProductDoc[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -105,11 +103,6 @@ export function ProductGalleryPane(props: { options?: Options }) {
     );
   }, [products, search]);
 
-  const openDoc = (id: string) => {
-    // Ouvre le document dans le pane courant en remplaçant le contenu
-    paneRouter.replaceCurrent({ id, type: "product" } as any);
-  };
-
   return (
     <Flex direction="column" style={{ height: "100%", minHeight: "100vh" }}>
       {/* Header sticky */}
@@ -160,7 +153,7 @@ export function ProductGalleryPane(props: { options?: Options }) {
         ) : (
           <Grid columns={[2, 3, 4, 5, 6]} gap={2}>
             {filtered.map((p) => (
-              <ProductCard key={p._id} product={p} onOpen={() => openDoc(p._id)} />
+              <ProductCard key={p._id} product={p} />
             ))}
           </Grid>
         )}
@@ -169,7 +162,7 @@ export function ProductGalleryPane(props: { options?: Options }) {
   );
 }
 
-function ProductCard({ product: p, onOpen }: { product: ProductDoc; onOpen: () => void }) {
+function ProductCard({ product: p }: { product: ProductDoc }) {
   const discount =
     p.compareAtPrice && p.price && p.compareAtPrice > p.price
       ? Math.round(((p.compareAtPrice - p.price) / p.compareAtPrice) * 100)
@@ -177,12 +170,16 @@ function ProductCard({ product: p, onOpen }: { product: ProductDoc; onOpen: () =
   const isOutOfStock = p.stock === "rupture";
 
   return (
+    <IntentLink
+      intent="edit"
+      params={{ id: p._id, type: "product" }}
+      style={{ textDecoration: "none", color: "inherit", display: "block" }}
+    >
     <Card
       padding={0}
       radius={3}
       shadow={1}
       style={{ cursor: "pointer", overflow: "hidden" }}
-      onClick={onOpen}
     >
       {/* Image */}
       <Box
@@ -265,5 +262,6 @@ function ProductCard({ product: p, onOpen }: { product: ProductDoc; onOpen: () =
         </Flex>
       </Stack>
     </Card>
+    </IntentLink>
   );
 }
