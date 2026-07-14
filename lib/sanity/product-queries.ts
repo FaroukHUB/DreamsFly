@@ -9,6 +9,11 @@ export const productBySlugFullQuery = groq`
     compositionImage{ ..., asset->{...} },
     compositionVideo{ asset->{url} },
     images[]{ ..., asset->{...}, "alt": coalesce(alt, ^.name) },
+    videos[]{
+      _key, alt, autoplay,
+      file{ asset->{url, mimeType} },
+      poster{ ..., asset->{...} }
+    },
     colors[]{
       _key, name, hex, isDefault,
       image{ ..., asset->{...} }
@@ -91,6 +96,11 @@ export const litBySlugQuery = groq`
     compositionImage{ ..., asset->{...} },
     compositionVideo{ asset->{url} },
     images[]{ ..., asset->{...}, "alt": coalesce(alt, ^.name) },
+    videos[]{
+      _key, alt, autoplay,
+      file{ asset->{url, mimeType} },
+      poster{ ..., asset->{...} }
+    },
     colors[]{
       _key, name, hex, isDefault,
       image{ ..., asset->{...} }

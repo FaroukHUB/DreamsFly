@@ -119,6 +119,7 @@ export default async function ProductPage({ params }: { params: Promise<Params> 
             productId={product._id}
             productSlug={product.slug}
             images={product.images}
+            videos={product.videos}
             variants={product.variants}
             colors={product.colors}
             name={product.name}

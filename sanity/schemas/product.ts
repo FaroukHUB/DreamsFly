@@ -621,7 +621,7 @@ export const product = defineType({
     // ─── Médias ───
     defineField({
       name: "images",
-      title: "Photos produit",
+      title: "📷 Photos produit",
       type: "array",
       group: "media",
       of: [
@@ -632,6 +632,45 @@ export const product = defineType({
         }),
       ],
       validation: (r) => r.min(1).max(10),
+    }),
+    defineField({
+      name: "videos",
+      title: "🎥 Vidéos produit",
+      type: "array",
+      group: "media",
+      description: "Vidéos courtes (10-60 s) affichées dans la galerie à côté des photos. MP4 ou WebM. Idéalement < 5 Mo.",
+      of: [
+        defineArrayMember({
+          type: "object",
+          fields: [
+            {
+              name: "file",
+              title: "Fichier vidéo",
+              type: "file",
+              options: { accept: "video/mp4,video/webm" },
+              validation: (r) => r.required(),
+            },
+            {
+              name: "poster",
+              title: "Image d'aperçu (poster)",
+              type: "image",
+              description: "Miniature affichée avant lecture + dans les vignettes de la galerie.",
+              options: { hotspot: true },
+              fields: [{ name: "alt", title: "Alt", type: "string" }],
+            },
+            { name: "alt", title: "Description accessible (aria-label)", type: "string" },
+            { name: "autoplay", title: "Lecture automatique (sans son)", type: "boolean", initialValue: true },
+          ],
+          preview: {
+            select: { title: "alt", media: "poster" },
+            prepare: ({ title, media }) => ({
+              title: `🎥 ${title || "Vidéo produit"}`,
+              media,
+            }),
+          },
+        }),
+      ],
+      validation: (r) => r.max(5),
     }),
 
     // ─── Avis ───

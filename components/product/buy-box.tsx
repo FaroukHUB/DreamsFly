@@ -25,10 +25,23 @@ type ColorOption = {
 
 type SanityImage = { asset?: any; alt?: string };
 
+type ProductVideo = {
+  _key: string;
+  alt?: string;
+  autoplay?: boolean;
+  file?: { asset?: { url?: string; mimeType?: string } };
+  poster?: SanityImage;
+};
+
+type GalleryItem =
+  | { type: "image"; key: string; image: SanityImage }
+  | { type: "video"; key: string; video: ProductVideo };
+
 export function ProductBuyBox({
   productId,
   productSlug,
   images,
+  videos,
   variants,
   colors,
   name,
@@ -36,6 +49,7 @@ export function ProductBuyBox({
   productId: string;
   productSlug: string;
   images?: SanityImage[];
+  videos?: ProductVideo[];
   variants?: Variant[];
   colors?: ColorOption[];
   name: string;
@@ -49,13 +63,24 @@ export function ProductBuyBox({
   const [selectedColorName, setSelectedColorName] = useState<string | undefined>(defaultColor);
   const selectedColor = colors?.find((c) => c.name === selectedColorName);
 
-  // ─── Galerie combinée (photos produit + photos couleurs) ──
-  const gallery: SanityImage[] = useMemo(() => {
-    const combined: SanityImage[] = [];
-    if (hasColors && selectedColor?.image) combined.push(selectedColor.image);
-    if (images?.length) combined.push(...images);
-    return combined.filter((img) => img?.asset);
-  }, [images, hasColors, selectedColor]);
+  // ─── Galerie combinée (photos couleur → photos produit → vidéos) ──
+  const gallery: GalleryItem[] = useMemo(() => {
+    const items: GalleryItem[] = [];
+    if (hasColors && selectedColor?.image?.asset) {
+      items.push({ type: "image", key: `color-${selectedColor._key}`, image: selectedColor.image });
+    }
+    if (images?.length) {
+      images.forEach((img, i) => {
+        if (img?.asset) items.push({ type: "image", key: `img-${i}`, image: img });
+      });
+    }
+    if (videos?.length) {
+      videos.forEach((v) => {
+        if (v?.file?.asset?.url) items.push({ type: "video", key: `vid-${v._key}`, video: v });
+      });
+    }
+    return items;
+  }, [images, videos, hasColors, selectedColor]);
 
   const [selectedImage, setSelectedImage] = useState(0);
 
@@ -98,8 +123,11 @@ export function ProductBuyBox({
   const discount = compareAtPrice && price ? Math.round(((compareAtPrice - price) / compareAtPrice) * 100) : null;
   const inStock = variant?.stockStatus !== "rupture";
 
-  const currentImage = gallery[selectedImage];
-  const imageUrl = currentImage ? urlFor(currentImage).width(400).url() : undefined;
+  const currentItem = gallery[selectedImage];
+  // Pour le panier : on stocke l'URL de la 1re image dispo (jamais une vidéo)
+  const cartImageSource: SanityImage | undefined =
+    currentItem?.type === "image" ? currentItem.image : gallery.find((g) => g.type === "image") as any;
+  const imageUrl = cartImageSource ? urlFor(cartImageSource).width(400).url() : undefined;
 
   async function handleAdd() {
     if (!variant || !price) return;
@@ -125,31 +153,70 @@ export function ProductBuyBox({
       {/* Galerie */}
       <div>
         <div className="relative aspect-square overflow-hidden rounded-3xl bg-sable">
-          {currentImage && (
+          {currentItem?.type === "image" && (
             <Image
-              src={urlFor(currentImage).width(1000).quality(90).url()}
-              alt={currentImage.alt || name}
+              src={urlFor(currentItem.image).width(1000).quality(90).url()}
+              alt={currentItem.image.alt || name}
               fill
               sizes="(max-width: 1024px) 100vw, 55vw"
               priority
               className="object-cover"
             />
           )}
+          {currentItem?.type === "video" && currentItem.video.file?.asset?.url && (
+            <video
+              key={currentItem.key}
+              src={currentItem.video.file.asset.url}
+              poster={currentItem.video.poster?.asset ? urlFor(currentItem.video.poster).width(1000).url() : undefined}
+              autoPlay={currentItem.video.autoplay !== false}
+              muted
+              loop
+              playsInline
+              controls
+              aria-label={currentItem.video.alt || `Vidéo de présentation ${name}`}
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+          )}
         </div>
         {gallery.length > 1 && (
           <div className="mt-4 grid grid-cols-5 gap-3">
-            {gallery.slice(0, 5).map((img, i) => (
-              <button
-                key={i}
-                onClick={() => setSelectedImage(i)}
-                className={`relative aspect-square overflow-hidden rounded-xl border-2 bg-sable transition-all ${
-                  i === selectedImage ? "border-midnight" : "border-transparent hover:border-border"
-                }`}
-                aria-label={`Voir image ${i + 1}`}
-              >
-                <Image src={urlFor(img).width(200).url()} alt={img.alt || ""} fill sizes="80px" className="object-cover" />
-              </button>
-            ))}
+            {gallery.slice(0, 5).map((item, i) => {
+              const isSel = i === selectedImage;
+              const thumb =
+                item.type === "image"
+                  ? urlFor(item.image).width(200).url()
+                  : item.video.poster?.asset
+                    ? urlFor(item.video.poster).width(200).url()
+                    : null;
+              return (
+                <button
+                  key={item.key}
+                  onClick={() => setSelectedImage(i)}
+                  className={`group relative aspect-square overflow-hidden rounded-xl border-2 bg-sable transition-all ${
+                    isSel ? "border-midnight" : "border-transparent hover:border-border"
+                  }`}
+                  aria-label={item.type === "video" ? `Lire la vidéo ${i + 1}` : `Voir image ${i + 1}`}
+                >
+                  {thumb ? (
+                    <Image src={thumb} alt="" fill sizes="80px" className="object-cover" />
+                  ) : (
+                    <div className="absolute inset-0 bg-midnight" />
+                  )}
+                  {item.type === "video" && (
+                    <span
+                      aria-hidden
+                      className="absolute inset-0 flex items-center justify-center bg-black/25 transition-colors group-hover:bg-black/40"
+                    >
+                      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/95 shadow">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" className="text-midnight">
+                          <path d="M8 5v14l11-7z" />
+                        </svg>
+                      </span>
+                    </span>
+                  )}
+                </button>
+              );
+            })}
           </div>
         )}
       </div>
