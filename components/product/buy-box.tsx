@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { urlFor } from "@/lib/sanity/image";
 import { useCart } from "@/lib/cart/store";
@@ -85,7 +85,9 @@ export function ProductBuyBox({
   const [selectedImage, setSelectedImage] = useState(0);
 
   // Reset image quand on change de couleur
-  useMemo(() => setSelectedImage(0), [selectedColorName]);
+  useEffect(() => {
+    setSelectedImage(0);
+  }, [selectedColorName]);
 
   // ─── Tailles dispo pour la couleur sélectionnée ──────────
   const availableVariants = useMemo(() => {
@@ -113,7 +115,7 @@ export function ProductBuyBox({
   const [selectedVariantKey, setSelectedVariantKey] = useState<string | null>(null);
 
   // Reset variant quand la liste change (nouvelle couleur)
-  useMemo(() => {
+  useEffect(() => {
     setSelectedVariantKey(availableVariants[0]?._key || null);
   }, [availableVariants]);
 
@@ -190,6 +192,7 @@ export function ProductBuyBox({
                     : null;
               return (
                 <button
+                  type="button"
                   key={item.key}
                   onClick={() => setSelectedImage(i)}
                   className={`group relative aspect-square w-16 flex-none overflow-hidden rounded-xl border-2 bg-sable transition-all md:w-20 ${
@@ -235,6 +238,7 @@ export function ProductBuyBox({
                 const isSel = c.name === selectedColorName;
                 return (
                   <button
+                    type="button"
                     key={c._key}
                     onClick={() => setSelectedColorName(c.name)}
                     aria-label={c.name}
@@ -278,6 +282,7 @@ export function ProductBuyBox({
             <div className="grid grid-cols-3 gap-2">
               {availableVariants.map((v) => (
                 <button
+                  type="button"
                   key={v._key}
                   onClick={() => setSelectedVariantKey(v._key)}
                   className={`rounded-xl border-2 p-3 text-sm font-medium transition-all ${
@@ -320,6 +325,7 @@ export function ProductBuyBox({
 
         <div className="space-y-3">
           <button
+            type="button"
             onClick={handleAdd}
             disabled={!inStock || !price || adding}
             className="flex w-full items-center justify-center gap-2 rounded-pill bg-midnight px-7 py-4 font-sora text-base font-semibold text-white transition-all hover:bg-midnight-dark hover:-translate-y-px disabled:cursor-not-allowed disabled:opacity-50"
