@@ -11,6 +11,7 @@ export const product = defineType({
   type: "document",
   groups: [
     { name: "main", title: "Principal", default: true },
+    { name: "content", title: "📖 Conseils & FAQ" },
     { name: "composition", title: "Composition" },
     { name: "variants", title: "Tailles & prix" },
     { name: "media", title: "Photos & médias" },
@@ -89,12 +90,13 @@ export const product = defineType({
       description: "Réécrite pour DreamsFly (pas reprise telle quelle du fournisseur).",
     }),
 
-    // ─── Type & caractéristiques ───
+    // ─── Caractéristiques MATELAS (visibles uniquement pour productType=matelas) ───
     defineField({
       name: "type",
       title: "Type de matelas",
       type: "string",
       group: "main",
+      hidden: ({ document }) => document?.productType !== "matelas" && !!document?.productType,
       options: {
         list: [
           { title: "Mousse polyuréthane", value: "mousse-polyurethane" },
@@ -109,6 +111,7 @@ export const product = defineType({
       title: "Fermeté",
       type: "string",
       group: "main",
+      hidden: ({ document }) => document?.productType !== "matelas" && document?.productType !== "oreiller" && !!document?.productType,
       options: {
         list: [
           { title: "Moelleux", value: "moelleux" },
@@ -121,9 +124,10 @@ export const product = defineType({
     }),
     defineField({
       name: "welcome",
-      title: "Accueil",
+      title: "Accueil (matelas)",
       type: "string",
       group: "main",
+      hidden: ({ document }) => document?.productType !== "matelas" && !!document?.productType,
       options: {
         list: ["Moelleux", "Équilibré", "Enveloppant", "Tonique"].map((v) => ({ title: v, value: v })),
       },
@@ -133,13 +137,14 @@ export const product = defineType({
       title: "Épaisseur (cm)",
       type: "number",
       group: "main",
+      hidden: ({ document }) => document?.productType !== "matelas" && document?.productType !== "sommier" && document?.productType !== "oreiller" && !!document?.productType,
     }),
-
     defineField({
       name: "features",
-      title: "Caractéristiques (chips)",
+      title: "Caractéristiques matelas (chips)",
       type: "object",
       group: "main",
+      hidden: ({ document }) => document?.productType !== "matelas" && !!document?.productType,
       fields: [
         { name: "memoireDeForme", type: "boolean", title: "Mémoire de forme" },
         { name: "antiAcariens", type: "boolean", title: "Anti-acariens" },
@@ -151,12 +156,186 @@ export const product = defineType({
       ],
     }),
 
-    // ─── Composition (8 couches max) ───
+    // ─── Caractéristiques LIT (visibles uniquement pour productType=lit) ───
+    defineField({
+      name: "litMaterial",
+      title: "🛋️ Matière du lit",
+      type: "string",
+      group: "main",
+      hidden: ({ document }) => document?.productType !== "lit",
+      options: {
+        list: [
+          { title: "Velours", value: "velours" },
+          { title: "Tissu tramé", value: "tissu-trame" },
+          { title: "Lin", value: "lin" },
+          { title: "Capitonné", value: "capitonne" },
+          { title: "Simili cuir", value: "simili-cuir" },
+        ],
+      },
+    }),
+    defineField({
+      name: "litColor",
+      title: "🎨 Couleur",
+      type: "string",
+      group: "main",
+      description: "Ex : « Beige sable », « Blanc cassé », « Bleu nuit »",
+      hidden: ({ document }) => document?.productType !== "lit",
+    }),
+    defineField({
+      name: "litCoffreType",
+      title: "📦 Type de coffre",
+      type: "string",
+      group: "main",
+      hidden: ({ document }) => document?.productType !== "lit",
+      options: {
+        list: [
+          { title: "Ouverture frontale (pieds du lit)", value: "frontal" },
+          { title: "Ouverture latérale", value: "lateral" },
+          { title: "Pas de coffre (lit classique)", value: "aucun" },
+        ],
+      },
+      initialValue: "frontal",
+    }),
+    defineField({
+      name: "litCoffreCapacityL",
+      title: "📏 Capacité du coffre (litres)",
+      type: "number",
+      group: "main",
+      hidden: ({ document }) => document?.productType !== "lit",
+    }),
+    defineField({
+      name: "litVerinsForceKg",
+      title: "🛠️ Force des vérins (kg par vérin)",
+      type: "number",
+      group: "main",
+      description: "Force de soulèvement de chaque vérin hydraulique",
+      hidden: ({ document }) => document?.productType !== "lit",
+    }),
+    defineField({
+      name: "litIncludes",
+      title: "✅ Inclus dans le prix",
+      type: "object",
+      group: "main",
+      hidden: ({ document }) => document?.productType !== "lit",
+      fields: [
+        { name: "headboard", type: "boolean", title: "Tête de lit incluse", initialValue: true },
+        { name: "sommier", type: "boolean", title: "Sommier inclus", initialValue: true },
+        { name: "matelas", type: "boolean", title: "Matelas inclus", initialValue: false },
+        { name: "feet", type: "boolean", title: "Pieds inclus" },
+      ],
+    }),
+    defineField({
+      name: "litAssembly",
+      title: "🔧 Montage",
+      type: "object",
+      group: "main",
+      hidden: ({ document }) => document?.productType !== "lit",
+      fields: [
+        { name: "required", type: "boolean", title: "Montage à réaliser", initialValue: true },
+        { name: "timeMin", type: "number", title: "Temps estimé (minutes)", initialValue: 45 },
+        { name: "peopleNeeded", type: "number", title: "Personnes nécessaires", initialValue: 2 },
+        { name: "toolsIncluded", type: "boolean", title: "Outils fournis", initialValue: true },
+      ],
+    }),
+
+    // ─── Caractéristiques SOMMIER ───
+    defineField({
+      name: "sommierType",
+      title: "🪑 Type de sommier",
+      type: "string",
+      group: "main",
+      hidden: ({ document }) => document?.productType !== "sommier",
+      options: {
+        list: [
+          { title: "À lattes apparentes", value: "lattes-apparentes" },
+          { title: "À lattes recouvertes", value: "lattes-recouvertes" },
+          { title: "Tapissier (semi-rigide)", value: "tapissier" },
+          { title: "À ressorts", value: "ressorts" },
+          { title: "Coffre (avec rangement)", value: "coffre" },
+        ],
+      },
+    }),
+    defineField({
+      name: "sommierLattes",
+      title: "Nombre de lattes",
+      type: "number",
+      group: "main",
+      hidden: ({ document }) => document?.productType !== "sommier",
+    }),
+    defineField({
+      name: "sommierFeet",
+      title: "🦵 Pieds",
+      type: "object",
+      group: "main",
+      hidden: ({ document }) => document?.productType !== "sommier",
+      fields: [
+        { name: "included", type: "boolean", title: "Pieds inclus" },
+        { name: "heightCm", type: "number", title: "Hauteur des pieds (cm)" },
+        { name: "material", type: "string", title: "Matériau (bois, métal…)" },
+      ],
+    }),
+
+    // ─── Caractéristiques OREILLER ───
+    defineField({
+      name: "oreillerFilling",
+      title: "🪶 Garnissage",
+      type: "string",
+      group: "main",
+      hidden: ({ document }) => document?.productType !== "oreiller",
+      options: {
+        list: [
+          { title: "Duvet d'oie", value: "duvet-oie" },
+          { title: "Plumes", value: "plumes" },
+          { title: "Mousse à mémoire de forme", value: "memoire-forme" },
+          { title: "Latex naturel", value: "latex" },
+          { title: "Fibre polyester recyclée", value: "fibre-recyclee" },
+          { title: "Microfibre", value: "microfibre" },
+        ],
+      },
+    }),
+    defineField({
+      name: "oreillerShape",
+      title: "Forme",
+      type: "string",
+      group: "main",
+      hidden: ({ document }) => document?.productType !== "oreiller",
+      options: {
+        list: [
+          { title: "Rectangulaire classique", value: "rectangulaire" },
+          { title: "Carré", value: "carre" },
+          { title: "Ergonomique (vague / cervical)", value: "ergonomique" },
+          { title: "Traversin", value: "traversin" },
+        ],
+      },
+    }),
+    defineField({
+      name: "oreillerDimensions",
+      title: "Dimensions (cm)",
+      type: "string",
+      group: "main",
+      description: "Ex : « 60 x 40 cm »",
+      hidden: ({ document }) => document?.productType !== "oreiller",
+    }),
+    defineField({
+      name: "oreillerCare",
+      title: "🧺 Entretien",
+      type: "object",
+      group: "main",
+      hidden: ({ document }) => document?.productType !== "oreiller",
+      fields: [
+        { name: "washable", type: "boolean", title: "Lavable en machine" },
+        { name: "washTemperatureC", type: "number", title: "Température max (°C)", initialValue: 40 },
+        { name: "removableCover", type: "boolean", title: "Housse amovible" },
+      ],
+    }),
+
+    // ─── Composition (matelas — de haut en bas) ───
     defineField({
       name: "composition",
       title: "Composition (de haut en bas)",
       type: "array",
       group: "composition",
+      hidden: ({ document }) => document?.productType !== "matelas" && !!document?.productType,
       of: [
         defineArrayMember({
           type: "object",
@@ -192,6 +371,91 @@ export const product = defineType({
             prepare: ({ title, price }) => ({ title, subtitle: price ? `${price} €` : "" }),
           },
         }),
+      ],
+    }),
+
+    // ─── Contenu éditorial (SEO + confiance client) ───
+    defineField({
+      name: "highlights",
+      title: "⚡ Points forts (3 à 5)",
+      type: "array",
+      group: "content",
+      description: "Affichés en badges sur la fiche produit — 3 à 5 arguments courts et percutants.",
+      of: [
+        defineArrayMember({
+          type: "object",
+          fields: [
+            { name: "icon", type: "string", title: "Emoji (ex. 🌙, ✨, 🛡️)" },
+            { name: "label", type: "string", title: "Texte court (ex. « 7 zones de confort »)" },
+          ],
+          preview: { select: { title: "label", subtitle: "icon" } },
+        }),
+      ],
+      validation: (r) => r.max(6),
+    }),
+    defineField({
+      name: "lifestyleImage",
+      title: "🖼️ Image en situation (lifestyle)",
+      type: "image",
+      group: "content",
+      description: "Photo du produit dans une chambre réelle. Affichée entre la buy box et les conseils.",
+      options: { hotspot: true },
+      fields: [{ name: "alt", type: "string", title: "Alt SEO" }],
+    }),
+    defineField({
+      name: "tips",
+      title: "💡 Conseils d'expert (astuces d'usage)",
+      type: "array",
+      group: "content",
+      description: "3 à 6 conseils DreamsFly — usage, entretien, installation. Contenu 100% original recommandé pour le SEO.",
+      of: [
+        defineArrayMember({
+          type: "object",
+          fields: [
+            { name: "title", type: "string", title: "Titre du conseil" },
+            { name: "text", type: "text", rows: 3, title: "Explication (1-3 phrases)" },
+            { name: "icon", type: "string", title: "Emoji" },
+          ],
+          preview: { select: { title: "title", subtitle: "text" } },
+        }),
+      ],
+    }),
+    defineField({
+      name: "careGuide",
+      title: "🧺 Guide d'entretien",
+      type: "array",
+      group: "content",
+      description: "Portable text — instructions détaillées d'entretien (nettoyage, retournement, fréquence…).",
+      of: [{ type: "block" }],
+    }),
+    defineField({
+      name: "productFaq",
+      title: "❓ FAQ spécifique à ce produit",
+      type: "array",
+      group: "content",
+      description: "Les questions clients récurrentes SUR CE MODÈLE. Injecté en JSON-LD FAQPage.",
+      of: [
+        defineArrayMember({
+          type: "object",
+          fields: [
+            { name: "question", type: "string", title: "Question", validation: (r) => r.required() },
+            { name: "answer", type: "text", rows: 4, title: "Réponse", validation: (r) => r.required() },
+          ],
+          preview: { select: { title: "question", subtitle: "answer" } },
+        }),
+      ],
+    }),
+    defineField({
+      name: "extraCta",
+      title: "🎯 CTA secondaire (bandeau ou bloc)",
+      type: "object",
+      group: "content",
+      description: "Ex : « Prenez rendez-vous en showroom pour tester ce lit »",
+      fields: [
+        { name: "title", type: "string", title: "Titre" },
+        { name: "subtitle", type: "string", title: "Sous-titre" },
+        { name: "ctaLabel", type: "string", title: "Texte du bouton" },
+        { name: "ctaLink", type: "string", title: "Lien" },
       ],
     }),
 

@@ -1,42 +1,22 @@
 import { groq } from "next-sanity";
 
-/** Récupère une fiche produit complète par slug. */
+/** Récupère une fiche produit complète par slug (tous types). */
 export const productBySlugFullQuery = groq`
   *[_type == "product" && slug.current == $slug][0]{
-    _id,
-    name,
-    title,
+    ...,
     "slug": slug.current,
-    sku,
-    tagline,
-    description,
-    type,
-    firmness,
-    welcome,
-    thicknessCm,
-    features,
-    composition,
-    variants[]{
-      _key,
-      size,
-      sku,
-      price,
-      compareAtPrice,
-      weightKg,
-      stockStatus,
-      stripePriceId
-    },
+    lifestyleImage{ ..., asset->{...} },
     images[]{ ..., asset->{...}, "alt": coalesce(alt, ^.name) },
-    rating,
-    badges,
+    variants[]{
+      _key, size, sku, price, compareAtPrice, weightKg, stockStatus, stripePriceId
+    },
     relatedProducts[]->{
       _id, name, title, "slug": slug.current, tagline,
       "image": images[0],
       "minPrice": variants[0].price,
       "compareAtPrice": variants[0].compareAtPrice,
       badges
-    },
-    seo
+    }
   }
 `;
 
@@ -101,6 +81,7 @@ export const litBySlugQuery = groq`
   *[_type == "product" && productType == "lit" && slug.current == $slug][0]{
     ...,
     "slug": slug.current,
+    lifestyleImage{ ..., asset->{...} },
     images[]{ ..., asset->{...}, "alt": coalesce(alt, ^.name) },
     variants[]{
       _key, size, sku, price, compareAtPrice, weightKg, stockStatus, stripePriceId

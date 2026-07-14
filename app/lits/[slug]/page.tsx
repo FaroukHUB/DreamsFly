@@ -8,18 +8,14 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { ProductBuyBox } from "@/components/product/buy-box";
 import { StickyMobileCTA } from "@/components/product/sticky-mobile-cta";
-import {
-  ProductComposition,
-  ProductSpecs,
-  ProductDescription,
-  RelatedProducts,
-} from "@/components/product/product-details";
+import { ProductPageSections } from "@/components/product/product-page-sections";
 import { buildMetadata } from "@/lib/seo/metadata";
 import {
   JsonLd,
   productSchema,
   breadcrumbSchema,
   organizationSchema,
+  faqSchema,
 } from "@/lib/seo/jsonld";
 import { urlFor } from "@/lib/sanity/image";
 
@@ -124,21 +120,7 @@ export default async function LitPage({ params }: { params: Promise<Params> }) {
           />
         </div>
 
-        {/* Contenu détaillé */}
-        <div className="mt-16 space-y-16 max-w-5xl md:mt-20 md:space-y-20">
-          <ProductDescription description={product.description} />
-          {product.composition && product.composition.length > 0 && (
-            <ProductComposition composition={product.composition} />
-          )}
-          <ProductSpecs product={product} />
-        </div>
-
-        {/* Produits associés */}
-        {product.relatedProducts?.length > 0 && (
-          <div className="mt-16 border-t border-border pt-12 md:mt-20 md:pt-16">
-            <RelatedProducts products={product.relatedProducts} />
-          </div>
-        )}
+        <ProductPageSections product={product} basePath="/lits" />
       </main>
 
       <Footer settings={siteSettings} />
@@ -151,6 +133,7 @@ export default async function LitPage({ params }: { params: Promise<Params> }) {
 
       <JsonLd data={organizationSchema({ name: "DreamsFly" })} />
       <JsonLd data={breadcrumbSchema(breadcrumbs)} />
+      {product.productFaq?.length > 0 && <JsonLd data={faqSchema(product.productFaq)} />}
       <JsonLd
         data={productSchema({
           name: product.title,

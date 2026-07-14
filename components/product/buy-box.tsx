@@ -29,14 +29,34 @@ export function ProductBuyBox({
   variants?: Variant[];
   name: string;
 }) {
+  // Dédup par taille : garde la variante la moins chère par taille distincte,
+  // trie ensuite par taille croissante (90 → 180).
+  const uniqueVariants = (() => {
+    if (!variants?.length) return [];
+    const bySize = new Map<string, Variant>();
+    for (const v of variants) {
+      const size = (v.size || "").trim();
+      if (!size) continue;
+      const existing = bySize.get(size);
+      if (!existing || (v.price ?? Infinity) < (existing.price ?? Infinity)) {
+        bySize.set(size, v);
+      }
+    }
+    const parseWidth = (s: string) => {
+      const m = s.match(/(\d+)/);
+      return m ? parseInt(m[1], 10) : 9999;
+    };
+    return Array.from(bySize.values()).sort((a, b) => parseWidth(a.size!) - parseWidth(b.size!));
+  })();
+
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedVariantKey, setSelectedVariantKey] = useState<string | null>(
-    variants?.[0]?._key || null
+    uniqueVariants[0]?._key || null
   );
   const { add } = useCart();
   const [adding, setAdding] = useState(false);
 
-  const variant = variants?.find((v) => v._key === selectedVariantKey) || variants?.[0];
+  const variant = uniqueVariants.find((v) => v._key === selectedVariantKey) || uniqueVariants[0];
   const price = variant?.price;
   const compareAtPrice = variant?.compareAtPrice;
   const discount = compareAtPrice && price ? Math.round(((compareAtPrice - price) / compareAtPrice) * 100) : null;
@@ -98,11 +118,11 @@ export function ProductBuyBox({
 
       {/* Buy box */}
       <div className="lg:sticky lg:top-24 lg:self-start">
-        {variants && variants.length > 1 && (
+        {uniqueVariants.length > 1 && (
           <div className="mb-6">
             <div className="mb-3 text-sm font-semibold uppercase tracking-wide text-pierre">Taille</div>
             <div className="grid grid-cols-3 gap-2">
-              {variants.map((v) => (
+              {uniqueVariants.map((v) => (
                 <button
                   key={v._key}
                   onClick={() => setSelectedVariantKey(v._key)}

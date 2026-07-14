@@ -8,18 +8,14 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { ProductBuyBox } from "@/components/product/buy-box";
 import { StickyMobileCTA } from "@/components/product/sticky-mobile-cta";
-import {
-  ProductComposition,
-  ProductSpecs,
-  ProductDescription,
-  RelatedProducts,
-} from "@/components/product/product-details";
+import { ProductPageSections } from "@/components/product/product-page-sections";
 import { buildMetadata } from "@/lib/seo/metadata";
 import {
   JsonLd,
   productSchema,
   breadcrumbSchema,
   organizationSchema,
+  faqSchema,
 } from "@/lib/seo/jsonld";
 import { urlFor } from "@/lib/sanity/image";
 
@@ -127,19 +123,7 @@ export default async function ProductPage({ params }: { params: Promise<Params> 
           />
         </div>
 
-        {/* Contenu détaillé */}
-        <div className="mt-20 space-y-20 max-w-5xl">
-          <ProductDescription description={product.description} />
-          <ProductComposition composition={product.composition} />
-          <ProductSpecs product={product} />
-        </div>
-
-        {/* Produits associés */}
-        {product.relatedProducts?.length > 0 && (
-          <div className="mt-20 border-t border-border pt-16">
-            <RelatedProducts products={product.relatedProducts} />
-          </div>
-        )}
+        <ProductPageSections product={product} basePath="/matelas" />
       </main>
 
       <Footer settings={siteSettings} />
@@ -154,6 +138,7 @@ export default async function ProductPage({ params }: { params: Promise<Params> 
       {/* JSON-LD */}
       <JsonLd data={organizationSchema({ name: "DreamsFly" })} />
       <JsonLd data={breadcrumbSchema(breadcrumbs)} />
+      {product.productFaq?.length > 0 && <JsonLd data={faqSchema(product.productFaq)} />}
       <JsonLd
         data={productSchema({
           name: product.title,
