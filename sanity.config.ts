@@ -41,7 +41,8 @@ export default defineConfig({
                       .child(
                         S.documentList()
                           .title("Matelas")
-                          .filter('_type == "product" && productType == "matelas"')
+                          .filter('_type == "product" && (productType == "matelas" || !defined(productType))')
+                          .defaultLayout("detail")
                           .defaultOrdering([{ field: "name", direction: "asc" }])
                       ),
                     S.listItem()
@@ -50,6 +51,7 @@ export default defineConfig({
                         S.documentList()
                           .title("Lits")
                           .filter('_type == "product" && productType == "lit"')
+                          .defaultLayout("detail")
                           .defaultOrdering([{ field: "name", direction: "asc" }])
                       ),
                     S.listItem()
@@ -58,6 +60,7 @@ export default defineConfig({
                         S.documentList()
                           .title("Sommiers")
                           .filter('_type == "product" && productType == "sommier"')
+                          .defaultLayout("detail")
                           .defaultOrdering([{ field: "name", direction: "asc" }])
                       ),
                     S.listItem()
@@ -66,6 +69,7 @@ export default defineConfig({
                         S.documentList()
                           .title("Oreillers")
                           .filter('_type == "product" && productType == "oreiller"')
+                          .defaultLayout("detail")
                           .defaultOrdering([{ field: "name", direction: "asc" }])
                       ),
                     S.listItem()
@@ -74,6 +78,7 @@ export default defineConfig({
                         S.documentList()
                           .title("Linge de lit")
                           .filter('_type == "product" && productType == "linge"')
+                          .defaultLayout("detail")
                           .defaultOrdering([{ field: "name", direction: "asc" }])
                       ),
                     S.listItem()
@@ -82,6 +87,7 @@ export default defineConfig({
                         S.documentList()
                           .title("Packs")
                           .filter('_type == "product" && productType == "pack"')
+                          .defaultLayout("detail")
                           .defaultOrdering([{ field: "name", direction: "asc" }])
                       ),
                     S.divider(),
@@ -91,6 +97,7 @@ export default defineConfig({
                         S.documentList()
                           .title("Tous les produits")
                           .filter('_type == "product"')
+                          .defaultLayout("detail")
                           .defaultOrdering([{ field: "productType", direction: "asc" }, { field: "name", direction: "asc" }])
                       ),
                   ])
