@@ -36,9 +36,9 @@ export const allProductSlugsQuery = groq`
   *[_type == "product" && defined(slug.current)]{ "slug": slug.current }
 `;
 
-/** Liste produits pour la page pilier /matelas. */
+/** Liste produits pour la page pilier /matelas — matelas uniquement (+ legacy sans type). */
 export const allProductsForPillarQuery = groq`
-  *[_type == "product"] | order(name asc) {
+  *[_type == "product" && (productType == "matelas" || !defined(productType))] | order(name asc) {
     _id, name, title, "slug": slug.current, tagline, type, firmness,
     thicknessCm,
     "image": images[0],
