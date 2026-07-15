@@ -33,8 +33,22 @@ const TYPE_TILES = [
 
 const SIZE_TILES = ["90 x 190", "140 x 190", "160 x 200", "180 x 200", "140 x 200"];
 
-function normalizeSize(s?: string): string {
-  return (s || "").toLowerCase().replace(/\s|cm/g, "").replace(/x/g, "x");
+/**
+ * Extrait les dimensions largeur × longueur depuis un texte de taille.
+ * Accepte tous les formats : "90x190", "90 x 190", "90×190", "90X190",
+ * "90x190 cm", "90 x 190cm", etc.
+ */
+function extractDimensions(s?: string): { w?: number; l?: number } {
+  if (!s) return {};
+  const m = String(s).match(/(\d{2,3})\s*[xX×]\s*(\d{2,3})/);
+  if (!m) return {};
+  return { w: parseInt(m[1], 10), l: parseInt(m[2], 10) };
+}
+
+function sizesMatch(a?: string, b?: string): boolean {
+  const da = extractDimensions(a);
+  const db = extractDimensions(b);
+  return !!da.w && !!db.w && da.w === db.w && da.l === db.l;
 }
 
 export async function generateMetadata({ searchParams }: { searchParams: SearchParams }): Promise<Metadata> {
@@ -71,9 +85,8 @@ export default async function MatelasPillar({ searchParams }: { searchParams: Se
     products = products.filter((p: any) => p.type === type);
   }
   if (size) {
-    const target = normalizeSize(size);
     products = products.filter((p: any) =>
-      (p.variants || []).some((v: any) => normalizeSize(v.size) === target)
+      (p.variants || []).some((v: any) => sizesMatch(v.size, size))
     );
   }
 
@@ -143,7 +156,7 @@ export default async function MatelasPillar({ searchParams }: { searchParams: Se
           <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 md:gap-3 lg:grid-cols-5">
             {SIZE_TILES.map((s) => {
               const paramValue = s.replace(/\s/g, "").toLowerCase();
-              const isActive = size === paramValue || normalizeSize(size) === normalizeSize(s);
+              const isActive = sizesMatch(size, s);
               return (
                 <FilterTile
                   key={s}
