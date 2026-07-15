@@ -8,7 +8,7 @@ export const productBySlugFullQuery = groq`
     lifestyleImage{ ..., asset->{...} },
     compositionImage{ ..., asset->{...} },
     compositionVideo{ asset->{url} },
-    images[]{ ..., asset->{...}, "alt": coalesce(alt, ^.name) },
+    images[]{ ..., asset->{...}, "url": asset->url, "alt": coalesce(alt, ^.name) },
     videos[]{
       _key, alt, autoplay,
       file{ asset->{url, mimeType} },
@@ -16,7 +16,7 @@ export const productBySlugFullQuery = groq`
     },
     colors[]{
       _key, name, hex, isDefault,
-      image{ ..., asset->{...} }
+      image{ ..., asset->{...}, "url": asset->url }
     },
     variants[]{
       _key, size, colorName, sku, price, compareAtPrice, weightKg, stockStatus, stripePriceId
@@ -105,7 +105,7 @@ export const litBySlugQuery = groq`
     lifestyleImage{ ..., asset->{...} },
     compositionImage{ ..., asset->{...} },
     compositionVideo{ asset->{url} },
-    images[]{ ..., asset->{...}, "alt": coalesce(alt, ^.name) },
+    images[]{ ..., asset->{...}, "url": asset->url, "alt": coalesce(alt, ^.name) },
     videos[]{
       _key, alt, autoplay,
       file{ asset->{url, mimeType} },
@@ -113,7 +113,7 @@ export const litBySlugQuery = groq`
     },
     colors[]{
       _key, name, hex, isDefault,
-      image{ ..., asset->{...} }
+      image{ ..., asset->{...}, "url": asset->url }
     },
     variants[]{
       _key, size, colorName, sku, price, compareAtPrice, weightKg, stockStatus, stripePriceId

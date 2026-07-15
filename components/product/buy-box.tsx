@@ -4,6 +4,23 @@ import Image from "next/image";
 import { urlFor } from "@/lib/sanity/image";
 import { useCart } from "@/lib/cart/store";
 
+/** Build image URL avec fallback : try urlFor + params, sinon URL brute Sanity. */
+function safeImageUrl(image: any, opts: { w?: number; h?: number; quality?: number } = {}): string | undefined {
+  if (!image) return undefined;
+  try {
+    let b = urlFor(image);
+    if (opts.w) b = b.width(opts.w);
+    if (opts.h) b = b.height(opts.h);
+    if (opts.quality) b = b.quality(opts.quality);
+    const url = b.url();
+    if (url) return url;
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.warn("[BuyBox] urlFor failed, fallback to raw URL", e);
+  }
+  return image?.url || image?.asset?.url || undefined;
+}
+
 type Variant = {
   _key: string;
   size?: string;
@@ -132,7 +149,7 @@ export function ProductBuyBox({
     const firstImage = gallery.find((g) => g.type === "image");
     return firstImage?.type === "image" ? firstImage.image : undefined;
   })();
-  const imageUrl = cartImageSource?.asset ? urlFor(cartImageSource).width(400).url() : undefined;
+  const imageUrl = cartImageSource?.asset ? safeImageUrl(cartImageSource, { w: 400 }) : undefined;
 
   async function handleAdd() {
     if (!variant || !price) return;
@@ -160,7 +177,7 @@ export function ProductBuyBox({
         <div className="relative aspect-square overflow-hidden rounded-3xl bg-sable">
           {currentItem?.type === "image" && (
             <Image
-              src={urlFor(currentItem.image).width(1000).quality(90).url()}
+              src={safeImageUrl(currentItem.image, { w: 1000, quality: 90 }) || ""}
               alt={currentItem.image.alt || name}
               fill
               sizes="(max-width: 1024px) 100vw, 55vw"
@@ -171,7 +188,7 @@ export function ProductBuyBox({
           {currentItem?.type === "video" && currentItem.video.file?.asset?.url && (
             <video
               key={currentItem.key}
-              poster={currentItem.video.poster?.asset ? urlFor(currentItem.video.poster).width(1000).url() : undefined}
+              poster={safeImageUrl(currentItem.video.poster, { w: 1000 })}
               muted
               loop
               playsInline
@@ -195,10 +212,8 @@ export function ProductBuyBox({
               const isSel = i === selectedImage;
               const thumb =
                 item.type === "image"
-                  ? urlFor(item.image).width(200).url()
-                  : item.video.poster?.asset
-                    ? urlFor(item.video.poster).width(200).url()
-                    : null;
+                  ? safeImageUrl(item.image, { w: 200 })
+                  : safeImageUrl(item.video.poster, { w: 200 });
               return (
                 <button
                   type="button"
@@ -258,7 +273,7 @@ export function ProductBuyBox({
                   >
                     {c.image?.asset ? (
                       <Image
-                        src={urlFor(c.image).width(120).height(120).url()}
+                        src={safeImageUrl(c.image, { w: 120, h: 120 }) || ""}
                         alt={c.name}
                         fill
                         sizes="64px"
