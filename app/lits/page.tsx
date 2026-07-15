@@ -8,8 +8,10 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { Sections } from "@/components/landing/blocks";
 import { buildMetadata } from "@/lib/seo/metadata";
-import { JsonLd, breadcrumbSchema, organizationSchema } from "@/lib/seo/jsonld";
+import { JsonLd, breadcrumbSchema, organizationSchema, faqSchema } from "@/lib/seo/jsonld";
 import { urlFor } from "@/lib/sanity/image";
+import { CategorySeoSections } from "@/components/category/category-seo-sections";
+import { categoryFaq } from "@/lib/category-defaults";
 
 export const revalidate = 120;
 
@@ -158,14 +160,22 @@ export default async function LitsPillar() {
           </section>
         )}
 
+        {/* Sections SEO enrichies */}
+        <CategorySeoSections productType="lit" categoryLabel="lit" />
+
         {/* Sections éditoriales depuis Sanity */}
-        {pillar?.sections && <Sections sections={pillar.sections} />}
+        {pillar?.sections && (
+          <div className="mt-16 md:mt-20">
+            <Sections sections={pillar.sections} />
+          </div>
+        )}
       </main>
 
       <Footer settings={siteSettings} />
 
       <JsonLd data={organizationSchema({ name: "DreamsFly" })} />
       <JsonLd data={breadcrumbSchema(breadcrumbs)} />
+      <JsonLd data={faqSchema(categoryFaq("lit"))} />
     </>
   );
 }

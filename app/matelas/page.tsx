@@ -8,7 +8,9 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { Sections } from "@/components/landing/blocks";
 import { buildMetadata } from "@/lib/seo/metadata";
-import { JsonLd, breadcrumbSchema, organizationSchema } from "@/lib/seo/jsonld";
+import { JsonLd, breadcrumbSchema, organizationSchema, faqSchema } from "@/lib/seo/jsonld";
+import { CategorySeoSections } from "@/components/category/category-seo-sections";
+import { categoryFaq } from "@/lib/category-defaults";
 import { urlFor } from "@/lib/sanity/image";
 
 export const revalidate = 120;
@@ -218,14 +220,22 @@ export default async function MatelasPillar({ searchParams }: { searchParams: Se
           )}
         </section>
 
+        {/* Sections SEO enrichies (avantages, guide, comparatif, conseils, entretien, FAQ) */}
+        <CategorySeoSections productType="matelas" categoryLabel="matelas" />
+
         {/* Sections éditoriales depuis Sanity */}
-        {pillar?.sections && <Sections sections={pillar.sections} />}
+        {pillar?.sections && (
+          <div className="mt-16 md:mt-20">
+            <Sections sections={pillar.sections} />
+          </div>
+        )}
       </main>
 
       <Footer settings={siteSettings} />
 
       <JsonLd data={organizationSchema({ name: "DreamsFly" })} />
       <JsonLd data={breadcrumbSchema(breadcrumbs)} />
+      <JsonLd data={faqSchema(categoryFaq("matelas"))} />
     </>
   );
 }
