@@ -38,18 +38,23 @@ const SIZE_TILES = ["90 x 190", "140 x 190", "160 x 200", "180 x 200", "140 x 20
  * Accepte tous les formats : "90x190", "90 x 190", "90×190", "90X190",
  * "90x190 cm", "90 x 190cm", etc.
  */
-function extractDimensions(s?: string): { w?: number; l?: number } {
-  if (!s) return {};
-  // Accepte : x, X, ×, /, - comme séparateurs, avec ou sans espaces
-  const m = String(s).match(/(\d{2,3})\s*[xX×/\-]\s*(\d{2,3})/);
-  if (!m) return {};
-  return { w: parseInt(m[1], 10), l: parseInt(m[2], 10) };
+/**
+ * Extrait les 2 premiers nombres 2-3 chiffres d'un texte, triés.
+ * Marche pour n'importe quel séparateur : x, X, ×, /, -, espace, cm, texte...
+ * Ex : "90x190" → [90, 190] ; "90 / 190 cm" → [90, 190] ; "L 90 · l 190" → [90, 190]
+ */
+function extractDimensionsSet(s?: string): number[] {
+  if (!s) return [];
+  const nums = String(s).match(/\d{2,3}/g);
+  if (!nums || nums.length < 2) return [];
+  return nums.slice(0, 2).map((n) => parseInt(n, 10)).sort((a, b) => a - b);
 }
 
 function sizesMatch(a?: string, b?: string): boolean {
-  const da = extractDimensions(a);
-  const db = extractDimensions(b);
-  return !!da.w && !!db.w && da.w === db.w && da.l === db.l;
+  const da = extractDimensionsSet(a);
+  const db = extractDimensionsSet(b);
+  if (da.length !== 2 || db.length !== 2) return false;
+  return da[0] === db[0] && da[1] === db[1];
 }
 
 export async function generateMetadata({ searchParams }: { searchParams: SearchParams }): Promise<Metadata> {
