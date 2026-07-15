@@ -20,6 +20,7 @@ export const landingPage = defineType({
     { name: "main", title: "Page", default: true },
     { name: "seo", title: "SEO & schema.org" },
     { name: "sections", title: "Sections" },
+    { name: "categorySeo", title: "📖 SEO catégorie (override)" },
     { name: "linking", title: "Maillage" },
     { name: "publish", title: "Publication" },
   ],
@@ -638,6 +639,162 @@ export const landingPage = defineType({
         }),
       ],
       options: { sortable: true },
+    }),
+
+    // ═══════════════════════════════════════════════════════════
+    // SEO CATÉGORIE — sections optionnelles qui écrasent les défauts code
+    // ═══════════════════════════════════════════════════════════
+    defineField({
+      name: "categoryAdvantagesOverride",
+      title: "⚡ Avantages catégorie (override)",
+      type: "array",
+      group: "categorySeo",
+      description:
+        "Laisse vide pour utiliser les 6 avantages par défaut selon le type de page (matelas, lit…). Sinon remplace complètement.",
+      of: [
+        defineArrayMember({
+          type: "object",
+          fields: [
+            { name: "icon", type: "string", title: "Emoji" },
+            { name: "title", type: "string", title: "Titre court" },
+            { name: "text", type: "text", rows: 2, title: "Phrase courte" },
+          ],
+          preview: { select: { title: "title", subtitle: "text" } },
+        }),
+      ],
+    }),
+    defineField({
+      name: "buyingCriteriaOverride",
+      title: "📖 Guide d'achat — critères (override)",
+      type: "array",
+      group: "categorySeo",
+      description: "Critères clés à considérer avant d'acheter.",
+      of: [
+        defineArrayMember({
+          type: "object",
+          fields: [
+            { name: "icon", type: "string", title: "Emoji" },
+            { name: "label", type: "string", title: "Critère" },
+            { name: "text", type: "text", rows: 2, title: "Explication" },
+          ],
+          preview: { select: { title: "label", subtitle: "text" } },
+        }),
+      ],
+    }),
+    defineField({
+      name: "categoryTipsOverride",
+      title: "💡 Conseils d'expert (override)",
+      type: "array",
+      group: "categorySeo",
+      description: "Chaque conseil peut citer sa source (INSV, INSERM…) pour le score EEAT.",
+      of: [
+        defineArrayMember({
+          type: "object",
+          fields: [
+            { name: "icon", type: "string", title: "Emoji" },
+            { name: "title", type: "string", title: "Titre du conseil" },
+            { name: "text", type: "text", rows: 3, title: "Explication" },
+            {
+              name: "source",
+              type: "object",
+              title: "Source (optionnel)",
+              fields: [
+                { name: "label", type: "string", title: "Nom" },
+                { name: "url", type: "url", title: "URL (optionnel)" },
+              ],
+            },
+          ],
+          preview: { select: { title: "title", subtitle: "text" } },
+        }),
+      ],
+    }),
+    defineField({
+      name: "categoryCareStepsOverride",
+      title: "🧺 Entretien — étapes (override)",
+      type: "array",
+      group: "categorySeo",
+      description: "3-4 gestes courts avec fréquence.",
+      of: [
+        defineArrayMember({
+          type: "object",
+          fields: [
+            { name: "icon", type: "string", title: "Emoji" },
+            { name: "frequency", type: "string", title: "Fréquence" },
+            { name: "title", type: "string", title: "Action" },
+            { name: "text", type: "text", rows: 2, title: "Comment faire" },
+          ],
+          preview: { select: { title: "title", subtitle: "frequency" } },
+        }),
+      ],
+    }),
+    defineField({
+      name: "categoryFaqOverride",
+      title: "❓ FAQ catégorie (override)",
+      type: "array",
+      group: "categorySeo",
+      description:
+        "Questions/réponses spécifiques. Injecté en JSON-LD FAQPage pour Google rich snippet.",
+      of: [
+        defineArrayMember({
+          type: "object",
+          fields: [
+            { name: "question", type: "string", title: "Question", validation: (r) => r.required() },
+            { name: "answer", type: "text", rows: 4, title: "Réponse", validation: (r) => r.required() },
+          ],
+          preview: { select: { title: "question", subtitle: "answer" } },
+        }),
+      ],
+    }),
+    defineField({
+      name: "categoryComparisonOverride",
+      title: "📊 Comparatif — tableau (override)",
+      type: "object",
+      group: "categorySeo",
+      description:
+        "Tableau comparatif de technologies/matières. Laisse vide pour utiliser le comparatif par défaut (matelas → 4 technos, lit → 4 matières).",
+      fields: [
+        {
+          name: "columns",
+          type: "array",
+          title: "Colonnes (noms des options comparées)",
+          of: [{ type: "string" }],
+        },
+        {
+          name: "recommendedIndex",
+          type: "number",
+          title: "Index de la colonne recommandée (0 = 1re, 1 = 2e...)",
+          description: "Cette colonne sera mise en avant en fond midnight.",
+        },
+        {
+          name: "rows",
+          type: "array",
+          title: "Lignes (critères comparés)",
+          of: [
+            defineArrayMember({
+              type: "object",
+              fields: [
+                { name: "criterion", type: "string", title: "Critère (ex. « Confort général »)" },
+                {
+                  name: "values",
+                  type: "array",
+                  title: "Valeurs (une par colonne, dans le même ordre)",
+                  of: [{ type: "string" }],
+                },
+              ],
+              preview: { select: { title: "criterion" } },
+            }),
+          ],
+        },
+      ],
+    }),
+    defineField({
+      name: "categorySeoHidden",
+      title: "🚫 Masquer les sections SEO catégorie par défaut",
+      type: "boolean",
+      group: "categorySeo",
+      description:
+        "Coche pour cacher entièrement le bloc SEO catégorie sur cette page (ex. si tu veux garder uniquement des sections éditoriales sur-mesure).",
+      initialValue: false,
     }),
 
     // ─── Maillage (tags) ───

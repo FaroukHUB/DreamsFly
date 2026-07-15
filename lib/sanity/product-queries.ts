@@ -66,6 +66,13 @@ export const pillarPageQuery = groq`
         }
       }
     },
+    categoryAdvantagesOverride,
+    buyingCriteriaOverride,
+    categoryTipsOverride,
+    categoryCareStepsOverride,
+    categoryFaqOverride,
+    categoryComparisonOverride,
+    categorySeoHidden,
     publishedAt
   }
 `;
@@ -136,6 +143,13 @@ export const pillarLitsQuery = groq`
         }
       }
     },
+    categoryAdvantagesOverride,
+    buyingCriteriaOverride,
+    categoryTipsOverride,
+    categoryCareStepsOverride,
+    categoryFaqOverride,
+    categoryComparisonOverride,
+    categorySeoHidden,
     publishedAt
   }
 `;

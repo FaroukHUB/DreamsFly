@@ -14,18 +14,54 @@ import {
   buyingCriteria,
 } from "@/lib/category-defaults";
 
+type Overrides = {
+  categoryAdvantagesOverride?: any[];
+  buyingCriteriaOverride?: any[];
+  categoryTipsOverride?: any[];
+  categoryCareStepsOverride?: any[];
+  categoryFaqOverride?: any[];
+  categoryComparisonOverride?: {
+    columns?: string[];
+    recommendedIndex?: number;
+    rows?: { criterion?: string; values?: string[] }[];
+  };
+  categorySeoHidden?: boolean;
+};
+
 type Props = {
   productType: "matelas" | "lit" | "sommier" | "oreiller" | string;
   categoryLabel: string; // « matelas », « lits », etc.
+  overrides?: Overrides;
 };
 
-export function CategorySeoSections({ productType, categoryLabel }: Props) {
-  const advantages = categoryAdvantages(productType);
-  const tips = categoryTips(productType);
-  const careSteps = categoryCareSteps(productType);
-  const faq = categoryFaq(productType);
-  const comparison = categoryComparison(productType);
-  const criteria = buyingCriteria(productType);
+export function CategorySeoSections({ productType, categoryLabel, overrides }: Props) {
+  if (overrides?.categorySeoHidden) return null;
+
+  const advantages = overrides?.categoryAdvantagesOverride?.length
+    ? overrides.categoryAdvantagesOverride
+    : categoryAdvantages(productType);
+  const tips = overrides?.categoryTipsOverride?.length
+    ? overrides.categoryTipsOverride
+    : categoryTips(productType);
+  const careSteps = overrides?.categoryCareStepsOverride?.length
+    ? overrides.categoryCareStepsOverride
+    : categoryCareSteps(productType);
+  const faq = overrides?.categoryFaqOverride?.length
+    ? overrides.categoryFaqOverride
+    : categoryFaq(productType);
+  const criteria = overrides?.buyingCriteriaOverride?.length
+    ? overrides.buyingCriteriaOverride
+    : buyingCriteria(productType);
+  const comparison = overrides?.categoryComparisonOverride?.columns?.length
+    ? {
+        columns: overrides.categoryComparisonOverride.columns,
+        recommendedIndex: overrides.categoryComparisonOverride.recommendedIndex,
+        rows: (overrides.categoryComparisonOverride.rows || []).map((r) => ({
+          criterion: r.criterion || "",
+          values: r.values || [],
+        })),
+      }
+    : categoryComparison(productType);
 
   return (
     <>

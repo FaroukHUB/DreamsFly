@@ -161,7 +161,7 @@ export default async function LitsPillar() {
         )}
 
         {/* Sections SEO enrichies */}
-        <CategorySeoSections productType="lit" categoryLabel="lit" />
+        <CategorySeoSections productType="lit" categoryLabel="lit" overrides={pillar} />
 
         {/* Sections éditoriales depuis Sanity */}
         {pillar?.sections && (
@@ -175,7 +175,11 @@ export default async function LitsPillar() {
 
       <JsonLd data={organizationSchema({ name: "DreamsFly" })} />
       <JsonLd data={breadcrumbSchema(breadcrumbs)} />
-      <JsonLd data={faqSchema(categoryFaq("lit"))} />
+      <JsonLd
+        data={faqSchema(
+          pillar?.categoryFaqOverride?.length ? pillar.categoryFaqOverride : categoryFaq("lit")
+        )}
+      />
     </>
   );
 }

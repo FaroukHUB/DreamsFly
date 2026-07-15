@@ -221,7 +221,7 @@ export default async function MatelasPillar({ searchParams }: { searchParams: Se
         </section>
 
         {/* Sections SEO enrichies (avantages, guide, comparatif, conseils, entretien, FAQ) */}
-        <CategorySeoSections productType="matelas" categoryLabel="matelas" />
+        <CategorySeoSections productType="matelas" categoryLabel="matelas" overrides={pillar} />
 
         {/* Sections éditoriales depuis Sanity */}
         {pillar?.sections && (
@@ -235,7 +235,11 @@ export default async function MatelasPillar({ searchParams }: { searchParams: Se
 
       <JsonLd data={organizationSchema({ name: "DreamsFly" })} />
       <JsonLd data={breadcrumbSchema(breadcrumbs)} />
-      <JsonLd data={faqSchema(categoryFaq("matelas"))} />
+      <JsonLd
+        data={faqSchema(
+          pillar?.categoryFaqOverride?.length ? pillar.categoryFaqOverride : categoryFaq("matelas")
+        )}
+      />
     </>
   );
 }
