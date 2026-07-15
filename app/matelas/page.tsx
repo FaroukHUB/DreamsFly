@@ -91,9 +91,15 @@ export default async function MatelasPillar({ searchParams }: { searchParams: Se
     products = products.filter((p: any) => p.type === type);
   }
   if (size) {
-    products = products.filter((p: any) =>
-      (p.variants || []).some((v: any) => sizesMatch(v.size, size))
-    );
+    products = products.filter((p: any) => {
+      // Cherche les dimensions dans toutes les sources possibles
+      const inVariants = (p.variants || []).some((v: any) => sizesMatch(v.size, size));
+      const inTitle = sizesMatch(p.title, size);
+      const inName = sizesMatch(p.name, size);
+      const inSlug = sizesMatch(p.slug, size);
+      const inTagline = sizesMatch(p.tagline, size);
+      return inVariants || inTitle || inName || inSlug || inTagline;
+    });
   }
 
   const activeFilter = type ? TYPE_LABELS[type] || type : size || null;
