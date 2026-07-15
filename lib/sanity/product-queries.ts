@@ -44,6 +44,7 @@ export const allProductsForPillarQuery = groq`
     "image": images[0],
     "minPrice": variants[0].price,
     "compareAtPrice": variants[0].compareAtPrice,
+    "variants": variants[]{ size },
     badges, rating
   }
 `;

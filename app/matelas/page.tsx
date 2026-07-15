@@ -8,22 +8,45 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { Sections } from "@/components/landing/blocks";
 import { buildMetadata } from "@/lib/seo/metadata";
-import {
-  JsonLd,
-  breadcrumbSchema,
-  organizationSchema,
-} from "@/lib/seo/jsonld";
+import { JsonLd, breadcrumbSchema, organizationSchema } from "@/lib/seo/jsonld";
 import { urlFor } from "@/lib/sanity/image";
 
 export const revalidate = 120;
 
-export async function generateMetadata(): Promise<Metadata> {
-  const pillar = sanityClient
-    ? await sanityClient.fetch<any>(pillarPageQuery).catch(() => null)
-    : null;
+type SearchParams = Promise<{ type?: string; size?: string }>;
+
+const TYPE_LABELS: Record<string, string> = {
+  "memoire-ressorts": "Mémoire de forme",
+  "mousse-hr-ressorts": "Hybride",
+  "mousse-ressorts": "Ressorts ensachés",
+  "mousse-polyurethane": "Mousse polyuréthane",
+};
+
+const TYPE_TILES = [
+  { slug: "memoire-ressorts", title: "Mémoire de forme", subtitle: "Enveloppant · Soulagement des points de pression" },
+  { slug: "mousse-hr-ressorts", title: "Hybride", subtitle: "Mémoire de forme + ressorts ensachés" },
+  { slug: "mousse-ressorts", title: "Ressorts ensachés", subtitle: "Indépendance de couchage maximale" },
+  { slug: "mousse-polyurethane", title: "Mousse polyuréthane", subtitle: "Excellent rapport qualité-prix" },
+];
+
+const SIZE_TILES = ["90 x 190", "140 x 190", "160 x 200", "180 x 200", "140 x 200"];
+
+function normalizeSize(s?: string): string {
+  return (s || "").toLowerCase().replace(/\s|cm/g, "").replace(/x/g, "x");
+}
+
+export async function generateMetadata({ searchParams }: { searchParams: SearchParams }): Promise<Metadata> {
+  const { type, size } = await searchParams;
+  const pillar = sanityClient ? await sanityClient.fetch<any>(pillarPageQuery).catch(() => null) : null;
+
+  const filterLabel = type
+    ? ` — ${TYPE_LABELS[type] || type}`
+    : size
+      ? ` — ${size}`
+      : "";
 
   return buildMetadata({
-    title: pillar?.metaTitle || pillar?.h1 || "Tous nos matelas",
+    title: (pillar?.metaTitle || pillar?.h1 || "Tous nos matelas") + filterLabel,
     description:
       pillar?.metaDescription ||
       "Découvrez l'intégralité des matelas DreamsFly : mémoire de forme, hybride, ressorts ensachés, mousse polyuréthane. Confection française.",
@@ -31,12 +54,29 @@ export async function generateMetadata(): Promise<Metadata> {
   });
 }
 
-export default async function MatelasPillar() {
-  const [pillar, products, siteSettings] = await Promise.all([
+export default async function MatelasPillar({ searchParams }: { searchParams: SearchParams }) {
+  const { type, size } = await searchParams;
+
+  const [pillar, allProducts, siteSettings] = await Promise.all([
     sanityClient?.fetch<any>(pillarPageQuery).catch(() => null) ?? null,
     sanityClient?.fetch<any[]>(allProductsForPillarQuery).catch(() => []) ?? [],
     sanityClient?.fetch<any>(siteSettingsQuery).catch(() => null) ?? null,
   ]);
+
+  // Filtrage server-side
+  let products = allProducts;
+  if (type) {
+    products = products.filter((p: any) => p.type === type);
+  }
+  if (size) {
+    const target = normalizeSize(size);
+    products = products.filter((p: any) =>
+      (p.variants || []).some((v: any) => normalizeSize(v.size) === target)
+    );
+  }
+
+  const activeFilter = type ? TYPE_LABELS[type] || type : size || null;
+  const clearFilterHref = "/matelas#modeles";
 
   const h1 = pillar?.h1 || "Tous nos matelas DreamsFly";
   const intro =
@@ -52,7 +92,7 @@ export default async function MatelasPillar() {
     <>
       <Header settings={siteSettings} />
 
-      <main className="mx-auto max-w-site px-8 py-12 md:py-16">
+      <main className="mx-auto max-w-site px-6 py-12 md:px-8 md:py-16">
         {/* Breadcrumbs */}
         <nav aria-label="Fil d'Ariane" className="mb-8 flex items-center gap-1.5 text-sm text-pierre">
           <Link href="/" className="hover:text-midnight">Accueil</Link>
@@ -61,71 +101,85 @@ export default async function MatelasPillar() {
         </nav>
 
         {/* H1 + intro */}
-        <header className="mb-16 max-w-3xl">
+        <header className="mb-14 max-w-3xl md:mb-16">
           <div className="eyebrow mb-3">Collection complète</div>
-          <h1 className="font-sora text-4xl font-semibold leading-tight tracking-tight text-ink md:text-5xl lg:text-6xl">
+          <h1 className="font-sora text-3xl font-semibold leading-tight tracking-tight text-ink md:text-5xl lg:text-6xl">
             {h1}
           </h1>
-          <p className="mt-6 text-lg leading-relaxed text-pierre md:text-xl">{intro}</p>
+          <p className="mt-5 text-base leading-relaxed text-pierre md:mt-6 md:text-xl">{intro}</p>
         </header>
 
         {/* Explorer par technologie */}
-        <section className="mb-20">
-          <h2 className="mb-2 font-sora text-2xl font-semibold tracking-tight text-ink md:text-3xl">
+        <section className="mb-14 md:mb-16">
+          <h2 className="mb-2 font-sora text-xl font-semibold tracking-tight text-ink md:text-3xl">
             Par technologie
           </h2>
-          <p className="mb-8 max-w-xl text-pierre">
-            Chaque technologie a ses atouts. Découvrez celle qui correspond à votre profil de sommeil.
+          <p className="mb-6 max-w-xl text-pierre md:mb-8">
+            Chaque technologie a ses atouts. Cliquez pour filtrer la collection.
           </p>
-          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-            <ExploreTile
-              title="Mémoire de forme"
-              subtitle="Enveloppant · Soulagement points de pression"
-              href="/matelas-memoire-de-forme"
-            />
-            <ExploreTile
-              title="Hybride"
-              subtitle="Mémoire de forme + ressorts ensachés"
-              href="/matelas-hybride"
-            />
-            <ExploreTile
-              title="Ressorts ensachés"
-              subtitle="Indépendance de couchage maximale"
-              href="/matelas-ressorts-ensaches"
-            />
-            <ExploreTile
-              title="Mousse polyuréthane"
-              subtitle="Excellent rapport qualité-prix"
-              href="/matelas-mousse"
-            />
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-4">
+            {TYPE_TILES.map((t) => (
+              <FilterTile
+                key={t.slug}
+                title={t.title}
+                subtitle={t.subtitle}
+                href={`/matelas?type=${t.slug}#modeles`}
+                active={type === t.slug}
+              />
+            ))}
           </div>
         </section>
 
         {/* Explorer par taille */}
-        <section className="mb-20">
-          <h2 className="mb-2 font-sora text-2xl font-semibold tracking-tight text-ink md:text-3xl">
+        <section className="mb-14 md:mb-16">
+          <h2 className="mb-2 font-sora text-xl font-semibold tracking-tight text-ink md:text-3xl">
             Par taille
           </h2>
-          <p className="mb-8 max-w-xl text-pierre">
-            Du studio compact au lit king size, retrouvez le format adapté à votre chambre.
+          <p className="mb-6 max-w-xl text-pierre md:mb-8">
+            Du studio compact au lit king size — filtrez la collection par format.
           </p>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
-            <ExploreTile compact title="90 × 190" href="/matelas-90x190" />
-            <ExploreTile compact title="140 × 190" href="/matelas-140x190" highlighted />
-            <ExploreTile compact title="160 × 200" href="/matelas-160x200" />
-            <ExploreTile compact title="180 × 200" href="/matelas-180x200" />
-            <ExploreTile compact title="140 × 200" href="/matelas-140x200" />
+          <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 md:gap-3 lg:grid-cols-5">
+            {SIZE_TILES.map((s) => {
+              const paramValue = s.replace(/\s/g, "").toLowerCase();
+              const isActive = size === paramValue || normalizeSize(size) === normalizeSize(s);
+              return (
+                <FilterTile
+                  key={s}
+                  compact
+                  title={s.replace(/ /g, "")}
+                  href={`/matelas?size=${paramValue}#modeles`}
+                  active={isActive}
+                />
+              );
+            })}
           </div>
         </section>
 
-        {/* Tous les produits */}
-        {products.length > 0 && (
-          <section className="mb-20">
-            <h2 className="mb-8 font-sora text-2xl font-semibold tracking-tight text-ink md:text-3xl">
-              La collection complète
-            </h2>
+        {/* Grille produits + indicateur filtre actif */}
+        <section id="modeles" className="mb-16 scroll-mt-20 md:mb-20">
+          <div className="mb-6 flex flex-col gap-3 md:mb-8 md:flex-row md:items-end md:justify-between">
+            <div>
+              <h2 className="font-sora text-xl font-semibold tracking-tight text-ink md:text-3xl">
+                {activeFilter ? `Matelas — ${activeFilter}` : "La collection complète"}
+              </h2>
+              <p className="mt-1 text-sm text-pierre md:text-base">
+                {products.length} modèle{products.length > 1 ? "s" : ""} disponible{products.length > 1 ? "s" : ""}
+                {activeFilter && ` (sur ${allProducts.length})`}
+              </p>
+            </div>
+            {activeFilter && (
+              <Link
+                href={clearFilterHref}
+                className="inline-flex w-fit items-center gap-2 rounded-pill border border-border bg-white px-4 py-2 text-sm font-medium text-midnight hover:border-midnight"
+              >
+                ✕ Retirer le filtre
+              </Link>
+            )}
+          </div>
+
+          {products.length > 0 ? (
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {products.map((p) => (
+              {products.map((p: any) => (
                 <Link
                   key={p._id}
                   href={`/matelas/${p.slug}`}
@@ -154,8 +208,15 @@ export default async function MatelasPillar() {
                 </Link>
               ))}
             </div>
-          </section>
-        )}
+          ) : (
+            <div className="rounded-2xl border border-border bg-sable p-8 text-center">
+              <p className="text-pierre">Aucun matelas ne correspond à ce filtre.</p>
+              <Link href={clearFilterHref} className="mt-4 inline-block text-sm font-semibold text-midnight underline">
+                Voir tous les matelas
+              </Link>
+            </div>
+          )}
+        </section>
 
         {/* Sections éditoriales depuis Sanity */}
         {pillar?.sections && <Sections sections={pillar.sections} />}
@@ -169,36 +230,40 @@ export default async function MatelasPillar() {
   );
 }
 
-function ExploreTile({
+function FilterTile({
   title,
   subtitle,
   href,
   compact,
-  highlighted,
+  active,
 }: {
   title: string;
   subtitle?: string;
   href: string;
   compact?: boolean;
-  highlighted?: boolean;
+  active?: boolean;
 }) {
   return (
     <Link
       href={href}
-      className={`group flex flex-col justify-between rounded-2xl border p-5 transition-all hover:-translate-y-1 ${
-        highlighted
+      className={`group flex flex-col justify-between rounded-2xl border p-4 transition-all hover:-translate-y-1 md:p-5 ${
+        active
           ? "border-midnight bg-midnight text-white hover:bg-midnight-dark"
           : "border-border bg-ivoire text-ink hover:border-midnight"
-      } ${compact ? "min-h-[90px]" : "min-h-[140px]"}`}
+      } ${compact ? "min-h-[80px] md:min-h-[90px]" : "min-h-[130px] md:min-h-[140px]"}`}
     >
       <div>
-        <h3 className={`font-sora ${compact ? "text-base" : "text-lg"} font-semibold tracking-tight`}>
+        <h3 className={`font-sora ${compact ? "text-sm md:text-base" : "text-base md:text-lg"} font-semibold tracking-tight`}>
           {title}
         </h3>
-        {subtitle && <p className={`mt-1.5 text-[13px] ${highlighted ? "text-white/75" : "text-pierre"}`}>{subtitle}</p>}
+        {subtitle && (
+          <p className={`mt-1 text-[12px] md:text-[13px] ${active ? "text-white/75" : "text-pierre"}`}>
+            {subtitle}
+          </p>
+        )}
       </div>
-      <span className={`mt-3 text-xs font-semibold uppercase tracking-wide ${highlighted ? "text-aurora" : "text-midnight"}`}>
-        Explorer →
+      <span className={`mt-3 text-[10px] font-semibold uppercase tracking-widest md:text-xs ${active ? "text-aurora" : "text-midnight"}`}>
+        {active ? "Filtré ✓" : "Filtrer →"}
       </span>
     </Link>
   );
