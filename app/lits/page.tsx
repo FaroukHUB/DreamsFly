@@ -15,13 +15,54 @@ import { categoryFaq } from "@/lib/category-defaults";
 
 export const revalidate = 120;
 
-export async function generateMetadata(): Promise<Metadata> {
-  const pillar = sanityClient
-    ? await sanityClient.fetch<any>(pillarLitsQuery).catch(() => null)
-    : null;
+type SearchParams = Promise<{ material?: string; size?: string }>;
+
+const MATERIAL_LABELS: Record<string, string> = {
+  velours: "Velours",
+  "tissu-trame": "Tissu tramé",
+  lin: "Lin",
+  capitonne: "Capitonné",
+  "simili-cuir": "Simili cuir",
+};
+
+/** Extraction fuzzy des 2 nombres de dimension (marche pour tous séparateurs). */
+function extractDimensionsSet(s?: string): number[] {
+  if (!s) return [];
+  const nums = String(s).match(/\d{2,3}/g);
+  if (!nums || nums.length < 2) return [];
+  return nums.slice(0, 2).map((n) => parseInt(n, 10)).sort((a, b) => a - b);
+}
+function sizesMatch(a?: string, b?: string): boolean {
+  const da = extractDimensionsSet(a);
+  const db = extractDimensionsSet(b);
+  if (da.length !== 2 || db.length !== 2) return false;
+  return da[0] === db[0] && da[1] === db[1];
+}
+
+/** Détecte la matière depuis titre/tagline/champ litMaterial. */
+function detectMaterial(product: any): string | null {
+  if (product.litMaterial) return product.litMaterial;
+  const text = `${product.title || ""} ${product.tagline || ""} ${product.name || ""}`.toLowerCase();
+  if (/velour/.test(text)) return "velours";
+  if (/capiton|matelass/.test(text)) return "capitonne";
+  if (/\blin\b/.test(text)) return "lin";
+  if (/simili|cuir/.test(text)) return "simili-cuir";
+  if (/tissu|trame/.test(text)) return "tissu-trame";
+  return null;
+}
+
+export async function generateMetadata({ searchParams }: { searchParams: SearchParams }): Promise<Metadata> {
+  const { material, size } = await searchParams;
+  const pillar = sanityClient ? await sanityClient.fetch<any>(pillarLitsQuery).catch(() => null) : null;
+
+  const filterLabel = material
+    ? ` — ${MATERIAL_LABELS[material] || material}`
+    : size
+      ? ` — ${size}`
+      : "";
 
   return buildMetadata({
-    title: pillar?.metaTitle || pillar?.h1 || "Lits coffre & lits une place — DreamsFly",
+    title: (pillar?.metaTitle || pillar?.h1 || "Lits coffre & lits une place — DreamsFly") + filterLabel,
     description:
       pillar?.metaDescription ||
       "Découvrez notre collection de lits coffre et lits une place : rangement optimisé, tissus premium (velours, lin, capitonné), livraison à domicile. Fabriqués en Europe.",
@@ -29,12 +70,36 @@ export async function generateMetadata(): Promise<Metadata> {
   });
 }
 
-export default async function LitsPillar() {
-  const [pillar, products, siteSettings] = await Promise.all([
+export default async function LitsPillar({ searchParams }: { searchParams: SearchParams }) {
+  const { material, size } = await searchParams;
+
+  const [pillar, allProducts, siteSettings] = await Promise.all([
     sanityClient?.fetch<any>(pillarLitsQuery).catch(() => null) ?? null,
     sanityClient?.fetch<any[]>(allLitsQuery).catch(() => []) ?? [],
     sanityClient?.fetch<any>(siteSettingsQuery).catch(() => null) ?? null,
   ]);
+
+  // Filtre server-side
+  let products = allProducts;
+  if (material) {
+    products = products.filter((p: any) => detectMaterial(p) === material);
+  }
+  if (size) {
+    products = products.filter((p: any) => {
+      const inVariants = (p.variants || []).some((v: any) => sizesMatch(v.size, size));
+      return inVariants || sizesMatch(p.title, size) || sizesMatch(p.name, size) || sizesMatch(p.slug, size) || sizesMatch(p.tagline, size);
+    });
+  }
+
+  // Comptage pour les tuiles (basé sur allProducts, pas products filtré)
+  const countByMaterial: Record<string, number> = {};
+  for (const p of allProducts) {
+    const m = detectMaterial(p);
+    if (m) countByMaterial[m] = (countByMaterial[m] || 0) + 1;
+  }
+
+  const activeFilter = material ? MATERIAL_LABELS[material] || material : size || null;
+  const clearFilterHref = "/lits#modeles";
 
   const h1 = pillar?.h1 || "Lits coffre & lits une place DreamsFly";
   const intro =
@@ -46,12 +111,19 @@ export default async function LitsPillar() {
     { name: "Lits", url: "/lits" },
   ];
 
-  // Détection matière depuis titre/tagline pour explorers
-  const byMaterial = {
-    velours: products.filter((p) => /velours/i.test(p.title || "")),
-    tissu: products.filter((p) => /tissu/i.test(p.title || "") && !/velours/i.test(p.title || "")),
-    capitonne: products.filter((p) => /capiton|matelass/i.test(p.title || "")),
-  };
+  const MATERIAL_TILES = [
+    { slug: "velours", title: "Velours", subtitle: "Toucher chaleureux", accent: "from-midnight to-midnight-dark text-white" },
+    { slug: "tissu-trame", title: "Tissu tramé", subtitle: "Sobriété contemporaine", accent: "from-aurora to-ivoire text-ink" },
+    { slug: "capitonne", title: "Capitonné", subtitle: "Élégance travaillée", accent: "from-sable to-ivoire text-ink" },
+  ];
+
+  const SIZE_TILES = [
+    { label: "90 × 190", subtitle: "Une place", param: "90x190" },
+    { label: "140 × 190", subtitle: "Deux places", param: "140x190" },
+    { label: "140 × 200", subtitle: "Deux places", param: "140x200" },
+    { label: "160 × 200", subtitle: "Queen", param: "160x200" },
+    { label: "180 × 200", subtitle: "King", param: "180x200" },
+  ];
 
   return (
     <>
@@ -80,24 +152,32 @@ export default async function LitsPillar() {
             Par matière
           </h2>
           <p className="mb-6 max-w-xl text-pierre md:mb-8">
-            Chaque tissu a sa personnalité — profondeur du velours, sobriété du tissu tramé, élégance du capitonné.
+            Chaque tissu a sa personnalité — cliquez pour filtrer la collection.
           </p>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-            <MaterialTile
-              title="Velours"
-              subtitle={`${byMaterial.velours.length} modèle${byMaterial.velours.length > 1 ? "s" : ""} · Toucher chaleureux`}
-              accent="from-midnight to-midnight-dark text-white"
-            />
-            <MaterialTile
-              title="Tissu tramé"
-              subtitle={`${byMaterial.tissu.length} modèle${byMaterial.tissu.length > 1 ? "s" : ""} · Sobriété contemporaine`}
-              accent="from-aurora to-ivoire text-ink"
-            />
-            <MaterialTile
-              title="Capitonné"
-              subtitle={`${byMaterial.capitonne.length} modèle${byMaterial.capitonne.length > 1 ? "s" : ""} · Élégance travaillée`}
-              accent="from-sable to-ivoire text-ink"
-            />
+            {MATERIAL_TILES.map((t) => {
+              const count = countByMaterial[t.slug] || 0;
+              const isActive = material === t.slug;
+              return (
+                <Link
+                  key={t.slug}
+                  href={`/lits?material=${t.slug}#modeles`}
+                  className={`group relative flex flex-col justify-between rounded-2xl bg-gradient-to-br p-6 transition-all hover:-translate-y-1 ${t.accent} ${
+                    isActive ? "ring-2 ring-midnight ring-offset-2" : ""
+                  } min-h-[140px]`}
+                >
+                  <div>
+                    <h3 className="font-sora text-xl font-semibold tracking-tight">{t.title}</h3>
+                    <p className="mt-1.5 text-[13px] opacity-80">
+                      {count} modèle{count > 1 ? "s" : ""} · {t.subtitle}
+                    </p>
+                  </div>
+                  <span className="mt-4 text-xs font-semibold uppercase tracking-wide opacity-90">
+                    {isActive ? "Filtré ✓" : "Filtrer →"}
+                  </span>
+                </Link>
+              );
+            })}
           </div>
         </section>
 
@@ -110,25 +190,61 @@ export default async function LitsPillar() {
             Du lit une place pour la chambre d'ami au format king size pour la chambre parentale.
           </p>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-4 lg:grid-cols-5">
-            <ExploreTile compact title="90 × 190" subtitle="Une place" />
-            <ExploreTile compact title="140 × 190" subtitle="Deux places" highlighted />
-            <ExploreTile compact title="140 × 200" subtitle="Deux places" />
-            <ExploreTile compact title="160 × 200" subtitle="Queen" />
-            <ExploreTile compact title="180 × 200" subtitle="King" />
+            {SIZE_TILES.map((s) => {
+              const isActive = sizesMatch(size, s.param);
+              return (
+                <Link
+                  key={s.param}
+                  href={`/lits?size=${s.param}#modeles`}
+                  className={`flex flex-col justify-between rounded-2xl border p-4 transition-all hover:-translate-y-1 md:p-5 ${
+                    isActive
+                      ? "border-midnight bg-midnight text-white"
+                      : "border-border bg-ivoire text-ink hover:border-midnight"
+                  } min-h-[80px] md:min-h-[90px]`}
+                >
+                  <div>
+                    <h3 className="font-sora text-sm font-semibold tracking-tight md:text-base">
+                      {s.label}
+                    </h3>
+                    <p className={`mt-1 text-[11px] md:text-[13px] ${isActive ? "text-white/75" : "text-pierre"}`}>
+                      {s.subtitle}
+                    </p>
+                  </div>
+                  <span className={`mt-2 text-[10px] font-semibold uppercase tracking-widest md:text-xs ${isActive ? "text-aurora" : "text-midnight"}`}>
+                    {isActive ? "Filtré ✓" : "Filtrer →"}
+                  </span>
+                </Link>
+              );
+            })}
           </div>
         </section>
 
-        {/* Tous les lits */}
-        {products.length > 0 && (
-          <section className="mb-16 md:mb-20">
-            <h2 className="mb-2 font-sora text-xl font-semibold tracking-tight text-ink md:text-3xl">
-              La collection complète
-            </h2>
-            <p className="mb-8 text-pierre">
-              {products.length} lits · Livraison gratuite · Paiement en plusieurs fois
-            </p>
+        {/* Tous les lits + indicateur de filtre */}
+        <section id="modeles" className="mb-16 scroll-mt-20 md:mb-20">
+          <div className="mb-6 flex flex-col gap-3 md:mb-8 md:flex-row md:items-end md:justify-between">
+            <div>
+              <h2 className="font-sora text-xl font-semibold tracking-tight text-ink md:text-3xl">
+                {activeFilter ? `Lits — ${activeFilter}` : "La collection complète"}
+              </h2>
+              <p className="mt-1 text-sm text-pierre md:text-base">
+                {products.length} lit{products.length > 1 ? "s" : ""}
+                {activeFilter && ` (sur ${allProducts.length})`}
+                {" · Livraison gratuite · Paiement en plusieurs fois"}
+              </p>
+            </div>
+            {activeFilter && (
+              <Link
+                href={clearFilterHref}
+                className="inline-flex w-fit items-center gap-2 rounded-pill border border-border bg-white px-4 py-2 text-sm font-medium text-midnight hover:border-midnight"
+              >
+                ✕ Retirer le filtre
+              </Link>
+            )}
+          </div>
+
+          {products.length > 0 ? (
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {products.map((p) => (
+              {products.map((p: any) => (
                 <Link
                   key={p._id}
                   href={`/lits/${p.slug}`}
@@ -157,8 +273,15 @@ export default async function LitsPillar() {
                 </Link>
               ))}
             </div>
-          </section>
-        )}
+          ) : (
+            <div className="rounded-2xl border border-border bg-sable p-8 text-center">
+              <p className="text-pierre">Aucun lit ne correspond à ce filtre.</p>
+              <Link href={clearFilterHref} className="mt-4 inline-block text-sm font-semibold text-midnight underline">
+                Voir tous les lits
+              </Link>
+            </div>
+          )}
+        </section>
 
         {/* Sections SEO enrichies */}
         <CategorySeoSections productType="lit" categoryLabel="lit" overrides={pillar} />
@@ -181,60 +304,5 @@ export default async function LitsPillar() {
         )}
       />
     </>
-  );
-}
-
-function MaterialTile({
-  title,
-  subtitle,
-  accent,
-}: {
-  title: string;
-  subtitle: string;
-  accent: string;
-}) {
-  return (
-    <div className={`flex flex-col justify-between rounded-2xl bg-gradient-to-br ${accent} p-6 min-h-[140px]`}>
-      <div>
-        <h3 className="font-sora text-xl font-semibold tracking-tight">{title}</h3>
-        <p className="mt-1.5 text-[13px] opacity-80">{subtitle}</p>
-      </div>
-      <span className="mt-4 text-xs font-semibold uppercase tracking-wide opacity-90">
-        Découvrir ↓
-      </span>
-    </div>
-  );
-}
-
-function ExploreTile({
-  title,
-  subtitle,
-  compact,
-  highlighted,
-}: {
-  title: string;
-  subtitle?: string;
-  compact?: boolean;
-  highlighted?: boolean;
-}) {
-  return (
-    <div
-      className={`flex flex-col justify-between rounded-2xl border p-4 md:p-5 ${
-        highlighted
-          ? "border-midnight bg-midnight text-white"
-          : "border-border bg-ivoire text-ink"
-      } ${compact ? "min-h-[80px] md:min-h-[90px]" : "min-h-[140px]"}`}
-    >
-      <div>
-        <h3 className={`font-sora ${compact ? "text-sm md:text-base" : "text-lg"} font-semibold tracking-tight`}>
-          {title}
-        </h3>
-        {subtitle && (
-          <p className={`mt-1 text-[11px] md:text-[13px] ${highlighted ? "text-white/75" : "text-pierre"}`}>
-            {subtitle}
-          </p>
-        )}
-      </div>
-    </div>
   );
 }

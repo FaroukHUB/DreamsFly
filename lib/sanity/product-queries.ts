@@ -77,13 +77,15 @@ export const pillarPageQuery = groq`
   }
 `;
 
-/** Tous les lits — page pilier /lits (grille + explorers). */
+/** Tous les lits — page pilier /lits (grille + explorers + filtres). */
 export const allLitsQuery = groq`
   *[_type == "product" && productType == "lit"] | order(name asc) {
     _id, name, title, "slug": slug.current, tagline,
+    litMaterial,
     "image": images[0],
     "minPrice": variants[0].price,
     "compareAtPrice": variants[0].compareAtPrice,
+    "variants": variants[]{ size },
     badges, rating
   }
 `;
