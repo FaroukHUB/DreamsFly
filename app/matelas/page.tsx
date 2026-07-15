@@ -40,7 +40,8 @@ const SIZE_TILES = ["90 x 190", "140 x 190", "160 x 200", "180 x 200", "140 x 20
  */
 function extractDimensions(s?: string): { w?: number; l?: number } {
   if (!s) return {};
-  const m = String(s).match(/(\d{2,3})\s*[xX×]\s*(\d{2,3})/);
+  // Accepte : x, X, ×, /, - comme séparateurs, avec ou sans espaces
+  const m = String(s).match(/(\d{2,3})\s*[xX×/\-]\s*(\d{2,3})/);
   if (!m) return {};
   return { w: parseInt(m[1], 10), l: parseInt(m[2], 10) };
 }
