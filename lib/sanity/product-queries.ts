@@ -177,6 +177,68 @@ export const sommierBySlugQuery = groq`
   }
 `;
 
+/** Tous les oreillers — page pilier /oreillers. */
+export const allOreillersQuery = groq`
+  *[_type == "product" && productType == "oreiller"] | order(name asc) {
+    _id, name, title, "slug": slug.current, tagline,
+    oreillerFilling, oreillerShape, firmness, thicknessCm,
+    "image": images[0],
+    "minPrice": variants[0].price,
+    "compareAtPrice": variants[0].compareAtPrice,
+    "variants": variants[]{ size },
+    badges, rating
+  }
+`;
+
+export const allOreillerSlugsQuery = groq`
+  *[_type == "product" && productType == "oreiller" && defined(slug.current)]{
+    "slug": slug.current
+  }
+`;
+
+export const oreillerBySlugQuery = groq`
+  *[_type == "product" && productType == "oreiller" && slug.current == $slug][0]{
+    ...,
+    "slug": slug.current,
+    lifestyleImage{ ..., asset->{...} },
+    images[]{ ..., asset->{...}, "url": asset->url, "alt": coalesce(alt, ^.name) },
+    videos[]{
+      _key, alt, autoplay,
+      file{ asset->{url, mimeType} },
+      poster{ ..., asset->{...} }
+    },
+    colors[]{
+      _key, name, hex, isDefault,
+      image{ ..., asset->{...}, "url": asset->url }
+    },
+    variants[]{
+      _key, size, colorName, sku, price, compareAtPrice, weightKg, stockStatus, stripePriceId
+    },
+    relatedProducts[]->{
+      _id, name, title, "slug": slug.current, tagline,
+      "image": images[0],
+      "minPrice": variants[0].price,
+      "compareAtPrice": variants[0].compareAtPrice,
+      badges
+    }
+  }
+`;
+
+export const pillarOreillersQuery = groq`
+  *[_type == "landingPage" && slug.current == "oreillers"][0]{
+    _id, h1, intro, metaTitle, metaDescription, editorialAngle,
+    sections[]{ ... },
+    categoryAdvantagesOverride,
+    buyingCriteriaOverride,
+    categoryTipsOverride,
+    categoryCareStepsOverride,
+    categoryFaqOverride,
+    categoryComparisonOverride,
+    categorySeoHidden,
+    publishedAt
+  }
+`;
+
 /** Page pilier /sommiers dans Sanity. */
 export const pillarSommiersQuery = groq`
   *[_type == "landingPage" && slug.current == "sommiers"][0]{
