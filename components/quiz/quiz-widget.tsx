@@ -150,8 +150,17 @@ export function QuizWidget({
 // ─────────────────────────────────────────────────────────────
 
 function SingleChoice({ step, value, onSelect }: { step: any; value?: string; onSelect: (v: string) => void }) {
+  const hasImages = step.options.some((o: any) => o.imageUrl);
+  const colClass = hasImages
+    ? step.options.length <= 3
+      ? "sm:grid-cols-3"
+      : "sm:grid-cols-2 lg:grid-cols-4"
+    : step.options.length <= 3
+      ? "sm:grid-cols-3"
+      : "sm:grid-cols-2 lg:grid-cols-4";
+
   return (
-    <div className={`grid gap-3 ${step.options.length <= 3 ? "sm:grid-cols-3" : "sm:grid-cols-2 lg:grid-cols-4"}`}>
+    <div className={`grid gap-3 md:gap-4 ${colClass}`}>
       {step.options.map((opt: any) => {
         const isSelected = value === opt.value;
         return (
@@ -159,18 +168,37 @@ function SingleChoice({ step, value, onSelect }: { step: any; value?: string; on
             key={opt.value}
             type="button"
             onClick={() => onSelect(opt.value)}
-            className={`group flex flex-col items-start rounded-2xl border-2 p-5 text-left transition-all hover:-translate-y-0.5 ${
-              isSelected ? "border-midnight bg-midnight text-white" : "border-border bg-white text-ink hover:border-midnight"
+            className={`group flex flex-col overflow-hidden rounded-2xl border-2 text-left transition-all hover:-translate-y-1 ${
+              isSelected
+                ? "border-midnight shadow-[0_10px_30px_rgba(15,23,42,0.15)]"
+                : "border-border bg-white hover:border-midnight"
             }`}
           >
-            <div className={`text-base font-sora font-semibold md:text-lg`}>
-              {opt.label}
-            </div>
-            {opt.subtitle && (
-              <div className={`mt-1 text-xs md:text-sm ${isSelected ? "text-white/75" : "text-pierre"}`}>
-                {opt.subtitle}
+            {opt.imageUrl && (
+              <div className="relative aspect-square w-full overflow-hidden bg-sable">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={`${opt.imageUrl}?w=400&auto=format`}
+                  alt={opt.imageAlt || opt.label}
+                  loading="lazy"
+                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
               </div>
             )}
+            <div
+              className={`flex flex-col items-center p-4 text-center ${
+                isSelected ? "bg-midnight text-white" : "bg-white text-ink"
+              } ${opt.imageUrl ? "" : "min-h-[110px] justify-center"}`}
+            >
+              <div className={`font-sora text-base font-semibold md:text-lg`}>
+                {opt.label}
+              </div>
+              {opt.subtitle && (
+                <div className={`mt-1 text-xs md:text-sm ${isSelected ? "text-white/80" : "text-pierre"}`}>
+                  {opt.subtitle}
+                </div>
+              )}
+            </div>
           </button>
         );
       })}

@@ -97,8 +97,19 @@ export const quizPage = defineType({
                     { name: "value", type: "string", title: "Valeur technique (ex. 'dos', 'moelleux', '140x190')" },
                     { name: "label", type: "string", title: "Label affiché" },
                     { name: "subtitle", type: "string", title: "Description courte (optionnel)" },
+                    {
+                      name: "image",
+                      type: "image",
+                      title: "🖼️ Image (optionnel)",
+                      description:
+                        "Uploade une image pour cette option — affichée en grand au-dessus du label (style Emma). Si vide, l'option affiche juste le texte.",
+                      options: { hotspot: true },
+                      fields: [{ name: "alt", type: "string", title: "Alt SEO" }],
+                    },
                   ],
-                  preview: { select: { title: "label", subtitle: "subtitle" } },
+                  preview: {
+                    select: { title: "label", subtitle: "subtitle", media: "image" },
+                  },
                 }),
               ],
               hidden: ({ parent }) => parent?.type === "slider",

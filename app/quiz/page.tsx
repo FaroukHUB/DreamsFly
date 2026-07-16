@@ -13,7 +13,16 @@ import { groq } from "next-sanity";
 
 export const revalidate = 300;
 
-const quizPageQuery = groq`*[_type == "quizPage"][0]{ ... }`;
+const quizPageQuery = groq`*[_type == "quizPage"][0]{
+  ...,
+  questions[]{
+    ...,
+    options[]{
+      ...,
+      image{ ..., asset->{ url }, "url": asset->url }
+    }
+  }
+}`;
 
 export async function generateMetadata(): Promise<Metadata> {
   const doc = sanityClient ? await sanityClient.fetch<any>(quizPageQuery).catch(() => null) : null;
@@ -50,6 +59,8 @@ function buildSteps(doc: any): QuizStep[] {
         value: o.value,
         label: o.label,
         subtitle: o.subtitle,
+        imageUrl: o.image?.url,
+        imageAlt: o.image?.alt,
       })),
     };
   });

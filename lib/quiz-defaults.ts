@@ -7,7 +7,8 @@ export type QuizOption = {
   value: string;
   label: string;
   subtitle?: string;
-  image?: string; // URL image optionnelle
+  imageUrl?: string; // URL directe Sanity CDN
+  imageAlt?: string;
 };
 
 export type QuizStep =
