@@ -128,6 +128,71 @@ export const litBySlugQuery = groq`
   }
 `;
 
+/** Tous les sommiers — page pilier /sommiers. */
+export const allSommiersQuery = groq`
+  *[_type == "product" && productType == "sommier"] | order(name asc) {
+    _id, name, title, "slug": slug.current, tagline,
+    sommierType, thicknessCm,
+    "image": images[0],
+    "minPrice": variants[0].price,
+    "compareAtPrice": variants[0].compareAtPrice,
+    "variants": variants[]{ size },
+    badges, rating
+  }
+`;
+
+/** Slugs des sommiers publiés — generateStaticParams. */
+export const allSommierSlugsQuery = groq`
+  *[_type == "product" && productType == "sommier" && defined(slug.current)]{
+    "slug": slug.current
+  }
+`;
+
+/** Fiche complète d'un sommier par slug. */
+export const sommierBySlugQuery = groq`
+  *[_type == "product" && productType == "sommier" && slug.current == $slug][0]{
+    ...,
+    "slug": slug.current,
+    lifestyleImage{ ..., asset->{...} },
+    images[]{ ..., asset->{...}, "url": asset->url, "alt": coalesce(alt, ^.name) },
+    videos[]{
+      _key, alt, autoplay,
+      file{ asset->{url, mimeType} },
+      poster{ ..., asset->{...} }
+    },
+    colors[]{
+      _key, name, hex, isDefault,
+      image{ ..., asset->{...}, "url": asset->url }
+    },
+    variants[]{
+      _key, size, colorName, sku, price, compareAtPrice, weightKg, stockStatus, stripePriceId
+    },
+    relatedProducts[]->{
+      _id, name, title, "slug": slug.current, tagline,
+      "image": images[0],
+      "minPrice": variants[0].price,
+      "compareAtPrice": variants[0].compareAtPrice,
+      badges
+    }
+  }
+`;
+
+/** Page pilier /sommiers dans Sanity. */
+export const pillarSommiersQuery = groq`
+  *[_type == "landingPage" && slug.current == "sommiers"][0]{
+    _id, h1, intro, metaTitle, metaDescription, editorialAngle,
+    sections[]{ ... },
+    categoryAdvantagesOverride,
+    buyingCriteriaOverride,
+    categoryTipsOverride,
+    categoryCareStepsOverride,
+    categoryFaqOverride,
+    categoryComparisonOverride,
+    categorySeoHidden,
+    publishedAt
+  }
+`;
+
 /** Page pilier /lits configurée dans Sanity (landingPage avec slug=lits). */
 export const pillarLitsQuery = groq`
   *[_type == "landingPage" && slug.current == "lits"][0]{
