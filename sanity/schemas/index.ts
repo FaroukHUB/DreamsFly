@@ -11,11 +11,13 @@ import { comparison } from "./comparison";
 import { showroom } from "./showroom";
 import { order } from "./order";
 import { staticPage } from "./staticPage";
+import { quizPage } from "./quizPage";
 
 export const schemaTypes = [
   // Singletons
   homepage,
   siteSettings,
+  quizPage,
   // Documents principaux
   product,
   landingPage,

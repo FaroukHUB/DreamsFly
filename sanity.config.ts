@@ -33,6 +33,9 @@ export default defineConfig({
             S.listItem()
               .title("⚙️ Paramètres du site")
               .child(S.editor().schemaType("siteSettings").documentId("siteSettings")),
+            S.listItem()
+              .title("🧭 Page Quiz")
+              .child(S.editor().schemaType("quizPage").documentId("quizPage")),
 
             S.divider(),
 
