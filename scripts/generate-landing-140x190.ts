@@ -284,7 +284,7 @@ const doc: any = {
           _key: "f6",
           question: "Mon matelas 140×190 est-il livré à domicile ?",
           answer:
-            "Oui. DreamsFly livre dans toute la France métropolitaine. Frais : 39 € dès le pas de votre porte. Délai : 3 à 5 jours ouvrés selon la zone. Pour un retrait gratuit en entrepôt, contactez-nous.",
+            "Oui. DreamsFly livre dans toute la France métropolitaine. Livraison offerte dès 999 € d'achat, participation forfaitaire en dessous selon la zone. Délai : 3 à 5 jours ouvrés. Pour un retrait gratuit en entrepôt, contactez-nous.",
         },
         {
           _key: "f7",

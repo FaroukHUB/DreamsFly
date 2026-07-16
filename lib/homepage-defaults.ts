@@ -28,7 +28,7 @@ export const defaultWhyUs: {
     { icon: "🛡️", title: "Qualité", text: "Certifications OEKO-TEX, garanties longues, matériaux traçables." },
     { icon: "🤝", title: "Accompagnement", text: "Conseillers sommeil formés, disponibles par téléphone ou en showroom." },
     { icon: "💬", title: "Service client", text: "Réponse en moins de 4 h, du lundi au samedi. Français, humain, sans script." },
-    { icon: "🚚", title: "Livraison", text: "Offerte dès 39 €, montée à l'étage incluse, reprise de l'ancien matelas gratuite." },
+    { icon: "🚚", title: "Livraison", text: "Offerte dès 999 € d'achat, montée à l'étage incluse, reprise de l'ancien matelas gratuite." },
   ],
 };
 
@@ -111,7 +111,7 @@ export const defaultHomepageFaq: {
     { category: "produit", question: "Les matelas DreamsFly sont-ils hypoallergéniques ?", answer: "Oui — traitement anti-acariens en usine, housses certifiées OEKO-TEX Standard 100 (absence de substances nocives). Pour les allergies sévères, ajoutez une alèse imperméable." },
 
     // ─── Livraison ─────────────────────────────────
-    { category: "livraison", question: "La livraison est-elle vraiment gratuite ?", answer: "Oui, gratuite dès 39 € en France métropolitaine, avec montée à l'étage incluse (2 livreurs). Corse et zones difficiles d'accès : supplément indiqué au checkout." },
+    { category: "livraison", question: "La livraison est-elle vraiment gratuite ?", answer: "Oui, offerte dès 999 € d'achat en France métropolitaine, avec montée à l'étage incluse (2 livreurs). En dessous de ce montant, participation forfaitaire selon la zone. Corse et zones difficiles d'accès : supplément indiqué au checkout." },
     { category: "livraison", question: "En combien de temps serai-je livré ?", answer: "5 à 7 jours ouvrés en France métropolitaine. Rendez-vous programmé par SMS 48 h avant, créneaux matin, après-midi ou samedi selon les zones." },
     { category: "livraison", question: "Reprenez-vous mon ancien matelas ?", answer: "Oui, gratuitement à la livraison sur simple demande à la commande. Nous le remettons à un centre de recyclage agréé Éco-mobilier." },
     { category: "livraison", question: "Livrez-vous en Belgique / Suisse / DOM-TOM ?", answer: "Belgique et Luxembourg : oui, sous 8-10 jours ouvrés, tarif dégressif selon poids. Suisse : oui, sous 10-14 jours (formalités douanières). DOM-TOM : nous consulter pour un devis personnalisé." },

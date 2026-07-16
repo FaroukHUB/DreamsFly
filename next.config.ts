@@ -13,7 +13,10 @@ const nextConfig: NextConfig = {
     ],
   },
   async redirects() {
-    return [];
+    return [
+      { source: "/promos", destination: "/", permanent: false },
+      { source: "/promotions", destination: "/", permanent: false },
+    ];
   },
 };
 

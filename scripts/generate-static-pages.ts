@@ -76,7 +76,7 @@ const cgv = {
     p("Le règlement des achats s'effectue par carte bancaire (Visa, Mastercard, CB) via Stripe, par PayPal ou en plusieurs fois sans frais via Alma (2x, 3x ou 4x). Les transactions sont sécurisées par cryptage SSL et 3D Secure."),
 
     h2("Article 6 — Livraison"),
-    p("La livraison s'effectue à l'adresse indiquée lors de la commande, en France métropolitaine. Frais de livraison : à partir de 39 € selon le poids et la destination. Délais indicatifs : 3 à 5 jours ouvrés. Les délais ne constituent pas un engagement ferme et ne peuvent ouvrir droit à indemnités."),
+    p("La livraison s'effectue à l'adresse indiquée lors de la commande, en France métropolitaine. Livraison offerte dès 999 € d'achat, participation forfaitaire en dessous de ce montant selon le poids et la zone. Délais indicatifs : 3 à 5 jours ouvrés. Les délais ne constituent pas un engagement ferme et ne peuvent ouvrir droit à indemnités."),
 
     h2("Article 7 — Droit de rétractation"),
     p("Conformément à l'article L.221-18 du Code de la consommation, l'acheteur dispose d'un délai de 14 jours à compter de la réception du produit pour exercer son droit de rétractation, sans avoir à justifier de motif. Le retour s'effectue aux frais de l'acheteur. Les produits doivent être retournés dans leur emballage d'origine, non utilisés et accompagnés d'une preuve d'achat."),
@@ -321,13 +321,13 @@ const livraison = {
   slug: { _type: "slug", current: "livraison" },
   excerpt: "Tout ce qu'il faut savoir sur la livraison DreamsFly : zones, tarifs, délais, suivi de commande.",
   metaTitle: "Livraison — Tarifs et délais | DreamsFly",
-  metaDescription: "Livraison DreamsFly partout en France dès 39 €. Délais 3-5 jours ouvrés. Suivi en temps réel et options spéciales (étage, déballage).",
+  metaDescription: "Livraison DreamsFly offerte dès 999 € d'achat, partout en France. Délais 3-5 jours ouvrés. Suivi en temps réel et options spéciales (étage, déballage).",
   body: [
     h2("Où livrons-nous ?"),
     p("DreamsFly livre dans toute la France métropolitaine. Pour la Corse, les DOM-TOM ou l'international (Belgique, Luxembourg, Suisse), contactez-nous au préalable pour un devis personnalisé."),
 
     h2("Tarifs"),
-    p("• France métropolitaine : à partir de 39 €"),
+    p("• France métropolitaine : offerte dès 999 € d'achat, participation forfaitaire en dessous"),
     p("• Livraison express (24-48h sur stock disponible) : +29 €"),
     p("• Livraison à l'étage ou en chambre : +49 € (sur demande)"),
     p("• Reprise de l'ancien matelas : +29 € (sur demande)"),
@@ -442,7 +442,7 @@ const faqPage = {
     faq("Quand reçois-je ma facture ?", "Automatiquement par email après confirmation du paiement. Vous pouvez aussi la retrouver dans votre espace client."),
 
     h2("Livraison"),
-    faq("Combien coûte la livraison ?", "À partir de 39 € en France métropolitaine. Options express (+29 €), étage (+49 €), reprise ancien matelas (+29 €) disponibles."),
+    faq("Combien coûte la livraison ?", "Offerte dès 999 € d'achat en France métropolitaine. En dessous, participation forfaitaire selon la zone. Options express (+29 €), étage (+49 €), reprise ancien matelas (+29 €) disponibles."),
     faq("Quel délai pour la livraison ?", "3 à 5 jours ouvrés pour les modèles en stock. 2 à 4 semaines pour les modèles fabriqués à la commande. Express possible en 24-48h."),
     faq("Livrez-vous à l'étage ?", "Sur demande au moment de la commande (option +49 €). Sinon livraison au pas de porte ou pied d'immeuble par défaut."),
 

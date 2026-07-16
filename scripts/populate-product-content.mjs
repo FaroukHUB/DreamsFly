@@ -232,7 +232,7 @@ function defaultFaq(pt, product) {
     { question: "Quel sommier utiliser ?", answer: "Sommier à lattes apparentes pour la ventilation, tapissier pour un soutien plus dense. Évitez les vieux sommiers avec lattes cassées." },
     { question: `${name} convient-il à un usage quotidien ?`, answer: `Oui — tous nos matelas sont conçus pour un couchage principal, testés pour 8+ heures d'usage par nuit sur 10 ans minimum.` },
     { question: "Comment entretenir mon matelas ?", answer: "Aérez chaque matin, aspirez tous les mois, retournez tous les 3 mois. Une housse de protection lavable à 60°C prolonge sa vie de plusieurs années." },
-    { question: "Comment se déroule la livraison ?", answer: "Livraison sous 5-7 jours ouvrés en France métropolitaine, gratuite dès 39 €. Rendez-vous par SMS 48h avant, montée à l'étage incluse, reprise gratuite sur demande." },
+    { question: "Comment se déroule la livraison ?", answer: "Livraison sous 5-7 jours ouvrés en France métropolitaine, offerte dès 999 € d'achat. Rendez-vous par SMS 48h avant, montée à l'étage incluse, reprise gratuite sur demande." },
     { question: "Puis-je essayer et renvoyer si ça ne convient pas ?", answer: "30 nuits d'essai à domicile. Après 21 jours d'adaptation, si le matelas ne vous convient pas, reprise gratuite et remboursement intégral." },
     { question: "Quelle est la garantie ?", answer: "Garantie fabricant 2 ans minimum. La garantie ne couvre pas l'usure normale ni les taches. Voir la fiche technique pour la garantie exacte de ce modèle." },
     { question: `Le matelas ${name} est-il hypoallergénique ?`, answer: "Nos matelas sont traités anti-acariens en usine et les housses sont certifiées OEKO-TEX Standard 100." },
@@ -269,7 +269,7 @@ function defaultFaq(pt, product) {
     { question: "L'oreiller convient-il aux allergiques ?", answer: "Traitement anti-acariens et housse OEKO-TEX." },
     { question: "Combien de temps dure un oreiller ?", answer: "2 à 3 ans pour un usage quotidien." },
     { question: "Quel oreiller pour douleurs cervicales ?", answer: "Un oreiller ergonomique qui épouse la nuque sans la cambrer." },
-    { question: "Comment se déroule la livraison ?", answer: "48h en France métropolitaine, gratuite dès 39 €." },
+    { question: "Comment se déroule la livraison ?", answer: "48h en France métropolitaine, offerte dès 999 € d'achat." },
     { question: "Quelle est la garantie ?", answer: "2 ans sur la garniture et la housse." },
   ];
   return [];
@@ -287,7 +287,7 @@ function defaultExtraCta(pt) {
 
 function defaultDelivery() {
   return {
-    price: "Livraison offerte dès 39 €",
+    price: "Livraison offerte dès 999 € d'achat",
     delay: "5 à 7 jours ouvrés en France métropolitaine",
     perks: [
       "Rendez-vous programmé par SMS 48h avant",

@@ -1,7 +1,7 @@
 type Advantage = { icon?: string; title?: string; subtitle?: string };
 
 const DEFAULT_ADVANTAGES: Advantage[] = [
-  { icon: "truck", title: "Livraison France", subtitle: "Partout en France dès 39 €" },
+  { icon: "truck", title: "Livraison France", subtitle: "Offerte dès 999 € d'achat" },
   { icon: "shield", title: "Garantie 2 ans", subtitle: "Confection française" },
   { icon: "lock", title: "Paiement sécurisé", subtitle: "Alma · Stripe · CB" },
   { icon: "store", title: "3 showrooms", subtitle: "Testez avant d'acheter" },
