@@ -9,64 +9,73 @@ import { Footer } from "@/components/footer";
 import { Sections } from "@/components/landing/blocks";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { JsonLd, breadcrumbSchema, organizationSchema, faqSchema } from "@/lib/seo/jsonld";
-import { CategorySeoSections } from "@/components/category/category-seo-sections";
-import { categoryFaq } from "@/lib/category-defaults";
 import { urlFor } from "@/lib/sanity/image";
+import { CategorySeoSections } from "@/components/category/category-seo-sections";
+import { FiltersSidebar } from "@/components/category/filters-sidebar";
+import { categoryFaq } from "@/lib/category-defaults";
 
 export const revalidate = 120;
 
-type SearchParams = Promise<{ type?: string; size?: string }>;
+type SearchParams = Promise<{
+  types?: string;
+  sizes?: string;
+  priceMin?: string;
+  priceMax?: string;
+  sort?: string;
+}>;
 
 const TYPE_LABELS: Record<string, string> = {
   "memoire-ressorts": "Mémoire de forme",
-  "mousse-hr-ressorts": "Hybride",
+  "mousse-hr-ressorts": "Hybride (mousse HR + ressorts)",
   "mousse-ressorts": "Ressorts ensachés",
   "mousse-polyurethane": "Mousse polyuréthane",
 };
 
-const TYPE_TILES = [
-  { slug: "memoire-ressorts", title: "Mémoire de forme", subtitle: "Enveloppant · Soulagement des points de pression" },
-  { slug: "mousse-hr-ressorts", title: "Hybride", subtitle: "Mémoire de forme + ressorts ensachés" },
-  { slug: "mousse-ressorts", title: "Ressorts ensachés", subtitle: "Indépendance de couchage maximale" },
-  { slug: "mousse-polyurethane", title: "Mousse polyuréthane", subtitle: "Excellent rapport qualité-prix" },
-];
+const STANDARD_SIZES = ["90x190", "90x200", "100x200", "140x190", "140x200", "160x200", "180x200", "200x200"];
 
-const SIZE_TILES = ["90 x 190", "140 x 190", "160 x 200", "180 x 200", "140 x 200"];
+const SIZE_LABELS: Record<string, string> = {
+  "90x190": "90 × 190 (une place)",
+  "90x200": "90 × 200",
+  "100x200": "100 × 200",
+  "140x190": "140 × 190 (deux places)",
+  "140x200": "140 × 200",
+  "160x200": "160 × 200 (Queen)",
+  "180x200": "180 × 200 (King)",
+  "200x200": "200 × 200",
+};
 
-/**
- * Extrait les dimensions largeur × longueur depuis un texte de taille.
- * Accepte tous les formats : "90x190", "90 x 190", "90×190", "90X190",
- * "90x190 cm", "90 x 190cm", etc.
- */
-/**
- * Extrait les 2 premiers nombres 2-3 chiffres d'un texte, triés.
- * Marche pour n'importe quel séparateur : x, X, ×, /, -, espace, cm, texte...
- * Ex : "90x190" → [90, 190] ; "90 / 190 cm" → [90, 190] ; "L 90 · l 190" → [90, 190]
- */
-function extractDimensionsSet(s?: string): number[] {
+function extractDims(s?: string): number[] {
   if (!s) return [];
   const nums = String(s).match(/\d{2,3}/g);
   if (!nums || nums.length < 2) return [];
   return nums.slice(0, 2).map((n) => parseInt(n, 10)).sort((a, b) => a - b);
 }
 
-function sizesMatch(a?: string, b?: string): boolean {
-  const da = extractDimensionsSet(a);
-  const db = extractDimensionsSet(b);
-  if (da.length !== 2 || db.length !== 2) return false;
-  return da[0] === db[0] && da[1] === db[1];
+function sizeKeyOf(s?: string): string | null {
+  const dims = extractDims(s);
+  if (dims.length !== 2) return null;
+  return `${dims[0]}x${dims[1]}`;
+}
+
+function productMatchesSize(product: any, sizeKey: string): boolean {
+  const target = extractDims(sizeKey);
+  if (target.length !== 2) return false;
+  const inVariants = (product.variants || []).some((v: any) => {
+    const d = extractDims(v.size);
+    return d.length === 2 && d[0] === target[0] && d[1] === target[1];
+  });
+  if (inVariants) return true;
+  // Fallback : cherche dans titre/nom/slug
+  const text = `${product.title || ""} ${product.name || ""} ${product.slug || ""}`;
+  const found: string[] = text.match(/\d{2,3}/g) || [];
+  return found.includes(String(target[0])) && found.includes(String(target[1]));
 }
 
 export async function generateMetadata({ searchParams }: { searchParams: SearchParams }): Promise<Metadata> {
-  const { type, size } = await searchParams;
+  const sp = await searchParams;
   const pillar = sanityClient ? await sanityClient.fetch<any>(pillarPageQuery).catch(() => null) : null;
-
-  const filterLabel = type
-    ? ` — ${TYPE_LABELS[type] || type}`
-    : size
-      ? ` — ${size}`
-      : "";
-
+  const nbFilters = [sp.types, sp.sizes, sp.priceMin, sp.priceMax].filter(Boolean).length;
+  const filterLabel = nbFilters > 0 ? ` — sélection filtrée` : "";
   return buildMetadata({
     title: (pillar?.metaTitle || pillar?.h1 || "Tous nos matelas") + filterLabel,
     description:
@@ -77,7 +86,7 @@ export async function generateMetadata({ searchParams }: { searchParams: SearchP
 }
 
 export default async function MatelasPillar({ searchParams }: { searchParams: SearchParams }) {
-  const { type, size } = await searchParams;
+  const sp = await searchParams;
 
   const [pillar, allProducts, siteSettings] = await Promise.all([
     sanityClient?.fetch<any>(pillarPageQuery).catch(() => null) ?? null,
@@ -85,25 +94,85 @@ export default async function MatelasPillar({ searchParams }: { searchParams: Se
     sanityClient?.fetch<any>(siteSettingsQuery).catch(() => null) ?? null,
   ]);
 
-  // Filtrage server-side
-  let products = allProducts;
-  if (type) {
-    products = products.filter((p: any) => p.type === type);
+  // Parse filtres URL
+  const selectedTypes = (sp.types || "").split(",").filter(Boolean);
+  const selectedSizes = (sp.sizes || "").split(",").filter(Boolean);
+  const priceMin = sp.priceMin ? parseInt(sp.priceMin, 10) : undefined;
+  const priceMax = sp.priceMax ? parseInt(sp.priceMax, 10) : undefined;
+  const sort = sp.sort || "featured";
+
+  // Bornes prix depuis le catalogue
+  const allPrices = allProducts.map((p: any) => p.minPrice).filter((n: any) => typeof n === "number" && n > 0);
+  const priceCeiling = Math.max(...allPrices, 2500);
+  const priceFloor = Math.min(...allPrices, 0);
+  // Arrondi supérieur à 100 pour ceiling
+  const priceMaxBound = Math.ceil(priceCeiling / 100) * 100;
+  const priceMinBound = Math.floor(priceFloor / 100) * 100;
+
+  // Filtrage
+  let products = allProducts.slice();
+  if (selectedTypes.length > 0) {
+    products = products.filter((p: any) => p.type && selectedTypes.includes(p.type));
   }
-  if (size) {
-    products = products.filter((p: any) => {
-      // Cherche les dimensions dans toutes les sources possibles
-      const inVariants = (p.variants || []).some((v: any) => sizesMatch(v.size, size));
-      const inTitle = sizesMatch(p.title, size);
-      const inName = sizesMatch(p.name, size);
-      const inSlug = sizesMatch(p.slug, size);
-      const inTagline = sizesMatch(p.tagline, size);
-      return inVariants || inTitle || inName || inSlug || inTagline;
-    });
+  if (selectedSizes.length > 0) {
+    products = products.filter((p: any) => selectedSizes.some((s) => productMatchesSize(p, s)));
+  }
+  if (typeof priceMin === "number") {
+    products = products.filter((p: any) => (p.minPrice || 0) >= priceMin);
+  }
+  if (typeof priceMax === "number") {
+    products = products.filter((p: any) => (p.minPrice || 0) <= priceMax);
   }
 
-  const activeFilter = type ? TYPE_LABELS[type] || type : size || null;
-  const clearFilterHref = "/matelas#modeles";
+  // Tri
+  if (sort === "price-asc") products.sort((a: any, b: any) => (a.minPrice || 0) - (b.minPrice || 0));
+  else if (sort === "price-desc") products.sort((a: any, b: any) => (b.minPrice || 0) - (a.minPrice || 0));
+  else if (sort === "name") products.sort((a: any, b: any) => (a.name || "").localeCompare(b.name || ""));
+  // featured: garde l'ordre Sanity (name asc par défaut de la query)
+
+  // Comptages pour la sidebar (basés sur allProducts, sans filtres croisés naïfs)
+  const countByType: Record<string, number> = {};
+  for (const p of allProducts) {
+    if (p.type) countByType[p.type] = (countByType[p.type] || 0) + 1;
+  }
+  const countBySize: Record<string, number> = {};
+  for (const p of allProducts) {
+    for (const s of STANDARD_SIZES) {
+      if (productMatchesSize(p, s)) countBySize[s] = (countBySize[s] || 0) + 1;
+    }
+  }
+
+  const typeGroup = {
+    key: "types",
+    label: "Technologie",
+    options: Object.entries(TYPE_LABELS).map(([value, label]) => ({
+      value,
+      label,
+      count: countByType[value] || 0,
+    })),
+  };
+  const sizeGroup = {
+    key: "sizes",
+    label: "Taille",
+    options: STANDARD_SIZES.map((s) => ({
+      value: s,
+      label: SIZE_LABELS[s] || s,
+      count: countBySize[s] || 0,
+    })),
+  };
+
+  const priceGroup = {
+    label: "Prix",
+    min: priceMinBound,
+    max: priceMaxBound,
+    suggestions: [
+      { label: "Tous", min: priceMinBound, max: priceMaxBound },
+      { label: "< 400 €", max: 400 },
+      { label: "400 – 700 €", min: 400, max: 700 },
+      { label: "700 – 1 200 €", min: 700, max: 1200 },
+      { label: "> 1 200 €", min: 1200 },
+    ],
+  };
 
   const h1 = pillar?.h1 || "Tous nos matelas DreamsFly";
   const intro =
@@ -115,11 +184,13 @@ export default async function MatelasPillar({ searchParams }: { searchParams: Se
     { name: "Matelas", url: "/matelas" },
   ];
 
+  const clearHref = "/matelas#modeles";
+
   return (
     <>
       <Header settings={siteSettings} />
 
-      <main className="mx-auto max-w-site px-6 py-12 md:px-8 md:py-16">
+      <main className="mx-auto max-w-site px-6 py-10 md:px-8 md:py-16">
         {/* Breadcrumbs */}
         <nav aria-label="Fil d'Ariane" className="mb-8 flex items-center gap-1.5 text-sm text-pierre">
           <Link href="/" className="hover:text-midnight">Accueil</Link>
@@ -128,124 +199,87 @@ export default async function MatelasPillar({ searchParams }: { searchParams: Se
         </nav>
 
         {/* H1 + intro */}
-        <header className="mb-14 max-w-3xl md:mb-16">
+        <header className="mb-10 max-w-3xl md:mb-14">
           <div className="eyebrow mb-3">Collection complète</div>
           <h1 className="font-sora text-3xl font-semibold leading-tight tracking-tight text-ink md:text-5xl lg:text-6xl">
             {h1}
           </h1>
-          <p className="mt-5 text-base leading-relaxed text-pierre md:mt-6 md:text-xl">{intro}</p>
+          <p className="mt-5 text-base leading-relaxed text-pierre md:mt-6 md:text-lg">{intro}</p>
         </header>
 
-        {/* Explorer par technologie */}
-        <section className="mb-14 md:mb-16">
-          <h2 className="mb-2 font-sora text-xl font-semibold tracking-tight text-ink md:text-3xl">
-            Par technologie
-          </h2>
-          <p className="mb-6 max-w-xl text-pierre md:mb-8">
-            Chaque technologie a ses atouts. Cliquez pour filtrer la collection.
-          </p>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-4">
-            {TYPE_TILES.map((t) => (
-              <FilterTile
-                key={t.slug}
-                title={t.title}
-                subtitle={t.subtitle}
-                href={`/matelas?type=${t.slug}#modeles`}
-                active={type === t.slug}
-              />
-            ))}
-          </div>
-        </section>
+        {/* Layout 2 colonnes : sidebar + grille */}
+        <section id="modeles" className="scroll-mt-20">
+          <div className="md:grid md:grid-cols-[260px_1fr] md:gap-10 lg:gap-12">
+            {/* Sidebar */}
+            <FiltersSidebar
+              groups={[typeGroup, sizeGroup]}
+              price={priceGroup}
+              totalCount={allProducts.length}
+              filteredCount={products.length}
+            />
 
-        {/* Explorer par taille */}
-        <section className="mb-14 md:mb-16">
-          <h2 className="mb-2 font-sora text-xl font-semibold tracking-tight text-ink md:text-3xl">
-            Par taille
-          </h2>
-          <p className="mb-6 max-w-xl text-pierre md:mb-8">
-            Du studio compact au lit king size — filtrez la collection par format.
-          </p>
-          <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 md:gap-3 lg:grid-cols-5">
-            {SIZE_TILES.map((s) => {
-              const paramValue = s.replace(/\s/g, "").toLowerCase();
-              const isActive = sizesMatch(size, s);
-              return (
-                <FilterTile
-                  key={s}
-                  compact
-                  title={s.replace(/ /g, "")}
-                  href={`/matelas?size=${paramValue}#modeles`}
-                  active={isActive}
-                />
-              );
-            })}
-          </div>
-        </section>
-
-        {/* Grille produits + indicateur filtre actif */}
-        <section id="modeles" className="mb-16 scroll-mt-20 md:mb-20">
-          <div className="mb-6 flex flex-col gap-3 md:mb-8 md:flex-row md:items-end md:justify-between">
+            {/* Grille produits */}
             <div>
-              <h2 className="font-sora text-xl font-semibold tracking-tight text-ink md:text-3xl">
-                {activeFilter ? `Matelas — ${activeFilter}` : "La collection complète"}
-              </h2>
-              <p className="mt-1 text-sm text-pierre md:text-base">
-                {products.length} modèle{products.length > 1 ? "s" : ""} disponible{products.length > 1 ? "s" : ""}
-                {activeFilter && ` (sur ${allProducts.length})`}
-              </p>
-            </div>
-            {activeFilter && (
-              <Link
-                href={clearFilterHref}
-                className="inline-flex w-fit items-center gap-2 rounded-pill border border-border bg-white px-4 py-2 text-sm font-medium text-midnight hover:border-midnight"
-              >
-                ✕ Retirer le filtre
-              </Link>
-            )}
-          </div>
+              <div className="mb-6 flex items-baseline justify-between">
+                <h2 className="font-sora text-xl font-semibold tracking-tight text-ink md:text-2xl">
+                  {products.length} matelas
+                  <span className="ml-2 text-sm font-normal text-pierre">
+                    {selectedTypes.length + selectedSizes.length + (priceMin || priceMax ? 1 : 0) > 0
+                      ? `sur ${allProducts.length}`
+                      : "disponibles"}
+                  </span>
+                </h2>
+              </div>
 
-          {products.length > 0 ? (
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {products.map((p: any) => (
-                <Link
-                  key={p._id}
-                  href={`/matelas/${p.slug}`}
-                  className="group flex flex-col rounded-2xl border border-border bg-ivoire p-4 transition-all hover:-translate-y-1 hover:border-midnight"
-                >
-                  <div className="relative mb-4 aspect-[5/4] overflow-hidden rounded-xl bg-sable">
-                    {p.image && (
-                      <Image
-                        src={urlFor(p.image).width(500).url()}
-                        alt={p.name}
-                        fill
-                        sizes="(max-width:1024px) 50vw, 25vw"
-                        className="object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                    )}
-                  </div>
-                  <h3 className="font-sora text-base font-semibold text-ink">{p.name}</h3>
-                  <p className="mb-3 line-clamp-2 text-[13px] text-pierre">{p.tagline}</p>
-                  <div className="mt-auto flex items-baseline gap-2 border-t border-border pt-3">
-                    <span className="text-[11px] text-brume">Dès</span>
-                    <span className="font-sora text-lg font-bold text-discount">{p.minPrice} €</span>
-                    {p.compareAtPrice && p.compareAtPrice > p.minPrice && (
-                      <span className="text-xs text-brume line-through">{p.compareAtPrice} €</span>
-                    )}
-                  </div>
-                </Link>
-              ))}
+              {products.length > 0 ? (
+                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
+                  {products.map((p: any) => (
+                    <Link
+                      key={p._id}
+                      href={`/matelas/${p.slug}`}
+                      className="group flex flex-col rounded-2xl border border-border bg-ivoire p-4 transition-all hover:-translate-y-1 hover:border-midnight"
+                    >
+                      <div className="relative mb-4 aspect-[5/4] overflow-hidden rounded-xl bg-sable">
+                        {p.image && (
+                          <Image
+                            src={urlFor(p.image).width(600).url()}
+                            alt={p.name}
+                            fill
+                            sizes="(max-width:1024px) 50vw, 33vw"
+                            className="object-cover transition-transform duration-500 group-hover:scale-105"
+                          />
+                        )}
+                        {p.type && TYPE_LABELS[p.type] && (
+                          <span className="absolute left-2 top-2 rounded-pill bg-white/90 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-widest text-midnight backdrop-blur-sm">
+                            {TYPE_LABELS[p.type].split(" ")[0]}
+                          </span>
+                        )}
+                      </div>
+                      <h3 className="font-sora text-base font-semibold text-ink">{p.name}</h3>
+                      <p className="mb-3 line-clamp-2 text-[13px] text-pierre">{p.tagline}</p>
+                      <div className="mt-auto flex items-baseline gap-2 border-t border-border pt-3">
+                        <span className="text-[11px] text-brume">Dès</span>
+                        <span className="font-sora text-lg font-bold text-discount">{p.minPrice} €</span>
+                        {p.compareAtPrice && p.compareAtPrice > p.minPrice && (
+                          <span className="text-xs text-brume line-through">{p.compareAtPrice} €</span>
+                        )}
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                <div className="rounded-2xl border border-border bg-sable p-8 text-center">
+                  <p className="text-pierre">Aucun matelas ne correspond à ces filtres.</p>
+                  <Link href={clearHref} className="mt-4 inline-block text-sm font-semibold text-midnight underline">
+                    Effacer les filtres
+                  </Link>
+                </div>
+              )}
             </div>
-          ) : (
-            <div className="rounded-2xl border border-border bg-sable p-8 text-center">
-              <p className="text-pierre">Aucun matelas ne correspond à ce filtre.</p>
-              <Link href={clearFilterHref} className="mt-4 inline-block text-sm font-semibold text-midnight underline">
-                Voir tous les matelas
-              </Link>
-            </div>
-          )}
+          </div>
         </section>
 
-        {/* Sections SEO enrichies (avantages, guide, comparatif, conseils, entretien, FAQ) */}
+        {/* Sections SEO enrichies */}
         <CategorySeoSections productType="matelas" categoryLabel="matelas" overrides={pillar} />
 
         {/* Sections éditoriales depuis Sanity */}
@@ -266,44 +300,5 @@ export default async function MatelasPillar({ searchParams }: { searchParams: Se
         )}
       />
     </>
-  );
-}
-
-function FilterTile({
-  title,
-  subtitle,
-  href,
-  compact,
-  active,
-}: {
-  title: string;
-  subtitle?: string;
-  href: string;
-  compact?: boolean;
-  active?: boolean;
-}) {
-  return (
-    <Link
-      href={href}
-      className={`group flex flex-col justify-between rounded-2xl border p-4 transition-all hover:-translate-y-1 md:p-5 ${
-        active
-          ? "border-midnight bg-midnight text-white hover:bg-midnight-dark"
-          : "border-border bg-ivoire text-ink hover:border-midnight"
-      } ${compact ? "min-h-[80px] md:min-h-[90px]" : "min-h-[130px] md:min-h-[140px]"}`}
-    >
-      <div>
-        <h3 className={`font-sora ${compact ? "text-sm md:text-base" : "text-base md:text-lg"} font-semibold tracking-tight`}>
-          {title}
-        </h3>
-        {subtitle && (
-          <p className={`mt-1 text-[12px] md:text-[13px] ${active ? "text-white/75" : "text-pierre"}`}>
-            {subtitle}
-          </p>
-        )}
-      </div>
-      <span className={`mt-3 text-[10px] font-semibold uppercase tracking-widest md:text-xs ${active ? "text-aurora" : "text-midnight"}`}>
-        {active ? "Filtré ✓" : "Filtrer →"}
-      </span>
-    </Link>
   );
 }
