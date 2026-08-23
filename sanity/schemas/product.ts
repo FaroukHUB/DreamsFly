@@ -422,8 +422,15 @@ export const product = defineType({
               description: "Ex : « Beige sable ». Laisse vide si le produit n'a qu'une seule couleur.",
             },
             { name: "sku", title: "SKU variante", type: "string" },
-            { name: "price", title: "Prix (€)", type: "number", validation: (r) => r.required().positive() },
+            { name: "price", title: "Prix affiché (€)", type: "number", validation: (r) => r.required().positive() },
             { name: "compareAtPrice", title: "Prix barré (€)", type: "number" },
+            {
+              name: "costPrice",
+              title: "💰 Prix d'achat / PA (privé)",
+              type: "number",
+              description:
+                "Ton coût fournisseur. INVISIBLE côté public — sert uniquement à calculer et afficher ta marge dans le Studio. Renseigne pour voir la marge dans le sous-titre de la variante.",
+            },
             { name: "weightKg", title: "Poids (kg)", type: "number" },
             {
               name: "stockStatus",
@@ -435,11 +442,20 @@ export const product = defineType({
             { name: "stripePriceId", title: "Stripe Price ID (checkout)", type: "string" },
           ],
           preview: {
-            select: { size: "size", color: "colorName", price: "price", stock: "stockStatus" },
-            prepare: ({ size, color, price, stock }) => ({
-              title: [size, color].filter(Boolean).join(" · "),
-              subtitle: [price ? `${price} €` : null, stock === "rupture" ? "🚫 Rupture" : null].filter(Boolean).join(" · "),
-            }),
+            select: { size: "size", color: "colorName", price: "price", cost: "costPrice", stock: "stockStatus" },
+            prepare: ({ size, color, price, cost, stock }) => {
+              const parts: string[] = [];
+              if (price) parts.push(`${price} €`);
+              if (price && cost && cost > 0) {
+                const margin = Math.round(((price - cost) / price) * 100);
+                parts.push(`marge ${margin}% (PA ${cost} €)`);
+              }
+              if (stock === "rupture") parts.push("🚫 Rupture");
+              return {
+                title: [size, color].filter(Boolean).join(" · "),
+                subtitle: parts.join(" · "),
+              };
+            },
           },
         }),
       ],
