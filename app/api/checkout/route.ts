@@ -65,6 +65,19 @@ export async function POST(req: NextRequest) {
       success_url: `${SITE_URL}/merci?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${SITE_URL}/panier`,
       shipping_address_collection: { allowed_countries: ["FR", "BE", "LU", "CH"] },
+      shipping_options: [
+        {
+          shipping_rate_data: {
+            type: "fixed_amount",
+            fixed_amount: { amount: 9900, currency: "eur" },
+            display_name: "Livraison France métropolitaine",
+            delivery_estimate: {
+              minimum: { unit: "business_day", value: 3 },
+              maximum: { unit: "business_day", value: 7 },
+            },
+          },
+        },
+      ],
       billing_address_collection: "auto",
       phone_number_collection: { enabled: true },
       automatic_tax: { enabled: false },

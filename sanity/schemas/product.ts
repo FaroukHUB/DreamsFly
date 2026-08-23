@@ -570,7 +570,7 @@ export const product = defineType({
       group: "content",
       description: "Laisse vide pour utiliser les infos livraison standard DreamsFly.",
       fields: [
-        { name: "price", type: "string", title: "Ex. « Livraison offerte dès 999 € »" },
+        { name: "price", type: "string", title: "Ex. « Livraison 99 € forfait »" },
         { name: "delay", type: "string", title: "Ex. « 5 à 7 jours ouvrés »" },
         { name: "perks", type: "array", of: [{ type: "string" }], title: "Perks (liste ✓)" },
       ],

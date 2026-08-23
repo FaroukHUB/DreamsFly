@@ -9,7 +9,7 @@ import { useCart } from "@/lib/cart/store";
  * Liste les articles, permet d'ajuster la quantité, ouvre Stripe Checkout.
  */
 export function CartDrawer() {
-  const { lines, isOpen, close, setQuantity, remove, subtotal } = useCart();
+  const { lines, isOpen, close, setQuantity, remove, subtotal, shipping, total } = useCart();
 
   // Empêche le scroll body quand ouvert
   useEffect(() => {
@@ -149,20 +149,25 @@ export function CartDrawer() {
         {/* Footer (checkout) */}
         {lines.length > 0 && (
           <footer className="border-t border-border bg-ivoire p-5">
-            <div className="mb-3 flex items-center justify-between">
-              <span className="text-sm font-medium text-pierre">Sous-total</span>
+            <div className="mb-2 flex items-center justify-between text-sm">
+              <span className="text-pierre">Sous-total</span>
+              <span className="font-medium text-ink">{subtotal().toFixed(2)} €</span>
+            </div>
+            <div className="mb-3 flex items-center justify-between text-sm">
+              <span className="text-pierre">Livraison (France métropolitaine)</span>
+              <span className="font-medium text-ink">{shipping().toFixed(2)} €</span>
+            </div>
+            <div className="mb-4 flex items-center justify-between border-t border-border pt-3">
+              <span className="text-sm font-semibold text-ink">Total TTC</span>
               <span className="font-sora text-2xl font-bold text-ink">
-                {subtotal().toFixed(2)} €
+                {total().toFixed(2)} €
               </span>
             </div>
-            <p className="mb-4 text-xs text-pierre">
-              Frais de livraison calculés au paiement.
-            </p>
 
             <CheckoutButton />
 
             <p className="mt-3 text-center text-xs text-pierre">
-              ou <strong className="text-ink">{(subtotal() / 4).toFixed(2)} €</strong> × 4 sans frais via Alma
+              ou <strong className="text-ink">{(total() / 4).toFixed(2)} €</strong> × 4 sans frais via Alma
             </p>
           </footer>
         )}

@@ -155,7 +155,7 @@ const FAQ_ITEMS = [
   { question: "Quelle taille pour un couple ?", answer: "160×200 est le meilleur compromis (chacun 80 cm, matelas de qualité, chambre 12 m² minimum). 180×200 si l'un de vous bouge beaucoup ou si vous avez la chambre. 140×190 est court pour deux adultes de + 1,75 m." },
   { question: "Faut-il changer de matelas tous les 10 ans ?", answer: "C'est la moyenne. Certains matelas premium tiennent 15 ans, d'autres modèles bas de gamme s'affaissent à 5 ans. Test : si votre matelas a plus de 10 ans ET que vous avez des douleurs matinales, c'est le moment." },
   { question: "Le quiz gère-t-il aussi les lits et oreillers ?", answer: "Oui — la 1re question vous demande le produit (matelas, lit ou oreiller). Le parcours s'adapte ensuite aux critères pertinents pour ce type de produit." },
-  { question: "Puis-je acheter directement après le quiz ?", answer: "Oui — bouton Acheter directement sur la page résultat. Livraison offerte dès 999 € d'achat, paiement en 4× sans frais avec Alma, 30 nuits d'essai." },
+  { question: "Puis-je acheter directement après le quiz ?", answer: "Oui — bouton Acheter directement sur la page résultat. Frais de port forfaitaires affichés au panier, paiement en 4× sans frais avec Alma, 30 nuits d'essai." },
 ];
 
 // ─────────────────────────────────────────────────────────────

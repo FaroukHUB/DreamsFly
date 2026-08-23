@@ -26,7 +26,7 @@ const DEFAULT_USPS: UspItem[] = [
   { icon: "users", title: "+ 5 000 clients satisfaits", subtitle: "★ 4,9/5 sur Google" },
   { icon: "lock", title: "Paiement 100 % sécurisé", subtitle: "Via Alma · Stripe · CB" },
   { icon: "store", title: "3 magasins physiques", subtitle: "Visitez nos showrooms" },
-  { icon: "truck", title: "Livraison à domicile", subtitle: "Offerte dès 999 € d'achat" },
+  { icon: "truck", title: "Livraison à domicile", subtitle: "Partout en France métropolitaine" },
 ];
 
 function Icon({ name }: { name: string }) {

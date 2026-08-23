@@ -17,6 +17,9 @@ export type CartLine = {
   quantity: number;
 };
 
+/** Frais de port forfaitaires fixes appliqués à toute commande France métropolitaine. */
+export const SHIPPING_FEE_EUR = 99;
+
 type CartState = {
   lines: CartLine[];
   isOpen: boolean;
@@ -27,8 +30,12 @@ type CartState = {
   open: () => void;
   close: () => void;
   toggle: () => void;
-  /** Sous-total avant promo (somme unitPrice × quantity). */
+  /** Sous-total produits (avant frais de port). */
   subtotal: () => number;
+  /** Montant des frais de port (0 si panier vide, sinon SHIPPING_FEE_EUR). */
+  shipping: () => number;
+  /** Total à payer : subtotal + shipping. */
+  total: () => number;
   /** Nombre d'articles dans le panier. */
   count: () => number;
 };
@@ -69,6 +76,11 @@ export const useCart = create<CartState>()(
       close: () => set({ isOpen: false }),
       toggle: () => set({ isOpen: !get().isOpen }),
       subtotal: () => get().lines.reduce((s, l) => s + l.unitPrice * l.quantity, 0),
+      shipping: () => (get().lines.length > 0 ? SHIPPING_FEE_EUR : 0),
+      total: () => {
+        const sub = get().lines.reduce((s, l) => s + l.unitPrice * l.quantity, 0);
+        return sub + (get().lines.length > 0 ? SHIPPING_FEE_EUR : 0);
+      },
       count: () => get().lines.reduce((n, l) => n + l.quantity, 0),
     }),
     {

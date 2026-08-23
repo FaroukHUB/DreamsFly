@@ -50,7 +50,7 @@ export function categoryAdvantages(pt: ProductType): Advantage[] {
         { icon: "🌿", title: "Anti-acariens", text: "Traitement en usine, idéal pour les allergiques." },
         { icon: "🌬️", title: "Régulation thermique", text: "Fibres respirantes qui régulent la température." },
         { icon: "🇪🇺", title: "Confection européenne", text: "Ateliers audités, garnitures certifiées." },
-        { icon: "🚚", title: "Livraison 48h", text: "Colis suivi, offerte dès 999 € d'achat." },
+        { icon: "🚚", title: "Livraison 48h", text: "Colis suivi, partout en France." },
       ];
     default:
       return [];
@@ -177,7 +177,7 @@ export function categoryFaq(pt: ProductType): FaqEntry[] {
         { question: "Quelle différence entre mousse et ressorts ?", answer: "La mousse (polyuréthane ou mémoire) enveloppe le corps et absorbe les points de pression. Les ressorts ensachés offrent un soutien plus tonique + une meilleure indépendance de couchage. Les hybrides combinent les deux." },
         { question: "Combien de temps dure un matelas ?", answer: "7 à 10 ans en usage quotidien. Au-delà, la mousse perd 30 % de son soutien même s'il semble intact. Un vieux matelas double le risque de douleurs dorsales." },
         { question: "Quel sommier utiliser avec un matelas neuf ?", answer: "Toujours neuf, adapté. Un vieux sommier avec lattes cassées ruine un matelas neuf en quelques mois — et annule la garantie. Lattes espacées pour la ventilation, tapissier pour un soutien dense." },
-        { question: "Combien de temps pour être livré ?", answer: "5 à 7 jours ouvrés en France métropolitaine, offerte dès 999 € d'achat (participation forfaitaire en dessous). Rendez-vous par SMS 48 h avant, montée à l'étage incluse, reprise gratuite de l'ancien matelas sur demande." },
+        { question: "Combien de temps pour être livré ?", answer: "5 à 7 jours ouvrés en France métropolitaine, frais de port forfaitaires affichés au panier. Rendez-vous par SMS 48 h avant, montée à l'étage incluse, reprise gratuite de l'ancien matelas sur demande." },
         { question: "Puis-je essayer et renvoyer si ça ne convient pas ?", answer: "30 nuits d'essai à domicile. Après 21 jours d'adaptation, si le matelas ne vous convient pas, reprise gratuite et remboursement intégral — sans conditions." },
         { question: "Quelle est la garantie ?", answer: "2 ans minimum sur tous nos matelas (défaut de fabrication, affaissement > 3 cm). Certains modèles premium : 5 ans. Ne couvre pas l'usure normale ni les taches." },
         { question: "Les matelas sont-ils hypoallergéniques ?", answer: "Traitement anti-acariens en usine, housses certifiées OEKO-TEX Standard 100. Pour les allergies sévères, ajoutez une alèse imperméable." },
@@ -205,7 +205,7 @@ export function categoryFaq(pt: ProductType): FaqEntry[] {
         { question: "Les pieds sont-ils inclus ?", answer: "Oui — 4 pieds cylindriques en bois massif (15 cm par défaut). Options 25 cm ou 5 cm disponibles." },
         { question: "Comment choisir la hauteur des pieds ?", answer: "Standard (15 cm) → couchage à 55-60 cm. Hauts (25 cm) → 65-70 cm, plus facile pour seniors et PMR. Bas (5 cm) → look japonisant." },
         { question: "Quel entretien ?", answer: "Aspirateur tous les 3 mois entre les lattes. Vérifiez le serrage des vis une fois par an. Aérez sous le sommier lorsque vous changez les draps." },
-        { question: "Combien de temps pour la livraison ?", answer: "5-7 jours ouvrés en France métropolitaine, offerte dès 999 € d'achat. Livré à plat, monté en 15 min à domicile." },
+        { question: "Combien de temps pour la livraison ?", answer: "5-7 jours ouvrés en France métropolitaine, frais de port forfaitaires affichés au panier. Livré à plat, monté en 15 min à domicile." },
       ];
     case "oreiller":
       return [
@@ -214,7 +214,7 @@ export function categoryFaq(pt: ProductType): FaqEntry[] {
         { question: "Combien de temps dure un oreiller ?", answer: "2 à 3 ans pour un usage quotidien. Test simple : plié en deux, il doit reprendre sa forme en < 3 secondes." },
         { question: "L'oreiller convient-il aux allergiques ?", answer: "Traitement anti-acariens et housse OEKO-TEX. Pour les allergies sévères, ajoutez une housse anti-acariens supplémentaire." },
         { question: "Quel oreiller pour douleurs cervicales ?", answer: "Un oreiller ergonomique (mémoire de forme, forme vague) qui épouse la nuque sans la cambrer. Consultez un ostéopathe si les douleurs persistent." },
-        { question: "Comment se déroule la livraison ?", answer: "48h en France métropolitaine, offerte dès 999 € d'achat. Colis suivi, remise en boîte aux lettres ou en main propre selon la taille." },
+        { question: "Comment se déroule la livraison ?", answer: "48h en France métropolitaine, frais de port forfaitaires affichés au panier. Colis suivi, remise en boîte aux lettres ou en main propre selon la taille." },
       ];
     default:
       return [];
