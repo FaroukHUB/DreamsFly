@@ -4,15 +4,16 @@ import { sanityClient } from "@/lib/sanity/client";
 import { groq } from "next-sanity";
 
 /**
- * Chatbot conseiller sommeil DreamsFly — API stream.
- * POST /api/chat  body : { messages: [{role, content}, ...] }
+ * Chatbot conseiller sommeil DreamsFly — API stream, provider-agnostique.
  *
- * Utilise l'API Claude (Anthropic) avec streaming. Le contexte
- * (catalogue produits + showrooms + engagements) est injecté dans le
- * system prompt à chaque requête pour que le bot ne parle QUE de vraies
- * infos DreamsFly (pas d'hallucination, pas de matelas fictif).
+ * Ordre de priorité :
+ *   1. Google Gemini 2.0 Flash   (env GOOGLE_API_KEY)  — GRATUIT (15 req/min, 1M tokens/jour)
+ *   2. Claude Haiku 4.5          (env ANTHROPIC_API_KEY) — payant mais peu cher (~1€/100 conv)
+ *   3. 503 si aucun des deux configuré
  *
- * Requiert env var ANTHROPIC_API_KEY (à ajouter dans Vercel → Settings).
+ * Où récupérer les clés :
+ *   • Gemini : https://aistudio.google.com/apikey  (compte Google, gratuit)
+ *   • Claude : https://console.anthropic.com/settings/keys
  */
 
 export const runtime = "nodejs";
@@ -113,13 +114,97 @@ ${showroomsList || "(3 showrooms en cours d'inauguration.)"}
 Si tu manques d'info catalogue pour répondre, oriente vers /quiz ou /aide/contact.`;
 }
 
+// ─────────────────────────────────────────────────────────────
+// Google Gemini — REST streaming (gratuit)
+// ─────────────────────────────────────────────────────────────
+async function* streamGemini(system: string, messages: ClientMessage[], apiKey: string) {
+  const model = "gemini-2.0-flash";
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse&key=${apiKey}`;
+
+  const contents = messages.map((m) => ({
+    role: m.role === "assistant" ? "model" : "user",
+    parts: [{ text: m.content }],
+  }));
+
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      systemInstruction: { parts: [{ text: system }] },
+      contents,
+      generationConfig: {
+        temperature: 0.7,
+        maxOutputTokens: 1024,
+      },
+    }),
+  });
+
+  if (!res.ok || !res.body) {
+    const errText = await res.text().catch(() => "");
+    throw new Error(`Gemini ${res.status} : ${errText.slice(0, 200)}`);
+  }
+
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split("\n");
+    buffer = lines.pop() || "";
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed.startsWith("data:")) continue;
+      const jsonStr = trimmed.slice(5).trim();
+      if (!jsonStr) continue;
+      try {
+        const payload = JSON.parse(jsonStr);
+        const parts = payload?.candidates?.[0]?.content?.parts;
+        if (Array.isArray(parts)) {
+          for (const p of parts) {
+            if (p?.text) yield p.text as string;
+          }
+        }
+      } catch {
+        // ligne partielle, on ignore
+      }
+    }
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+// Anthropic Claude Haiku 4.5 — SDK streaming (payant, peu cher)
+// ─────────────────────────────────────────────────────────────
+async function* streamClaude(system: string, messages: ClientMessage[], apiKey: string) {
+  const client = new Anthropic({ apiKey });
+  const anthropicStream = client.messages.stream({
+    model: "claude-haiku-4-5",
+    max_tokens: 1024,
+    system,
+    messages,
+  });
+  for await (const event of anthropicStream) {
+    if (
+      event.type === "content_block_delta" &&
+      event.delta.type === "text_delta" &&
+      event.delta.text
+    ) {
+      yield event.delta.text;
+    }
+  }
+}
+
 export async function POST(req: NextRequest) {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) {
+  const googleKey = process.env.GOOGLE_API_KEY;
+  const anthropicKey = process.env.ANTHROPIC_API_KEY;
+
+  if (!googleKey && !anthropicKey) {
     return new Response(
       JSON.stringify({
         error:
-          "Le conseiller IA n'est pas encore actif. Ajoutez ANTHROPIC_API_KEY dans les variables d'environnement Vercel.",
+          "Le conseiller IA n'est pas encore actif. Ajoutez GOOGLE_API_KEY (gratuit — aistudio.google.com/apikey) OU ANTHROPIC_API_KEY dans les variables d'environnement Vercel.",
       }),
       { status: 503, headers: { "Content-Type": "application/json" } },
     );
@@ -145,29 +230,19 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  const client = new Anthropic({ apiKey });
   const context = await loadContext();
   const system = buildSystemPrompt(context);
+  const trimmedMessages = messages.slice(-12);
 
   const encoder = new TextEncoder();
   const stream = new ReadableStream({
     async start(controller) {
       try {
-        const anthropicStream = client.messages.stream({
-          model: "claude-opus-5",
-          max_tokens: 1024,
-          system,
-          messages: messages.slice(-12),
-        });
-
-        for await (const event of anthropicStream) {
-          if (
-            event.type === "content_block_delta" &&
-            event.delta.type === "text_delta" &&
-            event.delta.text
-          ) {
-            controller.enqueue(encoder.encode(event.delta.text));
-          }
+        const generator = googleKey
+          ? streamGemini(system, trimmedMessages, googleKey)
+          : streamClaude(system, trimmedMessages, anthropicKey!);
+        for await (const chunk of generator) {
+          controller.enqueue(encoder.encode(chunk));
         }
         controller.close();
       } catch (err: any) {
