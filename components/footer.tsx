@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Logo } from "./logo";
+import { LineIcon } from "./line-icon";
 
 type Link = { label: string; link: string };
 type Column = { title: string; links: Link[] };
@@ -44,18 +45,28 @@ export function Footer({ settings }: { settings?: any }) {
 
             {/* Contact rapide */}
             {(contact.phone || contact.email) && (
-              <div className="mt-5 space-y-1 text-sm">
+              <ul className="mt-6 space-y-3 font-sans text-sm">
                 {contact.phone && (
-                  <a href={`tel:${contact.phone.replace(/\s/g, "")}`} className="block text-white/80 hover:text-or">
-                    📞 {contact.phone}
-                  </a>
+                  <li>
+                    <a href={`tel:${contact.phone.replace(/\s/g, "")}`} className="group inline-flex items-center gap-3 text-ivoire/80 hover:text-or transition-colors">
+                      <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/15 group-hover:border-or">
+                        <LineIcon name="phone" size={14} />
+                      </span>
+                      {contact.phone}
+                    </a>
+                  </li>
                 )}
                 {contact.email && (
-                  <a href={`mailto:${contact.email}`} className="block text-white/80 hover:text-or">
-                    ✉️ {contact.email}
-                  </a>
+                  <li>
+                    <a href={`mailto:${contact.email}`} className="group inline-flex items-center gap-3 text-ivoire/80 hover:text-or transition-colors">
+                      <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/15 group-hover:border-or">
+                        <LineIcon name="mail" size={14} />
+                      </span>
+                      {contact.email}
+                    </a>
+                  </li>
                 )}
-              </div>
+              </ul>
             )}
 
             {/* Socials */}

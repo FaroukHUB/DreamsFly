@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { urlFor } from "@/lib/sanity/image";
 import { defaultWhyUs } from "@/lib/homepage-defaults";
+import { LineIcon, iconNameForEmoji } from "@/components/line-icon";
 
 type Pillar = { icon?: string; title?: string; text?: string };
 type Data = {
@@ -50,17 +51,18 @@ export function WhyUs({ data }: { data?: Data }) {
 
         <div className="rule-noir mb-14" />
 
-        <div className="grid gap-x-10 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-x-12 gap-y-16 sm:grid-cols-2 lg:grid-cols-3">
           {d.pillars.map((p, i) => (
             <div key={i} className="reveal" style={{ transitionDelay: `${i * 70}ms` }}>
-              <div className="mb-5 flex items-baseline gap-4">
-                <span className="num-editorial !text-[38px] !text-or">
+              <div className="mb-6 flex items-center gap-5">
+                <span className="num-editorial !text-[42px] !text-or leading-none">
                   {String(i + 1).padStart(2, "0")}
                 </span>
-                <span aria-hidden className="text-2xl">{p.icon}</span>
+                <span className="h-px flex-1 bg-white/15" aria-hidden="true" />
+                <LineIcon name={iconNameForEmoji(p.icon)} size={26} className="text-or" />
               </div>
-              <h3 className="display-serif text-[1.4rem] font-normal text-ivoire md:text-[1.7rem]">{p.title}</h3>
-              <p className="mt-3 font-sans text-[14px] leading-relaxed text-ivoire/65 md:text-[15px] max-w-[38ch]">{p.text}</p>
+              <h3 className="display-serif text-[1.5rem] font-normal text-ivoire md:text-[1.8rem]">{p.title}</h3>
+              <p className="mt-4 font-sans text-[14px] leading-relaxed text-ivoire/65 md:text-[15px] max-w-[38ch]">{p.text}</p>
             </div>
           ))}
         </div>

@@ -28,9 +28,14 @@ const components: PortableTextComponents = {
         </figure>
       ) : null,
     calloutBlock: ({ value }: any) => (
-      <aside className="my-8 rounded-2xl border border-sky/30 bg-aurora/15 p-6">
-        {value.title && <h4 className="mb-2 font-sora text-base font-semibold text-midnight">💡 {value.title}</h4>}
-        <p className="text-[15.5px] leading-relaxed text-ink">{value.text}</p>
+      <aside className="my-10 border-l-2 border-or bg-creme/40 px-6 py-5">
+        {value.title && (
+          <h4 className="mb-2 font-serif text-[18px] font-normal text-noir">
+            <span className="mr-2 text-or">◆</span>
+            {value.title}
+          </h4>
+        )}
+        <p className="font-sans text-[15px] leading-relaxed text-ink">{value.text}</p>
       </aside>
     ),
     faqItem: ({ value }: any) => (

@@ -4,6 +4,7 @@ import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import { urlFor } from "@/lib/sanity/image";
 import { sanityClient } from "@/lib/sanity/client";
 import { JsonLd, faqSchema, definedTermSchema } from "@/lib/seo/jsonld";
+import { LineIcon } from "@/components/line-icon";
 import { getShellClasses } from "./section-shells";
 
 type Block = any;
@@ -201,22 +202,18 @@ function LifestyleImageBlock({ data }: { data: Block }) {
 // ───────────────────────────────────────
 function DefinitionBlock({ data }: { data: Block }) {
   return (
-    <section className="relative overflow-hidden rounded-3xl border border-aurora/40 bg-gradient-to-br from-aurora/15 via-ivoire to-aurora/5 p-10 md:p-12">
-      {/* Décor */}
-      <div aria-hidden className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-aurora/30 blur-3xl" />
-      <div aria-hidden className="absolute -left-10 -bottom-10 h-40 w-40 rounded-full bg-or/15 blur-2xl" />
+    <section className="relative overflow-hidden rounded-[28px] border border-ink/10 bg-creme p-10 md:p-14">
+      <div aria-hidden className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-or/12 blur-3xl" />
 
       <div className="relative z-10 max-w-3xl">
-        <div className="mb-3 flex items-center gap-3">
-          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-midnight font-sora text-lg font-bold text-white">
-            📖
-          </span>
-          <span className="text-xs font-bold uppercase tracking-widest text-midnight">Définition</span>
+        <div className="mb-6 flex items-center gap-3">
+          <span className="h-px w-10 bg-or" aria-hidden="true" />
+          <span className="font-sans text-[11px] font-medium uppercase tracking-[0.22em] text-taupe">Définition</span>
         </div>
-        <h2 className="mb-4 font-sora text-3xl font-semibold leading-tight tracking-tight text-ink md:text-4xl">
-          Qu'est-ce qu'un <span className="bg-gradient-to-r from-midnight to-sky bg-clip-text text-transparent">{data.term}</span> ?
+        <h2 className="mb-5 display-serif on-cream text-[2rem] font-normal md:text-[3rem]">
+          Qu'est-ce qu'un <em>{data.term}</em> ?
         </h2>
-        <p className="text-lg leading-relaxed text-ink/85">{data.definition}</p>
+        <p className="font-sans text-[17px] leading-relaxed text-ink/80">{data.definition}</p>
       </div>
       <JsonLd data={definedTermSchema(data.term, data.definition)} />
     </section>
@@ -230,19 +227,20 @@ function ComparisonTable({ data }: { data: Block }) {
   return (
     <section>
       {data.title && (
-        <div className="mb-8">
-          <div className="mb-2 inline-flex items-center gap-2 rounded-pill bg-or/20 px-3 py-1 text-xs font-bold uppercase tracking-wider text-or-dark">
-            📊 Comparatif
+        <div className="mb-10">
+          <div className="mb-3 flex items-center gap-3">
+            <span className="h-px w-10 bg-or" aria-hidden="true" />
+            <span className="font-sans text-[11px] font-medium uppercase tracking-[0.22em] text-taupe">Comparatif</span>
           </div>
-          <h2 className="font-sora text-3xl font-semibold tracking-tight text-ink md:text-4xl">{data.title}</h2>
+          <h2 className="display-serif on-cream text-[2rem] font-normal md:text-[3rem]">{data.title}</h2>
         </div>
       )}
-      <div className="overflow-x-auto rounded-2xl border border-border bg-ivoire shadow-[0_8px_32px_rgba(15,23,42,0.05)]">
+      <div className="overflow-x-auto rounded-[24px] border border-ink/10 bg-ivoire">
         <table className="w-full border-collapse text-sm">
           <thead>
-            <tr className="bg-gradient-to-r from-midnight to-midnight-dark text-white">
+            <tr className="bg-noir text-ivoire">
               {data.columns?.map((c: string, i: number) => (
-                <th key={i} className="border-b border-border p-4 text-left font-sora text-[15px] font-semibold">
+                <th key={i} className="border-b border-white/10 p-5 text-left font-sans text-[12px] font-medium uppercase tracking-[0.14em]">
                   {c}
                 </th>
               ))}
@@ -250,10 +248,10 @@ function ComparisonTable({ data }: { data: Block }) {
           </thead>
           <tbody>
             {data.rows?.map((row: any, i: number) => (
-              <tr key={i} className={i % 2 ? "bg-sable" : "bg-ivoire"}>
-                <td className="border-b border-border p-4 font-sora font-semibold text-ink">{row.label}</td>
+              <tr key={i} className={i % 2 ? "bg-creme/40" : "bg-ivoire"}>
+                <td className="border-b border-ink/8 p-5 font-serif text-[15px] font-normal text-noir">{row.label}</td>
                 {row.values?.map((v: string, j: number) => (
-                  <td key={j} className="border-b border-border p-4 text-[14.5px] text-pierre">
+                  <td key={j} className="border-b border-ink/8 p-5 font-sans text-[14px] text-taupe">
                     {v}
                   </td>
                 ))}
@@ -269,54 +267,54 @@ function ComparisonTable({ data }: { data: Block }) {
 // ───────────────────────────────────────
 // RECOMMANDATIONS — cards profil avec icônes + accent or
 // ───────────────────────────────────────
-const PROFILE_ICONS: Record<string, string> = {
-  couple: "💑",
-  studio: "🏙️",
-  ami: "🛌",
-  étudiant: "🎓",
-  enfant: "🧒",
-  bébé: "👶",
-  adulte: "🧍",
-  appart: "🏠",
-  morpho: "💪",
-  dos: "🦴",
-  chaud: "🔥",
-  froid: "❄️",
+const PROFILE_ICON_MAP: Record<string, string> = {
+  couple: "couple",
+  studio: "city",
+  ami: "bed",
+  étudiant: "book",
+  enfant: "users",
+  bébé: "users",
+  adulte: "users",
+  appart: "home",
+  morpho: "target",
+  dos: "shield",
+  chaud: "sun",
+  froid: "moon",
 };
 
-function getProfileIcon(profile: string): string {
+function getProfileIconName(profile: string): string {
   const lower = profile.toLowerCase();
-  for (const [key, icon] of Object.entries(PROFILE_ICONS)) {
-    if (lower.includes(key)) return icon;
+  for (const [key, name] of Object.entries(PROFILE_ICON_MAP)) {
+    if (lower.includes(key)) return name;
   }
-  return "✨";
+  return "sparkle";
 }
 
 function RecommendationBlock({ data }: { data: Block }) {
   return (
     <section>
       {data.heading && (
-        <div className="mb-8">
-          <div className="mb-2 inline-flex items-center gap-2 rounded-pill bg-aurora/30 px-3 py-1 text-xs font-bold uppercase tracking-wider text-midnight">
-            🎯 Pour qui ?
+        <div className="mb-10">
+          <div className="mb-3 flex items-center gap-3">
+            <span className="h-px w-10 bg-or" aria-hidden="true" />
+            <span className="font-sans text-[11px] font-medium uppercase tracking-[0.22em] text-taupe">Pour qui</span>
           </div>
-          <h2 className="font-sora text-3xl font-semibold tracking-tight text-ink md:text-4xl">{data.heading}</h2>
+          <h2 className="display-serif on-cream text-[2rem] font-normal md:text-[3rem]">{data.heading}</h2>
         </div>
       )}
-      <div className="grid gap-5 md:grid-cols-2">
+      <div className="grid gap-6 md:grid-cols-2">
         {data.items?.map((it: any, i: number) => (
           <div
             key={i}
-            className="group relative overflow-hidden rounded-2xl border border-border bg-ivoire p-6 transition-all hover:-translate-y-0.5 hover:border-midnight hover:shadow-[0_12px_32px_rgba(15,23,42,0.06)]"
+            className="group relative overflow-hidden rounded-[24px] border border-ink/10 bg-ivoire p-8 transition-all hover:-translate-y-1 hover:border-noir/40"
           >
-            <div className="absolute right-0 top-0 h-24 w-24 -translate-y-12 translate-x-12 rounded-full bg-aurora/15 transition-transform group-hover:translate-x-8" />
-            <div className="relative">
-              <div className="mb-3 flex items-center gap-3">
-                <span aria-hidden className="text-3xl">{getProfileIcon(it.profile || "")}</span>
-                <h3 className="font-sora text-lg font-semibold text-ink">{it.profile}</h3>
-              </div>
-              <p className="text-[15px] leading-relaxed text-pierre">{it.advice}</p>
+            <div className="mb-5 flex items-center gap-4">
+              <span className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-ink/15 text-noir">
+                <LineIcon name={getProfileIconName(it.profile || "")} size={20} />
+              </span>
+              <h3 className="display-serif on-cream text-[1.25rem] font-normal">{it.profile}</h3>
             </div>
+            <p className="font-sans text-[15px] leading-relaxed text-taupe">{it.advice}</p>
           </div>
         ))}
       </div>
