@@ -64,8 +64,8 @@ const DEFAULT_CONTENT = {
     },
     {
       icon: "🛌",
-      title: "Nuit d'essai 100 nuits",
-      text: "Vous doutez malgré l'essai en magasin ? Vous gardez le droit de rendre le matelas sous 100 nuits.",
+      title: "Essai libre en showroom",
+      text: "Prenez le temps d'allonger, comparer, ressentir — sans limite de temps ni pression commerciale.",
     },
     {
       icon: "🇫🇷",

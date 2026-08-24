@@ -44,7 +44,7 @@ export const siteSettings = defineType({
           type: "array",
           of: [{ type: "string" }],
           description:
-            "Exemples factuellement vrais : noms de gammes DreamsFly (Milan, Berlin, Londres…), certifications (OEKO-TEX, CertiPUR, GOTS, PEFC), matériaux (mousse HR 55 kg/m³, coton bio, lin français), engagements (100 nuits d'essai, 15 ans de garantie, fabrication européenne), ou services (livraison à domicile, showrooms Paris·Lyon·Marseille).",
+            "Exemples factuellement vrais : noms de gammes DreamsFly (Milan, Berlin, Londres…), certifications (OEKO-TEX, CertiPUR, GOTS, PEFC), matériaux (mousse HR 55 kg/m³, coton bio, lin français), engagements (fabrication européenne, essai en showroom), ou services (livraison à domicile, showrooms Paris·Lyon·Marseille).",
         },
       ],
     }),

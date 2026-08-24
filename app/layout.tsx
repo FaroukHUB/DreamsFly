@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     template: "%s · DreamsFly",
   },
   description:
-    "Découvrez nos matelas conçus en France. Mémoire de forme, ressorts ensachés, mousse polyuréthane. Essai 100 nuits · Garantie 15 ans · Paiement 3× sans frais.",
+    "Découvrez nos matelas conçus en France. Mémoire de forme, ressorts ensachés, mousse polyuréthane. Essai en showroom · Garantie fabricant · Paiement 3× sans frais.",
   openGraph: {
     type: "website",
     locale: "fr_FR",

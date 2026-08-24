@@ -31,7 +31,7 @@ export const revalidate = 60;
 export const metadata: Metadata = buildMetadata({
   title: "Matelas & literie premium fabriqués en Europe",
   description:
-    "DreamsFly : matelas, lits coffre, sommiers et oreillers premium fabriqués en Europe. 100 nuits d'essai, livraison à l'étage, paiement en 3× ou 4× sans frais.",
+    "DreamsFly : matelas, lits coffre, sommiers et oreillers premium fabriqués en Europe. Essai en showroom, livraison à l'étage, paiement en 3× ou 4× sans frais.",
   path: "/",
 });
 

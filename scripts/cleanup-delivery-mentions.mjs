@@ -1,18 +1,21 @@
 #!/usr/bin/env node
 /**
- * Migration : nettoie les mentions "Livraison offerte / gratuite / dès X €"
- * saisies en base Sanity — sur les champs :
- *  - product.deliveryOverride.price
- *  - product.deliveryOverride.perks[]
- *  - landingPage.sections[].* (portable text callouts, si présents)
+ * Migration : nettoie les mentions inventées / incorrectes qui traînent
+ * en base Sanity — sur les champs :
+ *  - product.deliveryOverride.price / .perks[]
+ *  - product.warrantyOverride.duration
+ *  - landingPage.sections[].* (portable text)
  *  - staticPage.body[].* (portable text)
+ *  - guide.body[].*
  *
  * Par défaut : mode DRY (liste seulement). Ajouter --publish pour appliquer.
  *
- * Politique cible :
- *  - "Livraison offerte dès 39 €"  → "Livraison — 99 € forfait national"
- *  - "Livraison offerte"           → "Livraison à domicile (99 €)"
- *  - "Livraison gratuite"          → "Livraison à domicile (99 €)"
+ * Politiques appliquées :
+ *  · "Livraison offerte / gratuite / incluse" → "Livraison à domicile (99 €)"
+ *  · "Frais de port offerts / gratuits"      → "Frais de livraison 99 €"
+ *  · "15 ans de garantie" / "Garantie 15 ans" → "Garantie fabricant"
+ *  · "100 nuits d'essai" / "Essai 100 nuits"  → "Essai en showroom"
+ *  · "essai 100 nuits" (minuscule)            → "essai en showroom"
  *
  * Usage :
  *   SANITY_PROJECT_ID=qqxvd0fj \
@@ -43,6 +46,8 @@ const client = createClient({
 // Regex catch-all pour les formulations à supprimer
 const OFFERED_RE = /livraison\s+(offerte|gratuite|incluse)(?:\s+d[eè]s\s+\d+\s*€?)?/gi;
 const FRAIS_RE = /frais\s+de\s+port\s+(offerts?|gratuits?|nuls?)/gi;
+const WARRANTY15_RE = /(garantie\s+(?:de\s+)?15\s*ans|15\s*ans\s+de\s+garantie)/gi;
+const NUITS100_RE = /(essai\s+100\s*nuits|100\s*nuits\s+d['e]?\s*essai|nuit\s+d['e]?\s*essai\s+100\s*nuits)/gi;
 
 /** Nettoie une string en remplaçant les formulations à bannir. */
 function cleanString(s) {
@@ -50,15 +55,18 @@ function cleanString(s) {
   let out = s;
   out = out.replace(OFFERED_RE, "Livraison à domicile (99 €)");
   out = out.replace(FRAIS_RE, "Frais de livraison 99 €");
+  out = out.replace(WARRANTY15_RE, (m) => (m[0] === m[0].toUpperCase() ? "Garantie fabricant" : "garantie fabricant"));
+  out = out.replace(NUITS100_RE, (m) => (m[0] === m[0].toUpperCase() ? "Essai en showroom" : "essai en showroom"));
   return out;
 }
 
 function hasIssue(s) {
-  return typeof s === "string" && (OFFERED_RE.test(s) || FRAIS_RE.test(s));
+  if (typeof s !== "string") return false;
+  OFFERED_RE.lastIndex = FRAIS_RE.lastIndex = WARRANTY15_RE.lastIndex = NUITS100_RE.lastIndex = 0;
+  return OFFERED_RE.test(s) || FRAIS_RE.test(s) || WARRANTY15_RE.test(s) || NUITS100_RE.test(s);
 }
-// note : les regex ont le flag /g → il faut reset lastIndex à chaque test
-OFFERED_RE.lastIndex = 0;
-FRAIS_RE.lastIndex = 0;
+// reset lastIndex après la déclaration
+OFFERED_RE.lastIndex = FRAIS_RE.lastIndex = WARRANTY15_RE.lastIndex = NUITS100_RE.lastIndex = 0;
 
 /** Parcourt récursivement une valeur pour trouver toutes les strings problématiques. */
 function findIssues(node, path = "") {
@@ -155,8 +163,8 @@ async function main() {
   console.log(`   Projet: ${projectId} · Dataset: ${dataset}\n`);
 
   const productIssues = await scan(
-    `*[_type == "product"]{ _id, _type, _rev, name, slug, deliveryOverride }`,
-    "Produits (deliveryOverride)",
+    `*[_type == "product"]{ _id, _type, _rev, name, slug, deliveryOverride, warrantyOverride, tagline, productFaq, highlights }`,
+    "Produits (deliveryOverride, warrantyOverride, tagline, FAQ, highlights)",
   );
 
   const landingIssues = await scan(
@@ -174,7 +182,36 @@ async function main() {
     "Guides magazine",
   );
 
-  const all = [...productIssues, ...landingIssues, ...staticIssues, ...guideIssues];
+  const homepageIssues = await scan(
+    `*[_type == "homepage"]{ ... }`,
+    "Homepage singleton (hero, mosaic, USP, advantages, FAQ, testimonials, quiz CTA…)",
+  );
+
+  const showroomsPageIssues = await scan(
+    `*[_type == "showroomsPage"]{ ... }`,
+    "Page Magasins singleton (hero, argumentaire, FAQ)",
+  );
+
+  const quizPageIssues = await scan(
+    `*[_type == "quizPage"]{ ... }`,
+    "Page Quiz singleton (méthode, critères, pièges, FAQ)",
+  );
+
+  const settingsIssues = await scan(
+    `*[_type == "siteSettings"]{ ... }`,
+    "Paramètres du site (topbar, footer, bandeau éditorial)",
+  );
+
+  const all = [
+    ...productIssues,
+    ...landingIssues,
+    ...staticIssues,
+    ...guideIssues,
+    ...homepageIssues,
+    ...showroomsPageIssues,
+    ...quizPageIssues,
+    ...settingsIssues,
+  ];
 
   console.log(`\n═══════════════════════════════════════════════`);
   console.log(`Total : ${all.length} document(s) à nettoyer.`);
