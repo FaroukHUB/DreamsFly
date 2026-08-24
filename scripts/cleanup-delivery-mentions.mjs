@@ -123,18 +123,20 @@ async function applyPatches(flagged) {
     console.log("\n✅ Rien à patcher.\n");
     return;
   }
-  console.log(`\n🩹 Application de ${flagged.length} patch(s)…\n`);
+  console.log(`\n🩹 Application de ${flagged.length} patch(s) — mode PATCH PARTIEL (sûr, ne touche que les champs modifiés)\n`);
   for (const { doc, issues } of flagged) {
-    // On patche le DRAFT si un draft existe, sinon la version publiée + on republie via createOrReplace après avoir manipulé.
-    // Le plus simple et sûr : muter directement le doc récupéré (déjà en mémoire), puis createOrReplace.
-    let mutated = JSON.parse(JSON.stringify(doc));
+    // ⚠️  Ne PAS utiliser createOrReplace — ça écrase le doc entier
+    // avec seulement les champs récupérés par la query GROQ (perte totale
+    // des images, variants, description, etc.).
+    // On utilise .patch().set() qui ne modifie que les champs listés.
+    let patch = client.patch(doc._id);
     for (const { path, cleaned } of issues) {
-      setDeep(mutated, path, cleaned);
+      patch = patch.set({ [path]: cleaned });
     }
-    await client.createOrReplace(mutated);
-    console.log(`  ✅ ${doc._id}${doc.slug?.current ? ` (/${doc.slug.current})` : ""} — ${issues.length} champ(s) mis à jour`);
+    await patch.commit();
+    console.log(`  ✅ ${doc._id}${doc.slug?.current ? ` (/${doc.slug.current})` : ""} — ${issues.length} champ(s) mis à jour (patch partiel)`);
   }
-  console.log(`\n💡 Republication effectuée sur les documents PUBLIÉS ci-dessus.\n`);
+  console.log(`\n💡 Patches partiels appliqués — aucun autre champ des documents n'a été touché.\n`);
 }
 
 /** Met à jour une valeur profonde en suivant une path syntaxe 'a.b[0].c'. */
