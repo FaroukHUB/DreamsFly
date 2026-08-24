@@ -49,7 +49,7 @@ export function BuyingGuide({ data }: { data?: Data }) {
               className="group reveal flex flex-col overflow-hidden rounded-[28px] border border-ink/10 bg-ivoire transition-all hover:-translate-y-1 hover:border-noir/50 md:flex-row"
             >
               {g.image?.asset && (
-                <div className="relative aspect-[4/3] overflow-hidden md:aspect-auto md:w-[42%] md:min-h-[280px]">
+                <div className="relative aspect-[4/3] overflow-hidden md:aspect-auto md:w-[45%] md:min-h-[360px]">
                   <Image src={urlFor(g.image).width(700).url()} alt={g.image.alt || g.title || ""} fill sizes="(max-width:768px) 100vw, 30vw" className="object-cover transition-transform duration-[900ms] group-hover:scale-105" loading="lazy" />
                 </div>
               )}

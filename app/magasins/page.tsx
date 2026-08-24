@@ -18,6 +18,7 @@ type ShowroomsPageData = {
   heroEyebrow?: string;
   heroTitle?: string;
   heroSubtitle?: string;
+  heroImage?: any;
   argumentsTitle?: string;
   argumentsItems?: { icon?: string; title?: string; text?: string }[];
   faqTitle?: string;
@@ -75,6 +76,7 @@ export default async function ShowroomsHub() {
         eyebrow={heroEyebrow}
         title={heroTitle}
         lead={heroSubtitle}
+        image={page?.heroImage}
       />
       <main className="mx-auto max-w-site px-6 py-16 md:px-10 md:py-24">
         {showrooms.length === 0 ? (

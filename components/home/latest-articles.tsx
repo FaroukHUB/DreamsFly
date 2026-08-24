@@ -45,7 +45,7 @@ export function LatestArticles({ data }: { data?: Data }) {
               style={{ transitionDelay: `${i * 80}ms` }}
               className="group reveal flex flex-col"
             >
-              <div className="relative mb-6 aspect-[4/5] overflow-hidden rounded-[24px] bg-noir">
+              <div className="relative mb-7 aspect-[3/4] overflow-hidden rounded-[28px] bg-noir md:min-h-[520px]">
                 {a.image?.asset ? (
                   <Image src={urlFor(a.image).width(800).url()} alt={a.image.alt || a.title || ""} fill sizes="(max-width:1024px) 100vw, 33vw" className="object-cover transition-transform duration-[900ms] group-hover:scale-105" loading="lazy" />
                 ) : (
@@ -58,10 +58,10 @@ export function LatestArticles({ data }: { data?: Data }) {
                   </span>
                 )}
               </div>
-              <h3 className="display-serif on-cream text-[1.4rem] font-normal leading-tight md:text-[1.7rem]">
+              <h3 className="display-serif on-cream text-[1.6rem] font-normal leading-tight md:text-[1.95rem]">
                 {a.title}
               </h3>
-              <p className="mt-3 line-clamp-2 font-sans text-[14px] leading-relaxed text-taupe md:text-[15px]">{a.excerpt}</p>
+              <p className="mt-4 line-clamp-3 font-sans text-[15px] leading-relaxed text-taupe md:text-[16px]">{a.excerpt}</p>
               {a.date && <time dateTime={a.date} className="mt-4 font-sans text-[11px] uppercase tracking-[0.14em] text-taupe">{formatDate(a.date)}</time>}
             </Link>
           ))}

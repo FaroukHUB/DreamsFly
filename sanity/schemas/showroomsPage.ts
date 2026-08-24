@@ -38,6 +38,16 @@ export const showroomsPage = defineType({
       initialValue:
         "Le matelas est l'achat le plus intime de votre maison. Venez le tester en boutique, échanger avec nos conseillers et faire votre choix en toute sérénité.",
     }),
+    defineField({
+      name: "heroImage",
+      title: "🖼️ Image du hero (optionnel)",
+      type: "image",
+      group: "hero",
+      options: { hotspot: true },
+      description:
+        "Si tu uploads une image, elle apparaît à droite du texte du hero (layout split). Sinon, le hero reste sur toute la largeur.",
+      fields: [{ name: "alt", title: "Alt SEO", type: "string" }],
+    }),
 
     defineField({
       name: "argumentsTitle",

@@ -101,9 +101,9 @@ function ProductCard({ product: p }: { product: Product }) {
   return (
     <Link
       href={`/matelas/${p.slug}`}
-      className="group relative flex flex-col rounded-[24px] border border-ink/10 bg-ivoire p-5 transition-all duration-500 hover:-translate-y-1 hover:border-noir/40 hover:shadow-[0_24px_50px_-20px_rgba(11,11,15,0.2)]"
+      className="group relative flex flex-col rounded-[28px] border border-ink/10 bg-ivoire p-6 transition-all duration-500 hover:-translate-y-2 hover:border-noir/40 hover:shadow-[0_30px_60px_-20px_rgba(11,11,15,0.25)] md:p-7"
     >
-      <div className="relative mb-6 aspect-[5/4] overflow-hidden rounded-[16px] bg-creme">
+      <div className="relative mb-7 aspect-[4/5] overflow-hidden rounded-[20px] bg-creme">
         {p.image ? (
           <Image
             src={urlFor(p.image).width(700).quality(88).url()}
@@ -129,20 +129,20 @@ function ProductCard({ product: p }: { product: Product }) {
         )}
       </div>
 
-      <h3 className="display-serif on-cream text-[1.2rem] font-normal leading-tight md:text-[1.4rem]">
+      <h3 className="display-serif on-cream text-[1.4rem] font-normal leading-tight md:text-[1.7rem]">
         {p.name}
       </h3>
-      <p className="mt-2 line-clamp-2 font-sans text-[13px] leading-relaxed text-taupe md:text-[14px]">
+      <p className="mt-3 line-clamp-2 font-sans text-[14px] leading-relaxed text-taupe md:text-[15px]">
         {p.tagline || p.title}
       </p>
 
-      <div className="mt-5 flex items-baseline gap-2 border-t border-ink/10 pt-4">
-        <span className="font-sans text-[11px] uppercase tracking-[0.14em] text-taupe">Dès</span>
-        <span className="font-serif text-[1.4rem] font-normal text-noir">
+      <div className="mt-6 flex items-baseline gap-3 border-t border-ink/10 pt-5">
+        <span className="font-sans text-[11px] uppercase tracking-[0.16em] text-taupe">Dès</span>
+        <span className="font-serif text-[1.7rem] font-normal text-noir md:text-[1.9rem]">
           {p.minPrice}€
         </span>
         {p.compareAtPrice && p.compareAtPrice > (p.minPrice || 0) && (
-          <span className="font-sans text-[13px] text-taupe line-through">
+          <span className="font-sans text-[14px] text-taupe line-through">
             {p.compareAtPrice}€
           </span>
         )}

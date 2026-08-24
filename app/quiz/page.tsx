@@ -80,6 +80,7 @@ export default async function QuizPage() {
     eyebrow: doc?.heroEyebrow || defaultQuizContent.hero.eyebrow,
     title: doc?.heroTitle || defaultQuizContent.hero.title,
     subtitle: doc?.heroSubtitle || defaultQuizContent.hero.subtitle,
+    image: doc?.heroImage,
   };
   const methodTitle = doc?.methodTitle || defaultQuizContent.method.title;
   const methodSteps = doc?.methodSteps?.length ? doc.methodSteps : defaultQuizContent.method.steps;
@@ -107,6 +108,7 @@ export default async function QuizPage() {
         eyebrow={hero.eyebrow}
         title={hero.title}
         lead={hero.subtitle}
+        image={hero.image}
       />
 
       <main className="mx-auto max-w-site px-6 py-14 md:px-10 md:py-20">

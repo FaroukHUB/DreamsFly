@@ -1,16 +1,20 @@
 import Link from "next/link";
+import Image from "next/image";
+import { urlFor } from "@/lib/sanity/image";
 
 /**
  * En-tête éditorial partagé — direction A (luxe).
  * Utilisé sur toutes les pages secondaires : catégorie, landing, magasin,
  * magazine, glossaire, comparatifs, aide, etc.
  *
- * Structure éditoriale : fil d'ariane discret + eyebrow trait+or + H1 Fraunces
- * XXL avec dernier mot italique or + lead texte + rule + optionnelle méta droite.
- *
- * Deux modes :
+ * Modes :
  *  - `tone="cream"` (défaut) : fond crème/beige, texte noir
  *  - `tone="noir"`          : fond noir, texte ivoire, or intensifié
+ *
+ * Image :
+ *  - `image` : Sanity image object → hero avec image en split (texte gauche + image droite)
+ *  - `imageUrl` : URL directe (fallback simple)
+ *  - Si aucune image, layout centré sur texte comme avant
  */
 type Crumb = { name: string; url: string };
 
@@ -21,8 +25,14 @@ type Props = {
   breadcrumbs?: Crumb[];
   meta?: React.ReactNode;
   tone?: "cream" | "noir";
-  /** Nombre du dernier mot à passer en italique — 1 par défaut (le dernier). Passer 0 pour désactiver. */
+  /** Nombre du dernier mot à passer en italique — 1 par défaut. Passer 0 pour désactiver. */
   emphasize?: number;
+  /** Image Sanity — génère un hero split image droite */
+  image?: any;
+  /** URL directe (alternative à `image`) */
+  imageUrl?: string;
+  /** Aspect ratio de l'image — défaut 4/5 */
+  imageAspect?: string;
 };
 
 export function EditorialPageHeader({
@@ -33,8 +43,14 @@ export function EditorialPageHeader({
   meta,
   tone = "cream",
   emphasize = 1,
+  image,
+  imageUrl,
+  imageAspect = "4/5",
 }: Props) {
   const isNoir = tone === "noir";
+  const resolvedImageUrl = imageUrl || (image ? urlFor(image).width(1400).quality(88).url() : null);
+  const hasImage = !!resolvedImageUrl;
+
   return (
     <section
       className={`${isNoir ? "bg-noir text-ivoire" : "bg-page text-ink"} border-b ${
@@ -67,7 +83,15 @@ export function EditorialPageHeader({
           </nav>
         )}
 
-        <div className={`grid gap-10 ${meta ? "md:grid-cols-[1.6fr_1fr] md:items-end md:gap-16" : ""}`}>
+        <div
+          className={`grid gap-10 ${
+            hasImage
+              ? "md:grid-cols-[1.1fr_1fr] md:items-center md:gap-16"
+              : meta
+                ? "md:grid-cols-[1.6fr_1fr] md:items-end md:gap-16"
+                : ""
+          }`}
+        >
           <div>
             {eyebrow && (
               <span className={`eyebrow-editorial ${isNoir ? "" : "on-cream"} mb-5`}>{eyebrow}</span>
@@ -86,10 +110,45 @@ export function EditorialPageHeader({
                 {lead}
               </p>
             )}
+            {meta && !hasImage && (
+              <div
+                className={`mt-6 font-sans text-[13px] leading-relaxed ${
+                  isNoir ? "text-ivoire/70" : "text-taupe"
+                }`}
+              >
+                {meta}
+              </div>
+            )}
           </div>
-          {meta && (
+
+          {hasImage && (
             <div
-              className={`font-sans text-[13px] leading-relaxed md:text-right ${
+              className="relative overflow-hidden rounded-[28px] shadow-[0_30px_60px_-20px_rgba(11,11,15,0.25)]"
+              style={{ aspectRatio: imageAspect }}
+            >
+              <Image
+                src={resolvedImageUrl}
+                alt={image?.alt || title}
+                fill
+                sizes="(max-width: 768px) 100vw, 45vw"
+                className="object-cover"
+                priority
+              />
+              {/* Subtile teinte ambrée pour l'unité graphique */}
+              <div
+                aria-hidden
+                className="absolute inset-0 mix-blend-overlay opacity-15"
+                style={{
+                  background:
+                    "linear-gradient(135deg, rgba(200, 168, 118, 0.4), transparent 60%)",
+                }}
+              />
+            </div>
+          )}
+
+          {meta && hasImage && (
+            <div
+              className={`col-span-full font-sans text-[13px] leading-relaxed ${
                 isNoir ? "text-ivoire/70" : "text-taupe"
               }`}
             >

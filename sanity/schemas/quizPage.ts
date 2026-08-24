@@ -37,6 +37,16 @@ export const quizPage = defineType({
       rows: 3,
       group: "hero",
     }),
+    defineField({
+      name: "heroImage",
+      title: "🖼️ Image du hero (optionnel)",
+      type: "image",
+      group: "hero",
+      options: { hotspot: true },
+      description:
+        "Si tu uploads une image, elle apparaît à droite du texte du hero (layout split).",
+      fields: [{ name: "alt", title: "Alt SEO", type: "string" }],
+    }),
 
     // ─── Questions du quiz ─────────────
     defineField({

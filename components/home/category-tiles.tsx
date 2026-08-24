@@ -60,7 +60,7 @@ export function CategoryTiles({ tiles }: { tiles?: Tile[] }) {
               <Link
                 key={i}
                 href={t.link || "#"}
-                className="group relative flex h-[420px] flex-col justify-end overflow-hidden rounded-3xl bg-sable transition-transform hover:-translate-y-1 sm:h-[460px] lg:h-[520px]"
+                className="group relative flex h-[520px] flex-col justify-end overflow-hidden rounded-[28px] bg-creme transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_30px_60px_-20px_rgba(11,11,15,0.3)] sm:h-[600px] lg:h-[720px]"
               >
                 {/* Image */}
                 {imgUrl ? (

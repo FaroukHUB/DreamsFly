@@ -27,7 +27,7 @@ export const allShowroomSlugsQuery = groq`
 
 export const showroomsPageQuery = groq`
   *[_type == "showroomsPage"][0]{
-    heroEyebrow, heroTitle, heroSubtitle,
+    heroEyebrow, heroTitle, heroSubtitle, heroImage,
     argumentsTitle,
     argumentsItems[]{ icon, title, text },
     faqTitle,
