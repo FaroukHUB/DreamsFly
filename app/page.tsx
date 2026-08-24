@@ -4,7 +4,6 @@ import { Hero } from "@/components/hero";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { UspStrip } from "@/components/usp-strip";
-import { PressMarquee } from "@/components/press-marquee";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import { BestSellers } from "@/components/best-sellers";
 import { MosaicCollections } from "@/components/home/mosaic-collections";
@@ -63,11 +62,6 @@ export default async function HomePage() {
       <main>
         {/* 1. HERO — préservé */}
         <Hero hero={homepage?.hero} heroSecondary={homepage?.heroSecondary} slides={homepage?.heroSlides} />
-
-        {/* 1b. Bandeau éditorial défilant — piloté depuis Sanity (Paramètres → Bandeau éditorial) */}
-        {siteSettings?.editorialStrip?.enabled !== false && (
-          <PressMarquee tone="noir" items={siteSettings?.editorialStrip?.items} />
-        )}
 
         {/* 2. USP strip */}
         <UspStrip items={homepage?.uspStrip} />

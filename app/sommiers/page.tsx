@@ -178,61 +178,61 @@ export default async function SommiersPillar({ searchParams }: { searchParams: S
               filteredCount={products.length}
             />
             <div>
-              <div className="mb-6 flex items-baseline justify-between">
-                <h2 className="font-sora text-xl font-semibold tracking-tight text-ink md:text-2xl">
+              <div className="mb-8 flex items-baseline justify-between">
+                <h2 className="display-serif on-cream text-[1.5rem] font-normal md:text-[2rem]">
                   {products.length} sommier{products.length > 1 ? "s" : ""}
-                  <span className="ml-2 text-sm font-normal text-pierre">
+                  <span className="ml-3 font-sans text-[13px] font-normal uppercase tracking-[0.14em] text-taupe">
                     {selectedTypes.length + selectedSizes.length + (priceMin || priceMax ? 1 : 0) > 0
-                      ? `sur ${allProducts.length}`
+                      ? `/ ${allProducts.length}`
                       : "disponibles"}
                   </span>
                 </h2>
               </div>
 
               {products.length > 0 ? (
-                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 md:gap-8">
                   {products.map((p: any) => (
                     <Link
                       key={p._id}
                       href={`/sommiers/${p.slug}`}
-                      className="group flex flex-col rounded-2xl border border-border bg-ivoire p-4 transition-all hover:-translate-y-1 hover:border-midnight"
+                      className="group flex flex-col rounded-[24px] border border-ink/10 bg-ivoire p-5 transition-all duration-500 hover:-translate-y-1 hover:border-noir/40 hover:shadow-[0_24px_50px_-20px_rgba(11,11,15,0.2)]"
                     >
-                      <div className="relative mb-4 aspect-[5/4] overflow-hidden rounded-xl bg-sable">
+                      <div className="relative mb-6 aspect-[5/4] overflow-hidden rounded-[16px] bg-creme">
                         {p.image && (
                           <Image
-                            src={urlFor(p.image).width(600).url()}
+                            src={urlFor(p.image).width(700).url()}
                             alt={p.name}
                             fill
                             sizes="(max-width:1024px) 50vw, 33vw"
-                            className="object-cover transition-transform duration-500 group-hover:scale-105"
+                            className="object-cover transition-transform duration-[900ms] group-hover:scale-105"
                           />
                         )}
                         {p.sommierType && TYPE_LABELS[p.sommierType] && (
-                          <span className="absolute left-2 top-2 rounded-pill bg-white/90 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-widest text-midnight backdrop-blur-sm">
+                          <span className="absolute left-3 top-3 rounded-full border border-noir bg-ivoire/95 px-3 py-1 font-sans text-[10px] font-medium uppercase tracking-[0.16em] text-noir backdrop-blur-sm">
                             {TYPE_LABELS[p.sommierType].split(" ").slice(0, 2).join(" ")}
                           </span>
                         )}
                       </div>
-                      <h3 className="font-sora text-base font-semibold text-ink">{p.name}</h3>
-                      <p className="mb-3 line-clamp-2 text-[13px] text-pierre">{p.tagline}</p>
-                      <div className="mt-auto flex items-baseline gap-2 border-t border-border pt-3">
-                        <span className="text-[11px] text-brume">Dès</span>
-                        <span className="font-sora text-lg font-bold text-discount">{p.minPrice} €</span>
+                      <h3 className="display-serif on-cream text-[1.2rem] font-normal leading-tight md:text-[1.4rem]">{p.name}</h3>
+                      <p className="mt-2 line-clamp-2 font-sans text-[13px] leading-relaxed text-taupe md:text-[14px]">{p.tagline}</p>
+                      <div className="mt-5 flex items-baseline gap-2 border-t border-ink/10 pt-4">
+                        <span className="font-sans text-[11px] uppercase tracking-[0.14em] text-taupe">Dès</span>
+                        <span className="font-serif text-[1.4rem] font-normal text-noir">{p.minPrice}€</span>
                         {p.compareAtPrice && p.compareAtPrice > p.minPrice && (
-                          <span className="text-xs text-brume line-through">{p.compareAtPrice} €</span>
+                          <span className="font-sans text-[13px] text-taupe line-through">{p.compareAtPrice}€</span>
                         )}
                       </div>
                     </Link>
                   ))}
                 </div>
               ) : (
-                <div className="rounded-2xl border border-border bg-sable p-8 text-center">
-                  <p className="text-pierre">
+                <div className="rounded-[24px] border border-ink/10 bg-creme p-10 text-center">
+                  <p className="font-serif text-[17px] italic text-taupe">
                     {allProducts.length === 0
                       ? "Aucun sommier publié pour le moment."
                       : "Aucun sommier ne correspond à ces filtres."}
                   </p>
-                  <Link href="/sommiers#modeles" className="mt-4 inline-block text-sm font-semibold text-midnight underline">
+                  <Link href="/sommiers#modeles" className="mt-5 inline-block border-b border-noir pb-1 font-sans text-[12px] font-medium uppercase tracking-[0.14em] text-noir hover:text-or hover:border-or">
                     Effacer les filtres
                   </Link>
                 </div>
