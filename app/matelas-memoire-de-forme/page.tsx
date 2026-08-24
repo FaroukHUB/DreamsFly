@@ -6,6 +6,8 @@ import { allProductsForPillarQuery } from "@/lib/sanity/product-queries";
 import { siteSettingsQuery } from "@/lib/sanity/queries";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
+import { EditorialPageHeader } from "@/components/editorial-page-header";
+import { ScrollReveal } from "@/components/scroll-reveal";
 import { buildMetadata } from "@/lib/seo/metadata";
 import {
   JsonLd,
@@ -112,34 +114,17 @@ export default async function MemoryFoamLanding() {
   return (
     <>
       <Header settings={siteSettings} />
+      <ScrollReveal />
 
-      <main className="mx-auto max-w-site px-6 py-10 md:px-8 md:py-16">
-        {/* Breadcrumbs */}
-        <nav aria-label="Fil d'Ariane" className="mb-8 flex flex-wrap items-center gap-1.5 text-sm text-pierre">
-          {breadcrumbs.map((b, i) => (
-            <span key={i} className="flex items-center gap-1.5">
-              {i > 0 && <span className="text-brume">/</span>}
-              {i === breadcrumbs.length - 1 ? (
-                <span className="font-medium text-ink">{b.name}</span>
-              ) : (
-                <Link href={b.url} className="hover:text-midnight">{b.name}</Link>
-              )}
-            </span>
-          ))}
-        </nav>
+      <EditorialPageHeader
+        breadcrumbs={breadcrumbs}
+        eyebrow="Gamme Performance · Guide expert"
+        title={H1}
+        lead="La mémoire de forme est devenue LE standard du confort orthopédique en 40 ans. Absorption des points de pression, alignement de la colonne, absence de mouvements ressentis — ses bénéfices sont réels quand la mousse est de qualité. Ce guide vous aide à distinguer les vrais modèles Performance des imitations bon marché."
+        emphasize={2}
+      />
 
-        {/* HERO */}
-        <header className="mb-14 max-w-3xl md:mb-16">
-          <div className="eyebrow mb-3">Gamme Performance · Guide expert</div>
-          <h1 className="font-sora text-3xl font-semibold leading-tight tracking-tight text-ink md:text-5xl lg:text-6xl">
-            {H1}
-          </h1>
-          <p className="mt-5 text-base leading-relaxed text-pierre md:mt-6 md:text-lg">
-            La mémoire de forme est devenue LE standard du confort orthopédique en 40 ans.
-            Absorption des points de pression, alignement de la colonne, absence de mouvements ressentis — ses bénéfices sont réels quand la mousse est de qualité.
-            Ce guide vous aide à distinguer les vrais modèles Performance des imitations bon marché.
-          </p>
-        </header>
+      <main className="mx-auto max-w-site px-6 py-16 md:px-10 md:py-24">
 
         {/* Chiffres clés */}
         <section className="mb-16 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

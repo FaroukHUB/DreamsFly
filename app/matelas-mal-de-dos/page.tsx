@@ -6,6 +6,8 @@ import { allProductsForPillarQuery } from "@/lib/sanity/product-queries";
 import { siteSettingsQuery } from "@/lib/sanity/queries";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
+import { EditorialPageHeader } from "@/components/editorial-page-header";
+import { ScrollReveal } from "@/components/scroll-reveal";
 import { buildMetadata } from "@/lib/seo/metadata";
 import {
   JsonLd,
@@ -101,38 +103,24 @@ export default async function MalDeDosLanding() {
   return (
     <>
       <Header settings={siteSettings} />
+      <ScrollReveal />
 
-      <main className="mx-auto max-w-site px-6 py-10 md:px-8 md:py-16">
-        {/* Breadcrumbs */}
-        <nav aria-label="Fil d'Ariane" className="mb-8 flex flex-wrap items-center gap-1.5 text-sm text-pierre">
-          {breadcrumbs.map((b, i) => (
-            <span key={i} className="flex items-center gap-1.5">
-              {i > 0 && <span className="text-brume">/</span>}
-              {i === breadcrumbs.length - 1 ? (
-                <span className="font-medium text-ink">{b.name}</span>
-              ) : (
-                <Link href={b.url} className="hover:text-midnight">{b.name}</Link>
-              )}
-            </span>
-          ))}
-        </nav>
+      <EditorialPageHeader
+        breadcrumbs={breadcrumbs}
+        eyebrow="Guide santé · Soutien renforcé"
+        title={H1}
+        lead="8 Français sur 10 souffrent du dos au cours de leur vie (INSERM 2023). Dans 65 % des cas, un mauvais matelas est en cause directe ou aggravante. Ce guide, validé par un ostéopathe D.O., vous aide à choisir un matelas qui soulage vraiment — pas juste un modèle marketé « orthopédique »."
+        emphasize={2}
+        meta={(
+          <>
+            <div className="mb-1 font-serif text-[16px] italic text-noir">Revu médicalement</div>
+            <div className="font-sans text-[11px] uppercase tracking-[0.14em]">Dr. Julien M.</div>
+            <div className="mt-1 font-sans text-[13px]">Ostéopathe D.O.</div>
+          </>
+        )}
+      />
 
-        {/* HERO */}
-        <header className="mb-14 max-w-3xl md:mb-16">
-          <div className="eyebrow mb-3">Guide santé · Soutien renforcé</div>
-          <h1 className="font-sora text-3xl font-semibold leading-tight tracking-tight text-ink md:text-5xl lg:text-6xl">
-            {H1}
-          </h1>
-          <p className="mt-5 text-base leading-relaxed text-pierre md:mt-6 md:text-lg">
-            8 Français sur 10 souffrent du dos au cours de leur vie (INSERM 2023).
-            Dans 65 % des cas, un mauvais matelas est en cause directe ou aggravante.
-            Ce guide, validé par un ostéopathe D.O., vous aide à choisir un matelas qui soulage vraiment — pas juste un modèle marketé "orthopédique".
-          </p>
-          <div className="mt-6 inline-flex items-center gap-2 rounded-full bg-page px-4 py-2 text-xs text-pierre">
-            <span aria-hidden>👨‍⚕️</span>
-            Contenu revu par Dr. Julien M., ostéopathe D.O. (RPPS 991xxx)
-          </div>
-        </header>
+      <main className="mx-auto max-w-site px-6 py-16 md:px-10 md:py-24">
 
         {/* Types de douleurs */}
         <section className="mb-16 md:mb-20">

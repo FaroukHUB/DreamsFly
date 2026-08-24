@@ -6,6 +6,8 @@ import { allShowroomsQuery, showroomsPageQuery } from "@/lib/sanity/extra-querie
 import { siteSettingsQuery } from "@/lib/sanity/queries";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
+import { EditorialPageHeader } from "@/components/editorial-page-header";
+import { ScrollReveal } from "@/components/scroll-reveal";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { JsonLd, breadcrumbSchema, organizationSchema, faqSchema } from "@/lib/seo/jsonld";
 import { urlFor } from "@/lib/sanity/image";
@@ -67,36 +69,28 @@ export default async function ShowroomsHub() {
   return (
     <>
       <Header settings={siteSettings} />
-      <main className="mx-auto max-w-site px-8 py-12 md:py-16">
-        <nav className="mb-8 flex items-center gap-1.5 text-sm text-pierre">
-          <Link href="/" className="hover:text-midnight">Accueil</Link>
-          <span className="text-brume">/</span>
-          <span className="font-medium text-ink">Showrooms</span>
-        </nav>
-
-        <header className="mb-16 max-w-3xl">
-          <div className="eyebrow mb-3">{heroEyebrow}</div>
-          <h1 className="font-sora text-4xl font-semibold leading-tight tracking-tight text-ink md:text-5xl lg:text-6xl">
-            {heroTitle}
-          </h1>
-          <p className="mt-6 whitespace-pre-line text-lg leading-relaxed text-pierre md:text-xl">
-            {heroSubtitle}
-          </p>
-        </header>
-
+      <ScrollReveal />
+      <EditorialPageHeader
+        breadcrumbs={breadcrumbs}
+        eyebrow={heroEyebrow}
+        title={heroTitle}
+        lead={heroSubtitle}
+      />
+      <main className="mx-auto max-w-site px-6 py-16 md:px-10 md:py-24">
         {showrooms.length === 0 ? (
           <p className="text-pierre">
             Nos showrooms sont en cours d'inauguration. Les adresses seront bientôt publiées.
           </p>
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {showrooms.map((s) => (
+            {showrooms.map((s, i) => (
               <Link
                 key={s._id}
                 href={`/magasins/${s.slug}`}
-                className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-ivoire transition-all hover:-translate-y-1 hover:border-midnight"
+                style={{ transitionDelay: `${i * 80}ms` }}
+                className="group reveal flex flex-col overflow-hidden rounded-[24px] border border-ink/10 bg-ivoire transition-all hover:-translate-y-1 hover:border-noir"
               >
-                <div className="relative aspect-[4/3] bg-sable">
+                <div className="relative aspect-[4/3] bg-creme">
                   {s.image ? (
                     <Image
                       src={urlFor(s.image).width(600).quality(85).url()}
@@ -106,24 +100,27 @@ export default async function ShowroomsHub() {
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                   ) : (
-                    <div className="flex h-full items-center justify-center text-5xl opacity-30">🏬</div>
+                    <div className="flex h-full items-center justify-center text-4xl opacity-25">🏬</div>
                   )}
                 </div>
-                <div className="p-6">
-                  <h2 className="font-sora text-xl font-semibold tracking-tight text-ink">
+                <div className="p-7">
+                  <span className="num-editorial !text-[26px] !text-or">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <h2 className="display-serif on-cream mt-3 text-[1.6rem] font-normal leading-tight">
                     {s.name}
                   </h2>
                   {s.address && (
-                    <p className="mt-2 text-sm text-pierre">
+                    <p className="mt-3 font-sans text-[14px] leading-relaxed text-taupe">
                       {s.address.street}<br />
                       {s.address.postalCode} {s.address.city}
                     </p>
                   )}
                   {s.phone && (
-                    <p className="mt-3 text-sm font-semibold text-midnight">{s.phone}</p>
+                    <p className="mt-3 font-sans text-[14px] font-medium text-noir">{s.phone}</p>
                   )}
-                  <span className="mt-4 inline-block text-xs font-semibold uppercase tracking-wide text-midnight">
-                    Voir le showroom →
+                  <span className="mt-5 inline-flex items-center gap-2 border-b border-noir pb-1 font-sans text-[11px] font-medium uppercase tracking-[0.16em] text-noir">
+                    Voir le showroom
                   </span>
                 </div>
               </Link>
@@ -132,16 +129,27 @@ export default async function ShowroomsHub() {
         )}
 
         {argsItems.length > 0 && (
-          <section className="mt-24">
-            <h2 className="mb-10 font-sora text-3xl font-semibold tracking-tight text-ink md:text-4xl">
-              {argsTitle}
-            </h2>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <section className="mt-28 md:mt-40">
+            <div className="mb-14 grid gap-6 md:grid-cols-[1fr_auto] md:items-end reveal">
+              <div>
+                <span className="eyebrow-editorial on-cream mb-3">Chapitre II · L'expérience showroom</span>
+                <h2 className="display-serif on-cream mt-4 text-[2rem] font-normal md:text-[3.2rem]">
+                  {argsTitle.split(" ").length > 2 ? emphasizeLast(argsTitle) : argsTitle}
+                </h2>
+              </div>
+            </div>
+            <div className="rule-cream mb-12" />
+            <div className="grid gap-x-10 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
               {argsItems.map((a, i) => (
-                <div key={i} className="rounded-2xl border border-border bg-ivoire p-7">
-                  {a.icon && <div className="mb-4 text-3xl">{a.icon}</div>}
-                  <h3 className="font-sora text-lg font-semibold text-ink">{a.title}</h3>
-                  {a.text && <p className="mt-2 text-sm leading-relaxed text-pierre">{a.text}</p>}
+                <div key={i} className="reveal" style={{ transitionDelay: `${i * 60}ms` }}>
+                  <div className="mb-5 flex items-baseline gap-4">
+                    <span className="num-editorial !text-[34px] !text-or">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    {a.icon && <span aria-hidden className="text-xl">{a.icon}</span>}
+                  </div>
+                  <h3 className="display-serif on-cream text-[1.3rem] font-normal leading-tight">{a.title}</h3>
+                  {a.text && <p className="mt-3 max-w-[38ch] font-sans text-[14px] leading-relaxed text-taupe md:text-[15px]">{a.text}</p>}
                 </div>
               ))}
             </div>
@@ -149,17 +157,23 @@ export default async function ShowroomsHub() {
         )}
 
         {faqItems.length > 0 && (
-          <section className="mt-24 max-w-3xl">
-            <h2 className="mb-8 font-sora text-3xl font-semibold tracking-tight text-ink md:text-4xl">
-              {faqTitle}
-            </h2>
-            <div className="divide-y divide-border rounded-2xl border border-border bg-ivoire">
+          <section className="mt-28 max-w-4xl md:mt-40">
+            <div className="mb-12 reveal">
+              <span className="eyebrow-editorial on-cream mb-3">Chapitre III · Questions fréquentes</span>
+              <h2 className="display-serif on-cream mt-4 text-[2rem] font-normal md:text-[3.2rem]">
+                {faqTitle.split(" ").length > 2 ? emphasizeLast(faqTitle) : faqTitle}
+              </h2>
+            </div>
+            <div className="divide-y divide-ink/10 border-y border-ink/10">
               {faqItems.map((f, i) => (
-                <details key={i} className="group px-6 py-5">
-                  <summary className="cursor-pointer list-none font-sora text-base font-semibold text-ink">
-                    {f.question}
+                <details key={i} className="group py-6">
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-6 font-serif text-[19px] font-normal text-noir md:text-[22px]">
+                    <span className="flex-1">{f.question}</span>
+                    <span className="text-or transition-transform group-open:rotate-45" aria-hidden>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4"><path d="M12 5v14M5 12h14"/></svg>
+                    </span>
                   </summary>
-                  <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-pierre">
+                  <p className="mt-4 max-w-[64ch] whitespace-pre-line font-sans text-[14px] leading-relaxed text-taupe md:text-[15px]">
                     {f.answer}
                   </p>
                 </details>
@@ -173,6 +187,17 @@ export default async function ShowroomsHub() {
       <JsonLd data={organizationSchema({ name: "DreamsFly" })} />
       <JsonLd data={breadcrumbSchema(breadcrumbs)} />
       {faqItems.length > 0 && <JsonLd data={faqSchema(faqItems)} />}
+    </>
+  );
+}
+
+function emphasizeLast(title: string): React.ReactNode {
+  const words = title.trim().split(/\s+/);
+  if (words.length < 2) return title;
+  const last = words.pop() as string;
+  return (
+    <>
+      {words.join(" ")} <em>{last}</em>
     </>
   );
 }

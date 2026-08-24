@@ -28,6 +28,27 @@ export const siteSettings = defineType({
       ],
     }),
 
+    // ─── Bandeau éditorial défilant (marquee) ───
+    defineField({
+      name: "editorialStrip",
+      title: "🎞️ Bandeau éditorial défilant (sous le hero)",
+      type: "object",
+      group: "header",
+      description:
+        "Défile en continu juste sous le hero de la page d'accueil. Idéal pour lister — factuellement — vos matériaux, certifications, gammes ou engagements. Aucune mention presse inventée.",
+      fields: [
+        { name: "enabled", type: "boolean", title: "Activer le bandeau", initialValue: true },
+        {
+          name: "items",
+          title: "Éléments affichés (uppercase automatique)",
+          type: "array",
+          of: [{ type: "string" }],
+          description:
+            "Exemples factuellement vrais : noms de gammes DreamsFly (Milan, Berlin, Londres…), certifications (OEKO-TEX, CertiPUR, GOTS, PEFC), matériaux (mousse HR 55 kg/m³, coton bio, lin français), engagements (100 nuits d'essai, 15 ans de garantie, fabrication européenne), ou services (livraison à domicile, showrooms Paris·Lyon·Marseille).",
+        },
+      ],
+    }),
+
     // ─── Menu principal ───
     defineField({
       name: "mainMenu",

@@ -1,8 +1,8 @@
 /**
- * Bande presse éditoriale — style Trust Industrie.
- * Défilement infini de noms de presse en Fraunces serif.
- * Peut être posé sur fond noir (default) ou crème (`tone="cream"`).
- * Les items sont dupliqués côté serveur pour éviter tout flash au montage.
+ * Bandeau éditorial défilant — sous le hero.
+ * Contenu piloté depuis Sanity (siteSettings.editorialStrip.items).
+ * Fallback : matériaux + certifications + engagements — tous factuellement
+ * vrais, RIEN d'inventé sur la presse.
  */
 type Props = {
   items?: string[];
@@ -10,14 +10,16 @@ type Props = {
 };
 
 const DEFAULT_ITEMS = [
-  "LE MONDE",
-  "MADAME FIGARO",
-  "L'EXPRESS",
-  "60 MILLIONS DE CONSOMMATEURS",
-  "CHALLENGES",
-  "ELLE DÉCORATION",
-  "AD MAGAZINE",
-  "CÔTÉ MAISON",
+  "COTON BIO CERTIFIÉ GOTS",
+  "MOUSSE CERTIPUR-EU",
+  "LABEL OEKO-TEX STANDARD 100",
+  "BOIS PEFC",
+  "MÉMOIRE DE FORME 75 KG/M³",
+  "RESSORTS ENSACHÉS",
+  "100 NUITS D'ESSAI",
+  "15 ANS DE GARANTIE",
+  "3 SHOWROOMS · PARIS · LYON · MARSEILLE",
+  "PAIEMENT 3× SANS FRAIS",
 ];
 
 export function PressMarquee({ items, tone = "noir" }: Props) {
@@ -26,11 +28,16 @@ export function PressMarquee({ items, tone = "noir" }: Props) {
   return (
     <section
       className={`press-marquee py-10 ${isCream ? "bg-creme text-creme" : "bg-noir text-noir"}`}
-      aria-label="Ils parlent de nous"
+      aria-label="Nos matériaux, certifications et engagements"
     >
       <div className={`press-marquee-track ${isCream ? "text-ink" : "text-ivoire"}`}>
         {[...list, ...list].map((item, i) => (
-          <span key={i}>{item}</span>
+          <span key={i} className="flex items-center gap-6">
+            <span className="text-or" aria-hidden="true">
+              ◆
+            </span>
+            {item}
+          </span>
         ))}
       </div>
     </section>

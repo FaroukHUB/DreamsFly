@@ -7,6 +7,7 @@ import { siteSettingsQuery } from "@/lib/sanity/queries";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { Sections } from "@/components/landing/blocks";
+import { EditorialPageHeader } from "@/components/editorial-page-header";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { JsonLd, breadcrumbSchema, organizationSchema, faqSchema } from "@/lib/seo/jsonld";
 import { urlFor } from "@/lib/sanity/image";
@@ -178,19 +179,13 @@ export default async function LitsPillar({ searchParams }: { searchParams: Searc
   return (
     <>
       <Header settings={siteSettings} />
-      <main className="mx-auto max-w-site px-6 py-10 md:px-8 md:py-16">
-        <nav aria-label="Fil d'Ariane" className="mb-8 flex items-center gap-1.5 text-sm text-pierre">
-          <Link href="/" className="hover:text-midnight">Accueil</Link>
-          <span className="text-brume">/</span>
-          <span className="font-medium text-ink">Lits</span>
-        </nav>
-
-        <header className="mb-10 max-w-3xl md:mb-14">
-          <div className="eyebrow mb-3">Collection lits</div>
-          <h1 className="font-sora text-3xl font-semibold leading-tight tracking-tight text-ink md:text-5xl lg:text-6xl">{h1}</h1>
-          <p className="mt-5 text-base leading-relaxed text-pierre md:mt-6 md:text-lg">{intro}</p>
-        </header>
-
+      <EditorialPageHeader
+        breadcrumbs={breadcrumbs}
+        eyebrow="Collection lits"
+        title={h1}
+        lead={intro}
+      />
+      <main className="mx-auto max-w-site px-6 py-14 md:px-10 md:py-20">
         <section id="modeles" className="scroll-mt-20">
           <div className="md:grid md:grid-cols-[260px_1fr] md:gap-10 lg:gap-12">
             <FiltersSidebar

@@ -4,6 +4,7 @@ import { sanityClient } from "@/lib/sanity/client";
 import { allGlossaryTermsQuery } from "@/lib/sanity/extra-queries";
 import { siteSettingsQuery } from "@/lib/sanity/queries";
 import { Header } from "@/components/header";
+import { EditorialPageHeader } from "@/components/editorial-page-header";
 import { Footer } from "@/components/footer";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { JsonLd, breadcrumbSchema, organizationSchema } from "@/lib/seo/jsonld";
@@ -48,23 +49,13 @@ export default async function GlossaireHub() {
   return (
     <>
       <Header settings={siteSettings} />
-      <main className="mx-auto max-w-site px-8 py-12 md:py-16">
-        <nav className="mb-8 flex items-center gap-1.5 text-sm text-pierre">
-          <Link href="/" className="hover:text-midnight">Accueil</Link>
-          <span className="text-brume">/</span>
-          <span className="font-medium text-ink">Glossaire</span>
-        </nav>
-
-        <header className="mb-12 max-w-3xl">
-          <div className="eyebrow mb-3">Vocabulaire du sommeil</div>
-          <h1 className="font-sora text-4xl font-semibold leading-tight tracking-tight text-ink md:text-5xl lg:text-6xl">
-            Glossaire de la literie.
-          </h1>
-          <p className="mt-6 text-lg leading-relaxed text-pierre md:text-xl">
-            Densité, mémoire de forme, ressorts ensachés, accueil tonique :
-            toutes les définitions des termes literie expliquées simplement.
-          </p>
-        </header>
+      <EditorialPageHeader
+        breadcrumbs={breadcrumbs}
+        eyebrow="Vocabulaire du sommeil"
+        title="Glossaire de la literie."
+        lead="Densité, mémoire de forme, ressorts ensachés, accueil tonique : toutes les définitions des termes literie expliquées simplement."
+      />
+      <main className="mx-auto max-w-site px-6 py-14 md:px-10 md:py-20">
 
         {terms.length === 0 ? (
           <p className="text-pierre">

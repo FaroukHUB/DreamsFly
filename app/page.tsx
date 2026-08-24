@@ -64,8 +64,10 @@ export default async function HomePage() {
         {/* 1. HERO — préservé */}
         <Hero hero={homepage?.hero} heroSecondary={homepage?.heroSecondary} slides={homepage?.heroSlides} />
 
-        {/* 1b. Bande presse éditoriale */}
-        <PressMarquee tone="noir" />
+        {/* 1b. Bandeau éditorial défilant — piloté depuis Sanity (Paramètres → Bandeau éditorial) */}
+        {siteSettings?.editorialStrip?.enabled !== false && (
+          <PressMarquee tone="noir" items={siteSettings?.editorialStrip?.items} />
+        )}
 
         {/* 2. USP strip */}
         <UspStrip items={homepage?.uspStrip} />

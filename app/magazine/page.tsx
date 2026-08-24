@@ -6,6 +6,7 @@ import { magazineHubQuery } from "@/lib/sanity/guide-queries";
 import { siteSettingsQuery } from "@/lib/sanity/queries";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
+import { EditorialPageHeader } from "@/components/editorial-page-header";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { JsonLd, breadcrumbSchema, organizationSchema } from "@/lib/seo/jsonld";
 import { urlFor } from "@/lib/sanity/image";
@@ -45,22 +46,13 @@ export default async function MagazineHub() {
   return (
     <>
       <Header settings={siteSettings} />
-      <main className="mx-auto max-w-site px-8 py-12 md:py-16">
-        <nav className="mb-8 flex items-center gap-1.5 text-sm text-pierre">
-          <Link href="/" className="hover:text-midnight">Accueil</Link>
-          <span className="text-brume">/</span>
-          <span className="font-medium text-ink">Magazine</span>
-        </nav>
-
-        <header className="mb-16 max-w-3xl">
-          <div className="eyebrow mb-3">Magazine du sommeil</div>
-          <h1 className="font-sora text-4xl font-semibold leading-tight tracking-tight text-ink md:text-5xl lg:text-6xl">
-            Tout comprendre sur le sommeil.
-          </h1>
-          <p className="mt-6 text-lg leading-relaxed text-pierre md:text-xl">
-            Guides pratiques, conseils d'experts et études sur le matelas, le confort et la qualité de votre repos.
-          </p>
-        </header>
+      <EditorialPageHeader
+        breadcrumbs={[{ name: "Accueil", url: "/" }, { name: "Magazine", url: "/magazine" }]}
+        eyebrow="Magazine du sommeil"
+        title="Tout comprendre sur le sommeil."
+        lead="Guides pratiques, conseils d'experts et études sur le matelas, le confort et la qualité de votre repos."
+      />
+      <main className="mx-auto max-w-site px-6 py-14 md:px-10 md:py-20">
 
         {/* Article featured */}
         {featured && (
