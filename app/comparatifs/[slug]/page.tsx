@@ -67,23 +67,23 @@ export default async function ComparisonPage({ params }: { params: Promise<Param
   return (
     <>
       <Header settings={siteSettings} />
-      <main className="mx-auto max-w-3xl px-8 py-12 md:py-16">
-        <nav className="mb-8 flex flex-wrap items-center gap-1.5 text-sm text-pierre">
-          <Link href="/" className="hover:text-midnight">Accueil</Link>
-          <span className="text-brume">/</span>
-          <Link href="/comparatifs" className="hover:text-midnight">Comparatifs</Link>
-          <span className="text-brume">/</span>
-          <span className="font-medium text-ink line-clamp-1">{c.title}</span>
+      <main className="mx-auto max-w-3xl px-6 py-14 md:px-8 md:py-20">
+        <nav className="mb-10 flex flex-wrap items-center gap-2 font-sans text-[11px] uppercase tracking-[0.14em] text-taupe">
+          <Link href="/" className="transition-colors hover:text-or">Accueil</Link>
+          <span className="opacity-40">/</span>
+          <Link href="/comparatifs" className="transition-colors hover:text-or">Comparatifs</Link>
+          <span className="opacity-40">/</span>
+          <span className="text-ink line-clamp-1">{c.title}</span>
         </nav>
 
         <article>
-          <header className="mb-10">
-            <div className="eyebrow mb-3">Comparatif</div>
-            <h1 className="font-sora text-4xl font-semibold leading-tight tracking-tight text-ink md:text-5xl">
+          <header className="mb-14">
+            <span className="eyebrow-editorial on-cream mb-3">Comparatif</span>
+            <h1 className="display-serif on-cream mt-4 text-[2.2rem] font-normal md:text-[3.6rem]">
               {c.title}
             </h1>
             {c.intro && (
-              <p className="mt-6 text-lg leading-relaxed text-pierre md:text-xl">{c.intro}</p>
+              <p className="mt-6 font-serif text-[18px] italic leading-relaxed text-taupe md:text-[22px]">{c.intro}</p>
             )}
           </header>
 

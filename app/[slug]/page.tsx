@@ -103,16 +103,15 @@ export default async function LandingPageRoute({ params }: { params: Promise<Par
     <>
       <Header settings={siteSettings} />
 
-      <main className="mx-auto max-w-site px-8 py-12 md:py-16">
-        {/* Breadcrumbs visibles */}
-        <nav aria-label="Fil d'Ariane" className="mb-8 flex flex-wrap items-center gap-1.5 text-sm text-pierre">
+      <main className="mx-auto max-w-site px-6 py-14 md:px-10 md:py-20">
+        <nav aria-label="Fil d'Ariane" className="mb-10 flex flex-wrap items-center gap-2 font-sans text-[11px] uppercase tracking-[0.14em] text-taupe">
           {breadcrumbs.map((b, i) => (
-            <span key={i} className="flex items-center gap-1.5">
-              {i > 0 && <span className="text-brume">/</span>}
+            <span key={i} className="flex items-center gap-2">
+              {i > 0 && <span className="opacity-40">/</span>}
               {i === breadcrumbs.length - 1 ? (
-                <span className="font-medium text-ink">{b.name}</span>
+                <span className="text-ink">{b.name}</span>
               ) : (
-                <Link href={b.url} className="hover:text-midnight">
+                <Link href={b.url} className="transition-colors hover:text-or">
                   {b.name}
                 </Link>
               )}
@@ -173,24 +172,26 @@ export default async function LandingPageRoute({ params }: { params: Promise<Par
           </section>
         )}
 
-        {/* CTA final vers la collection */}
-        <section className="mt-16 rounded-3xl bg-midnight p-12 text-center text-white">
-          <h2 className="font-sora text-3xl font-semibold tracking-tight md:text-4xl">
-            Pas encore décidé ?
+        {/* CTA final éditorial */}
+        <section className="mt-20 overflow-hidden rounded-[28px] bg-noir p-12 text-center text-ivoire md:p-16">
+          <span className="eyebrow-editorial mb-3">Encore une question</span>
+          <h2 className="display-serif mt-4 text-[2.2rem] font-normal md:text-[3.4rem]">
+            Pas encore <em>décidé</em> ?
           </h2>
-          <p className="mx-auto mt-3 max-w-md text-lg text-white/85">
-            Explorez l'intégralité de notre collection ou contactez nos conseillers.
+          <p className="mx-auto mt-5 max-w-md font-sans text-[15px] leading-relaxed text-ivoire/70 md:text-base">
+            Explorez l'intégralité de notre collection ou parlez à un conseiller sommeil.
           </p>
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-4">
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-6">
             <Link
               href="/matelas"
-              className="inline-flex items-center gap-2 rounded-pill bg-ivoire px-7 py-3.5 font-sans text-base font-semibold text-midnight transition-all hover:bg-aurora hover:-translate-y-px"
+              className="inline-flex items-center gap-3 rounded-pill bg-ivoire px-7 py-3.5 font-sans text-[13px] font-medium uppercase tracking-[0.14em] text-noir transition-all hover:bg-or"
             >
-              Voir tous les matelas →
+              Voir tous les matelas
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
             </Link>
             <Link
               href="/aide/contact"
-              className="text-sm font-medium text-white/80 hover:text-aurora"
+              className="border-b border-white/30 pb-1 font-sans text-[12px] uppercase tracking-[0.14em] text-ivoire/80 transition-colors hover:border-or hover:text-or"
             >
               Parler à un conseiller
             </Link>

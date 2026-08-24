@@ -5,6 +5,7 @@ import { sanityClient } from "@/lib/sanity/client";
 import { allLitsQuery } from "@/lib/sanity/product-queries";
 import { siteSettingsQuery } from "@/lib/sanity/queries";
 import { Header } from "@/components/header";
+import { EditorialPageHeader } from "@/components/editorial-page-header";
 import { Footer } from "@/components/footer";
 import { buildMetadata } from "@/lib/seo/metadata";
 import {
@@ -149,63 +150,40 @@ export default async function LitCoffreGuide() {
     <>
       <Header settings={siteSettings} />
 
-      <main className="mx-auto max-w-site px-6 py-8 md:px-8 md:py-12">
-        {/* Breadcrumbs */}
-        <nav aria-label="Fil d'Ariane" className="mb-6 flex flex-wrap items-center gap-1.5 text-sm text-pierre md:mb-8">
-          {breadcrumbs.map((b, i) => (
-            <span key={i} className="flex items-center gap-1.5">
-              {i > 0 && <span className="text-brume">/</span>}
-              {i === breadcrumbs.length - 1 ? (
-                <span className="font-medium text-ink">{b.name}</span>
-              ) : (
-                <Link href={b.url} className="hover:text-midnight">{b.name}</Link>
-              )}
-            </span>
-          ))}
-        </nav>
+      <EditorialPageHeader
+        breadcrumbs={breadcrumbs}
+        eyebrow="Guide expert · janvier 2026"
+        title={H1}
+        lead="Un lit coffre, ce n'est pas juste un lit avec un tiroir dessous. C'est 300 à 500 litres de rangement caché qui transforme une chambre de 12 m² en pièce fonctionnelle. Ce guide vous dit ce que les fiches produit ne disent pas — mécanisme, entretien, pièges à éviter, choix de tissu."
+        emphasize={2}
+      />
 
-        {/* HERO éditorial */}
-        <header className="mb-12 md:mb-16">
-          <div className="grid gap-8 lg:grid-cols-[1.2fr_1fr] lg:items-center lg:gap-16">
-            <div>
-              <div className="eyebrow mb-3">Guide expert · Mis à jour janvier 2026</div>
-              <h1 className="font-sora text-3xl font-semibold leading-tight tracking-tight text-ink md:text-5xl lg:text-6xl">
-                {H1}
-              </h1>
-              <p className="mt-5 text-base leading-relaxed text-pierre md:mt-6 md:text-xl">
-                Un lit coffre, ce n'est pas juste un lit avec un tiroir dessous. C'est <strong className="text-ink">300 à 500 litres de rangement caché</strong> qui transforme une chambre de 12 m² en pièce fonctionnelle. Ce guide vous dit ce que les fiches produit ne disent pas — mécanisme, entretien, pièges à éviter, choix de tissu.
-              </p>
-              <div className="mt-6 flex flex-wrap gap-3 text-xs md:text-sm">
-                <a href="#comparatif" className="rounded-pill border border-border bg-ivoire px-4 py-2 font-medium text-midnight hover:border-midnight">Comparatif rapide ↓</a>
-                <a href="#modeles" className="rounded-pill border border-border bg-ivoire px-4 py-2 font-medium text-midnight hover:border-midnight">Voir les modèles ↓</a>
-                <a href="#faq" className="rounded-pill border border-border bg-ivoire px-4 py-2 font-medium text-midnight hover:border-midnight">FAQ complète ↓</a>
-              </div>
-            </div>
-
-            {/* Bloc chiffres-clés */}
-            <aside className="rounded-3xl border border-border bg-gradient-to-br from-midnight to-midnight-dark p-6 text-white md:p-8">
-              <div className="eyebrow mb-4 text-aurora">En chiffres</div>
-              <ul className="space-y-4">
-                <li>
-                  <div className="font-sora text-3xl font-bold text-aurora">400 L</div>
-                  <div className="mt-1 text-sm text-white/80">Capacité moyenne (140×190) — équivalent 4 tiroirs de commode</div>
-                </li>
-                <li>
-                  <div className="font-sora text-3xl font-bold text-aurora">15 000</div>
-                  <div className="mt-1 text-sm text-white/80">Cycles d'ouverture garantis par les vérins DreamsFly</div>
-                </li>
-                <li>
-                  <div className="font-sora text-3xl font-bold text-aurora">1 sec</div>
-                  <div className="mt-1 text-sm text-white/80">Temps d'ouverture, matelas inclus, d'une seule main</div>
-                </li>
-                <li>
-                  <div className="font-sora text-3xl font-bold text-aurora">-32 %</div>
-                  <div className="mt-1 text-sm text-white/80">Gain d'espace ressenti vs un lit classique + commode</div>
-                </li>
-              </ul>
-            </aside>
+      <main className="mx-auto max-w-site px-6 py-14 md:px-10 md:py-20">
+        <div className="mb-14 grid gap-10 lg:grid-cols-[1fr_1fr] lg:items-start lg:gap-16">
+          <div className="flex flex-wrap gap-3 font-sans text-[11px] uppercase tracking-[0.14em]">
+            <a href="#comparatif" className="rounded-pill border border-ink/15 bg-ivoire px-5 py-2.5 font-medium text-noir transition-colors hover:border-noir hover:text-or">Comparatif rapide ↓</a>
+            <a href="#modeles" className="rounded-pill border border-ink/15 bg-ivoire px-5 py-2.5 font-medium text-noir transition-colors hover:border-noir hover:text-or">Voir les modèles ↓</a>
+            <a href="#faq" className="rounded-pill border border-ink/15 bg-ivoire px-5 py-2.5 font-medium text-noir transition-colors hover:border-noir hover:text-or">FAQ complète ↓</a>
           </div>
-        </header>
+
+          {/* Bloc chiffres-clés éditorial noir */}
+          <aside className="rounded-[28px] bg-noir p-8 text-ivoire md:p-10">
+            <span className="eyebrow-editorial mb-6">En chiffres</span>
+            <ul className="mt-6 space-y-6">
+              {[
+                { n: "400 L", txt: "Capacité moyenne (140×190) — équivalent 4 tiroirs de commode" },
+                { n: "15 000", txt: "Cycles d'ouverture garantis par les vérins DreamsFly" },
+                { n: "1 sec", txt: "Temps d'ouverture, matelas inclus, d'une seule main" },
+                { n: "−32 %", txt: "Gain d'espace ressenti vs un lit classique + commode" },
+              ].map((s, i) => (
+                <li key={i} className="border-t border-white/10 pt-4 first:border-t-0 first:pt-0">
+                  <div className="display-serif text-[2rem] font-normal text-or md:text-[2.4rem]">{s.n}</div>
+                  <div className="mt-1 font-sans text-[13px] leading-relaxed text-ivoire/70">{s.txt}</div>
+                </li>
+              ))}
+            </ul>
+          </aside>
+        </div>
 
         {/* CE QU'IL FAUT SAVOIR — 3 pièges à éviter */}
         <section className="mb-16 md:mb-20">

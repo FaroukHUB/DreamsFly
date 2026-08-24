@@ -5,18 +5,18 @@ import { urlFor } from "@/lib/sanity/image";
 
 const components: PortableTextComponents = {
   block: {
-    h2: ({ children }) => <h2 className="mt-10 mb-4 font-sora text-2xl font-semibold tracking-tight text-ink md:text-3xl">{children}</h2>,
-    h3: ({ children }) => <h3 className="mt-7 mb-3 font-sora text-xl font-semibold tracking-tight text-ink md:text-2xl">{children}</h3>,
-    normal: ({ children }) => <p className="mb-4 text-[16px] leading-relaxed text-ink/85 md:text-[17px]">{children}</p>,
+    h2: ({ children }) => <h2 className="mt-14 mb-5 font-serif text-[1.7rem] font-normal leading-tight tracking-tight text-noir md:text-[2.2rem]" style={{ fontVariationSettings: "'opsz' 144" }}>{children}</h2>,
+    h3: ({ children }) => <h3 className="mt-10 mb-3 font-serif text-[1.3rem] font-normal leading-tight text-noir md:text-[1.55rem]" style={{ fontVariationSettings: "'opsz' 144" }}>{children}</h3>,
+    normal: ({ children }) => <p className="mb-5 font-sans text-[16px] leading-[1.75] text-ink/85 md:text-[17px]">{children}</p>,
   },
   list: {
-    bullet: ({ children }) => <ul className="my-4 space-y-2 pl-5 text-[16px] leading-relaxed text-ink/85 [&>li]:list-disc [&>li]:marker:text-midnight">{children}</ul>,
-    number: ({ children }) => <ol className="my-4 space-y-2 pl-5 text-[16px] leading-relaxed text-ink/85 [&>li]:list-decimal [&>li]:marker:text-midnight">{children}</ol>,
+    bullet: ({ children }) => <ul className="my-5 space-y-2 pl-5 font-sans text-[16px] leading-relaxed text-ink/85 [&>li]:list-disc [&>li]:marker:text-or">{children}</ul>,
+    number: ({ children }) => <ol className="my-5 space-y-2 pl-5 font-sans text-[16px] leading-relaxed text-ink/85 [&>li]:list-decimal [&>li]:marker:text-or">{children}</ol>,
   },
   marks: {
-    strong: ({ children }) => <strong className="font-semibold text-ink">{children}</strong>,
+    strong: ({ children }) => <strong className="font-medium text-noir">{children}</strong>,
     link: ({ value, children }) => (
-      <a href={value?.href} className="text-midnight underline decoration-midnight/30 underline-offset-4 hover:decoration-midnight">{children}</a>
+      <a href={value?.href} className="text-noir underline decoration-or decoration-2 underline-offset-4 transition-colors hover:text-or">{children}</a>
     ),
   },
   types: {
@@ -39,14 +39,16 @@ const components: PortableTextComponents = {
       </aside>
     ),
     faqItem: ({ value }: any) => (
-      <details className="group my-4 overflow-hidden rounded-2xl border border-border bg-ivoire transition-all hover:border-midnight">
-        <summary className="flex cursor-pointer items-center justify-between gap-4 p-5 font-sora text-base font-semibold text-ink md:text-lg">
-          <span>{value.question}</span>
-          <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-sable text-midnight transition-transform group-open:rotate-45">+</span>
+      <details className="group my-4 border-b border-ink/10">
+        <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-5 font-serif text-[19px] font-normal text-noir md:text-[21px]" style={{ fontVariationSettings: "'opsz' 144" }}>
+          <span className="flex-1">{value.question}</span>
+          <span className="text-or transition-transform group-open:rotate-45" aria-hidden>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4"><path d="M12 5v14M5 12h14"/></svg>
+          </span>
         </summary>
-        <div className="border-t border-border bg-sable/40 px-5 pb-5 pt-4">
-          <p className="text-[15.5px] leading-relaxed text-pierre">{value.answer}</p>
-        </div>
+        <p className="mb-6 max-w-[64ch] whitespace-pre-line font-sans text-[15px] leading-relaxed text-taupe">
+          {value.answer}
+        </p>
       </details>
     ),
   },
@@ -59,25 +61,28 @@ export type StaticPageProps = {
 
 export function StaticPageContent({ page, breadcrumbs }: StaticPageProps) {
   return (
-    <main className="mx-auto max-w-3xl px-6 py-10 md:px-8 md:py-16">
+    <main className="mx-auto max-w-3xl px-6 py-14 md:px-8 md:py-20">
       {breadcrumbs && (
-        <nav aria-label="Fil d'Ariane" className="mb-8 flex flex-wrap items-center gap-1.5 text-sm text-pierre">
+        <nav aria-label="Fil d'Ariane" className="mb-10 flex flex-wrap items-center gap-2 font-sans text-[11px] uppercase tracking-[0.14em] text-taupe">
           {breadcrumbs.map((b, i) => (
-            <span key={i} className="flex items-center gap-1.5">
-              {i > 0 && <span className="text-brume">/</span>}
+            <span key={i} className="flex items-center gap-2">
+              {i > 0 && <span className="opacity-40">/</span>}
               {i === breadcrumbs.length - 1 ? (
-                <span className="font-medium text-ink">{b.name}</span>
+                <span className="text-ink">{b.name}</span>
               ) : (
-                <Link href={b.url} className="hover:text-midnight">{b.name}</Link>
+                <Link href={b.url} className="transition-colors hover:text-or">{b.name}</Link>
               )}
             </span>
           ))}
         </nav>
       )}
 
-      <header className="mb-10">
-        <h1 className="font-sora text-3xl font-semibold leading-tight tracking-tight text-ink md:text-5xl">{page.title}</h1>
-        {page.excerpt && <p className="mt-5 text-lg leading-relaxed text-pierre md:text-xl">{page.excerpt}</p>}
+      <header className="mb-14">
+        {breadcrumbs && breadcrumbs.length > 1 && (
+          <span className="eyebrow-editorial on-cream mb-3">{breadcrumbs[breadcrumbs.length - 2].name}</span>
+        )}
+        <h1 className="display-serif on-cream mt-4 text-[2.2rem] font-normal md:text-[3.6rem]">{page.title}</h1>
+        {page.excerpt && <p className="mt-6 font-serif text-[18px] italic leading-relaxed text-taupe md:text-[22px]">{page.excerpt}</p>}
       </header>
 
       <article>

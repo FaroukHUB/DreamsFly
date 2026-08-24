@@ -66,27 +66,26 @@ export default async function GlossaryTermPage({ params }: { params: Promise<Par
   return (
     <>
       <Header settings={siteSettings} />
-      <main className="mx-auto max-w-3xl px-8 py-12 md:py-16">
-        <nav className="mb-8 flex flex-wrap items-center gap-1.5 text-sm text-pierre">
-          <Link href="/" className="hover:text-midnight">Accueil</Link>
-          <span className="text-brume">/</span>
-          <Link href="/glossaire" className="hover:text-midnight">Glossaire</Link>
-          <span className="text-brume">/</span>
-          <span className="font-medium text-ink">{t.term}</span>
+      <main className="mx-auto max-w-3xl px-6 py-14 md:px-8 md:py-20">
+        <nav className="mb-10 flex flex-wrap items-center gap-2 font-sans text-[11px] uppercase tracking-[0.14em] text-taupe">
+          <Link href="/" className="transition-colors hover:text-or">Accueil</Link>
+          <span className="opacity-40">/</span>
+          <Link href="/glossaire" className="transition-colors hover:text-or">Glossaire</Link>
+          <span className="opacity-40">/</span>
+          <span className="text-ink">{t.term}</span>
         </nav>
 
         <article>
-          {t.category && <div className="eyebrow mb-3">{t.category}</div>}
-          <h1 className="font-sora text-4xl font-semibold leading-tight tracking-tight text-ink md:text-5xl">
+          {t.category && <span className="eyebrow-editorial on-cream mb-3">{t.category}</span>}
+          <h1 className="display-serif on-cream mt-4 text-[2.4rem] font-normal md:text-[4rem]">
             {t.term}
           </h1>
 
-          {/* Définition courte — AI extract */}
-          <div className="my-8 rounded-2xl border border-aurora/50 bg-aurora/10 p-6">
-            <h2 className="mb-2 font-sora text-sm font-semibold uppercase tracking-wider text-midnight">
-              Définition
+          <div className="my-10 border-l-2 border-or bg-creme/40 px-8 py-6">
+            <h2 className="mb-3 font-sans text-[11px] font-medium uppercase tracking-[0.16em] text-taupe">
+              <span className="mr-2 text-or">◆</span>Définition
             </h2>
-            <p className="text-lg leading-relaxed text-ink">{t.shortDefinition}</p>
+            <p className="font-serif text-[19px] italic leading-relaxed text-ink">{t.shortDefinition}</p>
           </div>
 
           {/* Synonymes */}

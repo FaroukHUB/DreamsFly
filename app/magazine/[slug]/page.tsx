@@ -169,29 +169,27 @@ export default async function GuidePage({ params }: { params: Promise<Params> })
     <>
       <Header settings={siteSettings} />
 
-      <main className="mx-auto max-w-3xl px-8 py-12">
-        {/* Breadcrumbs */}
-        <nav aria-label="Fil d'Ariane" className="mb-8 flex flex-wrap items-center gap-1.5 text-sm text-pierre">
-          <Link href="/" className="hover:text-midnight">Accueil</Link>
-          <span className="text-brume">/</span>
-          <Link href="/magazine" className="hover:text-midnight">Magazine</Link>
-          <span className="text-brume">/</span>
-          <span className="font-medium text-ink line-clamp-1">{g.title}</span>
+      <main className="mx-auto max-w-3xl px-6 py-14 md:px-8 md:py-20">
+        <nav aria-label="Fil d'Ariane" className="mb-10 flex flex-wrap items-center gap-2 font-sans text-[11px] uppercase tracking-[0.14em] text-taupe">
+          <Link href="/" className="transition-colors hover:text-or">Accueil</Link>
+          <span className="opacity-40">/</span>
+          <Link href="/magazine" className="transition-colors hover:text-or">Magazine</Link>
+          <span className="opacity-40">/</span>
+          <span className="text-ink line-clamp-1">{g.title}</span>
         </nav>
 
         <article>
-          {/* Header article */}
-          <header className="mb-10">
+          <header className="mb-14">
             {g.articleType && (
-              <div className="eyebrow mb-3">
+              <span className="eyebrow-editorial on-cream mb-3">
                 {ARTICLE_TYPE_LABELS[g.articleType as string] || "Article"}
-              </div>
+              </span>
             )}
-            <h1 className="font-sora text-4xl font-semibold leading-tight tracking-tight text-ink md:text-5xl">
+            <h1 className="display-serif on-cream mt-4 text-[2.2rem] font-normal md:text-[3.6rem]">
               {g.title}
             </h1>
             {g.excerpt && (
-              <p className="mt-6 text-lg leading-relaxed text-pierre md:text-xl">{g.excerpt}</p>
+              <p className="mt-6 font-serif text-[18px] italic leading-relaxed text-taupe md:text-[22px]">{g.excerpt}</p>
             )}
 
             {/* Auteur + date */}

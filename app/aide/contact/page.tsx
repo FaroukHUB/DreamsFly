@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { sanityClient } from "@/lib/sanity/client";
 import { siteSettingsQuery } from "@/lib/sanity/queries";
 import { Header } from "@/components/header";
+import { EditorialPageHeader } from "@/components/editorial-page-header";
+import { LineIcon, iconNameForEmoji } from "@/components/line-icon";
 import { Footer } from "@/components/footer";
 import { ContactForm } from "@/components/contact-form";
 import { buildMetadata } from "@/lib/seo/metadata";
@@ -34,23 +36,14 @@ export default async function ContactPage() {
     <>
       <Header settings={siteSettings} />
 
-      <main className="mx-auto max-w-site px-6 py-12 md:px-8 md:py-16">
-        <nav className="mb-8 flex items-center gap-1.5 text-sm text-pierre">
-          <a href="/" className="hover:text-midnight">Accueil</a>
-          <span className="text-brume">/</span>
-          <span className="font-medium text-ink">Contact</span>
-        </nav>
+      <EditorialPageHeader
+        breadcrumbs={breadcrumbs}
+        eyebrow="Service client"
+        title="Une question ? On est là."
+        lead="Nos conseillers experts répondent à toutes vos questions sur le sommeil et la literie. Choisissez le canal qui vous convient — réponse rapide garantie."
+      />
 
-        <header className="mb-12 max-w-2xl">
-          <div className="eyebrow mb-3">Service client</div>
-          <h1 className="font-sora text-3xl font-semibold leading-tight tracking-tight text-ink md:text-5xl">
-            Une question ? On est là.
-          </h1>
-          <p className="mt-5 text-lg leading-relaxed text-pierre md:text-xl">
-            Nos conseillers experts répondent à toutes vos questions sur le sommeil et la literie.
-            Choisissez le canal qui vous convient — réponse rapide garantie.
-          </p>
-        </header>
+      <main className="mx-auto max-w-site px-6 py-14 md:px-10 md:py-20">
 
         <div className="grid gap-10 lg:grid-cols-[1fr_1.2fr]">
           {/* Canaux directs */}
@@ -110,13 +103,15 @@ function ContactCard({ icon, title, subtitle, cta, ctaLabel }: any) {
   return (
     <a
       href={cta}
-      className="group flex items-center gap-4 rounded-2xl border border-border bg-ivoire p-5 transition-all hover:-translate-y-0.5 hover:border-midnight md:p-6"
+      className="group flex items-center gap-5 rounded-[24px] border border-ink/10 bg-ivoire p-6 transition-all hover:-translate-y-1 hover:border-noir/40 md:p-7"
     >
-      <span aria-hidden className="text-3xl md:text-4xl">{icon}</span>
+      <span className="inline-flex h-12 w-12 flex-none items-center justify-center rounded-full border border-ink/15 text-noir transition-all group-hover:border-noir group-hover:bg-noir group-hover:text-or">
+        <LineIcon name={iconNameForEmoji(icon)} size={20} strokeWidth={1.3} />
+      </span>
       <div className="flex-1">
-        <div className="text-xs uppercase tracking-wide text-pierre">{subtitle}</div>
-        <div className="font-sora text-base font-semibold text-ink md:text-lg">{title}</div>
-        <div className="text-sm font-semibold text-midnight group-hover:text-midnight-dark">{ctaLabel} →</div>
+        <div className="font-sans text-[11px] uppercase tracking-[0.14em] text-taupe">{subtitle}</div>
+        <div className="mt-1 display-serif on-cream text-[1.15rem] font-normal md:text-[1.25rem]">{title}</div>
+        <div className="mt-1 font-sans text-[13px] font-medium uppercase tracking-[0.14em] text-noir group-hover:text-or">{ctaLabel} →</div>
       </div>
     </a>
   );

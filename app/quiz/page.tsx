@@ -5,6 +5,7 @@ import { allProductsForPillarQuery } from "@/lib/sanity/product-queries";
 import { siteSettingsQuery } from "@/lib/sanity/queries";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
+import { EditorialPageHeader } from "@/components/editorial-page-header";
 import { QuizWidget } from "@/components/quiz/quiz-widget";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { JsonLd, breadcrumbSchema, organizationSchema, faqSchema } from "@/lib/seo/jsonld";
@@ -97,29 +98,19 @@ export default async function QuizPage() {
     <>
       <Header settings={siteSettings} />
 
-      <main className="mx-auto max-w-site px-6 py-10 md:px-8 md:py-16">
-        {/* Breadcrumbs */}
-        <nav aria-label="Fil d'Ariane" className="mb-8 flex items-center gap-1.5 text-sm text-pierre">
-          <Link href="/" className="hover:text-midnight">Accueil</Link>
-          <span className="text-brume">/</span>
-          <span className="font-medium text-ink">Quiz matelas</span>
-        </nav>
+      <EditorialPageHeader
+        breadcrumbs={[
+          { name: "Accueil", url: "/" },
+          { name: "Quiz matelas", url: "/quiz" },
+        ]}
+        eyebrow={hero.eyebrow}
+        title={hero.title}
+        lead={hero.subtitle}
+      />
 
-        {/* HERO */}
-        <header className="mb-12 text-center md:mb-16">
-          <div className="eyebrow mb-3">{hero.eyebrow}</div>
-          <h1 className="mx-auto max-w-4xl font-sora text-3xl font-semibold leading-tight tracking-tight text-ink md:text-5xl lg:text-6xl">
-            {hero.title}
-          </h1>
-          {hero.subtitle && (
-            <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-pierre md:mt-6 md:text-lg">
-              {hero.subtitle}
-            </p>
-          )}
-        </header>
-
+      <main className="mx-auto max-w-site px-6 py-14 md:px-10 md:py-20">
         {/* QUIZ WIDGET */}
-        <section id="quiz" className="mb-20 rounded-3xl border border-border bg-white p-6 md:mb-24 md:p-10">
+        <section id="quiz" className="mb-24 rounded-[28px] border border-ink/10 bg-ivoire p-6 md:mb-32 md:p-12">
           <QuizWidget steps={steps} products={products} />
         </section>
 

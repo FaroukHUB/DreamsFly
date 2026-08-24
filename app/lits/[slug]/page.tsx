@@ -79,33 +79,35 @@ export default async function LitPage({ params }: { params: Promise<Params> }) {
     <>
       <Header settings={siteSettings} />
 
-      <main className="mx-auto max-w-site px-6 py-8 md:px-8 md:py-12">
-        {/* Breadcrumbs */}
-        <nav aria-label="Fil d'Ariane" className="mb-6 flex flex-wrap items-center gap-1.5 text-sm text-pierre">
+      <main className="mx-auto max-w-site px-6 py-10 md:px-10 md:py-14">
+        <nav aria-label="Fil d'Ariane" className="mb-8 flex flex-wrap items-center gap-2 font-sans text-[11px] uppercase tracking-[0.14em] text-taupe">
           {breadcrumbs.map((b, i) => (
-            <span key={i} className="flex items-center gap-1.5">
-              {i > 0 && <span className="text-brume">/</span>}
+            <span key={i} className="flex items-center gap-2">
+              {i > 0 && <span className="opacity-40">/</span>}
               {i === breadcrumbs.length - 1 ? (
-                <span className="font-medium text-ink">{b.name}</span>
+                <span className="text-ink">{b.name}</span>
               ) : (
-                <Link href={b.url} className="hover:text-midnight">{b.name}</Link>
+                <Link href={b.url} className="transition-colors hover:text-or">{b.name}</Link>
               )}
             </span>
           ))}
         </nav>
 
-        {/* Titre */}
-        <div className="mb-8">
-          <div className="mb-2 text-xs font-semibold uppercase tracking-widest text-pierre">Lit coffre</div>
-          <h1 className="font-sora text-2xl font-semibold tracking-tight text-ink md:text-4xl">
+        <div className="mb-10 max-w-2xl md:mb-14">
+          <span className="eyebrow-editorial on-cream mb-3">Lit coffre</span>
+          <h1 className="display-serif on-cream mt-4 text-[2rem] font-normal md:text-[3.4rem]">
             {product.title}
           </h1>
-          {product.tagline && <p className="mt-2 text-base text-pierre md:text-lg">{product.tagline}</p>}
+          {product.tagline && (
+            <p className="mt-4 max-w-xl font-serif text-[18px] italic leading-relaxed text-taupe md:text-[22px]">
+              {product.tagline}
+            </p>
+          )}
           {product.rating?.value && (
-            <p className="mt-3 flex items-center gap-2 text-sm">
-              <span className="text-or">★★★★★</span>
-              <strong className="text-ink">{product.rating.value} / 5</strong>
-              <span className="text-pierre">— {product.rating.count} avis</span>
+            <p className="mt-5 flex items-center gap-3 font-sans text-[13px]">
+              <span className="text-or tracking-[0.2em]">★★★★★</span>
+              <strong className="font-medium text-ink">{product.rating.value} / 5</strong>
+              <span className="text-taupe">— {product.rating.count} avis vérifiés</span>
             </p>
           )}
         </div>

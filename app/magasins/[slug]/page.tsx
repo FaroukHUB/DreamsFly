@@ -11,6 +11,7 @@ import {
 import { siteSettingsQuery } from "@/lib/sanity/queries";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
+import { EditorialPageHeader } from "@/components/editorial-page-header";
 import { buildMetadata } from "@/lib/seo/metadata";
 import {
   JsonLd,
@@ -78,27 +79,18 @@ export default async function ShowroomPage({ params }: { params: Promise<Params>
   return (
     <>
       <Header settings={siteSettings} />
-      <main className="mx-auto max-w-site px-8 py-12 md:py-16">
-        <nav className="mb-8 flex flex-wrap items-center gap-1.5 text-sm text-pierre">
-          <Link href="/" className="hover:text-midnight">Accueil</Link>
-          <span className="text-brume">/</span>
-          <Link href="/magasins" className="hover:text-midnight">Showrooms</Link>
-          <span className="text-brume">/</span>
-          <span className="font-medium text-ink">{s.name}</span>
-        </nav>
-
-        <header className="mb-12">
-          <div className="eyebrow mb-3">Showroom DreamsFly</div>
-          <h1 className="font-sora text-4xl font-semibold leading-tight tracking-tight text-ink md:text-5xl">
-            {s.name}
-          </h1>
-          {s.address?.city && (
-            <p className="mt-3 text-lg text-pierre">
-              {s.address.street} · {s.address.postalCode} {s.address.city}
-            </p>
-          )}
-        </header>
-
+      <EditorialPageHeader
+        breadcrumbs={[
+          { name: "Accueil", url: "/" },
+          { name: "Showrooms", url: "/magasins" },
+          { name: s.name, url: `/magasins/${s.slug}` },
+        ]}
+        eyebrow="Showroom DreamsFly"
+        title={s.name}
+        emphasize={0}
+        lead={s.address?.city ? `${s.address.street} · ${s.address.postalCode} ${s.address.city}` : undefined}
+      />
+      <main className="mx-auto max-w-site px-6 py-14 md:px-10 md:py-20">
         <div className="grid gap-10 lg:grid-cols-[1.6fr_1fr]">
           {/* Images */}
           <div>
