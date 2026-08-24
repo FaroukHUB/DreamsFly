@@ -3,16 +3,16 @@ type UspItem = { icon?: string; title?: string; subtitle?: string };
 export function UspStrip({ items }: { items?: UspItem[] }) {
   const usps = items?.length === 4 ? items : DEFAULT_USPS;
   return (
-    <div className="mt-6 border-y border-border bg-sable">
-      <div className="mx-auto grid max-w-site gap-6 px-8 py-7 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="border-y border-ink/10 bg-creme">
+      <div className="mx-auto grid max-w-site divide-y divide-ink/10 md:grid-cols-4 md:divide-x md:divide-y-0 px-0">
         {usps.map((u, i) => (
-          <div key={i} className="flex items-center gap-3.5 text-sm">
-            <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-ivoire text-midnight border border-border">
+          <div key={i} className="flex items-center gap-4 px-6 py-6 md:px-8 md:py-8">
+            <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full border border-noir/20 text-noir">
               <Icon name={u.icon || "shield"} />
             </div>
             <div>
-              <strong className="block text-sm font-semibold text-ink">{u.title}</strong>
-              <span className="text-[13px] text-pierre">{u.subtitle}</span>
+              <strong className="display-serif on-cream block text-[15px] font-normal leading-tight md:text-[16px]">{u.title}</strong>
+              <span className="mt-1 block font-sans text-[12px] uppercase tracking-[0.14em] text-taupe">{u.subtitle}</span>
             </div>
           </div>
         ))}

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Sora, Plus_Jakarta_Sans } from "next/font/google";
+import { Sora, Plus_Jakarta_Sans, Fraunces } from "next/font/google";
 import "./globals.css";
 import { CartDrawer } from "@/components/cart/cart-drawer";
 
@@ -15,6 +15,14 @@ const jakarta = Plus_Jakarta_Sans({
   variable: "--font-jakarta",
   display: "swap",
   weight: ["400", "500", "600", "700", "800"],
+});
+
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  variable: "--font-fraunces",
+  display: "swap",
+  style: ["normal", "italic"],
+  axes: ["opsz"],
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://dreamsfly.fr";
@@ -45,7 +53,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr" className={`${sora.variable} ${jakarta.variable}`}>
+    <html lang="fr" className={`${sora.variable} ${jakarta.variable} ${fraunces.variable}`}>
       <body>
         {children}
         <CartDrawer />

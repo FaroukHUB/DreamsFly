@@ -16,27 +16,42 @@ export function Footer({ settings }: { settings?: any }) {
   const contact = settings?.contact || {};
 
   return (
-    <footer className="bg-ink text-white/70">
+    <footer className="bg-noir text-ivoire/65">
+      {/* Bloc éditorial de tête */}
+      <div className="border-b border-white/10">
+        <div className="mx-auto max-w-site px-6 py-16 md:px-8 md:py-24 grid gap-10 md:grid-cols-[1.4fr_1fr] md:items-end">
+          <div>
+            <span className="eyebrow-editorial mb-4">Manufacture de literie française · depuis 2013</span>
+            <h2 className="display-serif mt-4 text-[2rem] font-normal text-ivoire md:text-[3.4rem]">
+              Dormir mieux, <em>vivre plus</em>.
+            </h2>
+          </div>
+          <p className="max-w-md font-sans text-[15px] leading-relaxed text-ivoire/60 md:text-base">
+            Bois de forêts françaises. Coton biologique certifié GOTS. Ressorts ensachés assemblés à la main. Chaque nuit, une exigence tenue.
+          </p>
+        </div>
+      </div>
+
       {/* Section principale */}
       <div className="mx-auto max-w-site px-6 pt-16 md:px-8 md:pt-20">
         <div className="grid gap-10 lg:grid-cols-[1.8fr_repeat(5,1fr)] lg:gap-8">
           {/* Bloc marque */}
           <div>
-            <div className="text-white">
-              <Logo size={28} color="#FBF9F4" />
+            <div className="text-ivoire">
+              <Logo size={28} color="#F0E9DC" />
             </div>
-            <p className="mt-4 max-w-xs text-sm leading-relaxed">{tagline}</p>
+            <p className="mt-4 max-w-xs font-sans text-sm leading-relaxed">{tagline}</p>
 
             {/* Contact rapide */}
             {(contact.phone || contact.email) && (
               <div className="mt-5 space-y-1 text-sm">
                 {contact.phone && (
-                  <a href={`tel:${contact.phone.replace(/\s/g, "")}`} className="block text-white/80 hover:text-aurora">
+                  <a href={`tel:${contact.phone.replace(/\s/g, "")}`} className="block text-white/80 hover:text-or">
                     📞 {contact.phone}
                   </a>
                 )}
                 {contact.email && (
-                  <a href={`mailto:${contact.email}`} className="block text-white/80 hover:text-aurora">
+                  <a href={`mailto:${contact.email}`} className="block text-white/80 hover:text-or">
                     ✉️ {contact.email}
                   </a>
                 )}
@@ -48,28 +63,28 @@ export function Footer({ settings }: { settings?: any }) {
               <ul className="mt-5 flex gap-3">
                 {socials.instagram && (
                   <li>
-                    <a href={socials.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 hover:bg-aurora hover:text-midnight">
+                    <a href={socials.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 hover:bg-or hover:text-noir">
                       <SocialIcon name="instagram" />
                     </a>
                   </li>
                 )}
                 {socials.facebook && (
                   <li>
-                    <a href={socials.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 hover:bg-aurora hover:text-midnight">
+                    <a href={socials.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 hover:bg-or hover:text-noir">
                       <SocialIcon name="facebook" />
                     </a>
                   </li>
                 )}
                 {socials.tiktok && (
                   <li>
-                    <a href={socials.tiktok} target="_blank" rel="noopener noreferrer" aria-label="TikTok" className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 hover:bg-aurora hover:text-midnight">
+                    <a href={socials.tiktok} target="_blank" rel="noopener noreferrer" aria-label="TikTok" className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 hover:bg-or hover:text-noir">
                       <SocialIcon name="tiktok" />
                     </a>
                   </li>
                 )}
                 {socials.youtube && (
                   <li>
-                    <a href={socials.youtube} target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 hover:bg-aurora hover:text-midnight">
+                    <a href={socials.youtube} target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 hover:bg-or hover:text-noir">
                       <SocialIcon name="youtube" />
                     </a>
                   </li>
@@ -81,15 +96,15 @@ export function Footer({ settings }: { settings?: any }) {
           {/* Colonnes de liens */}
           {columns.slice(0, 5).map((col, i) => (
             <div key={i}>
-              <h4 className="mb-4 font-sora text-sm font-semibold uppercase tracking-wide text-white">
+              <h4 className="mb-5 font-sans text-[11px] font-medium uppercase tracking-[0.18em] text-or">
                 {col.title}
               </h4>
-              <ul className="space-y-2.5">
+              <ul className="space-y-3">
                 {(col.links || []).map((l, j) => (
                   <li key={j}>
                     <Link
                       href={l.link || "#"}
-                      className="text-sm text-white/60 transition-colors hover:text-aurora"
+                      className="font-sans text-[14px] text-ivoire/60 transition-colors hover:text-or"
                     >
                       {l.label}
                     </Link>
@@ -100,40 +115,41 @@ export function Footer({ settings }: { settings?: any }) {
           ))}
         </div>
 
-        {/* Bandeau newsletter */}
-        <div className="mt-14 rounded-3xl border border-white/10 bg-white/[0.03] p-6 md:mt-16 md:flex md:items-center md:justify-between md:gap-6 md:p-8">
+        {/* Bandeau newsletter éditorial */}
+        <div className="mt-16 border-t border-white/10 pt-10 md:mt-20 md:flex md:items-center md:justify-between md:gap-10">
           <div>
-            <div className="text-xs font-semibold uppercase tracking-widest text-aurora">Newsletter</div>
-            <h3 className="mt-1 font-sora text-lg font-semibold text-white md:text-xl">
-              Conseils sommeil + offres exclusives, chaque semaine.
+            <span className="eyebrow-editorial mb-2">Newsletter</span>
+            <h3 className="display-serif mt-3 text-2xl font-normal text-ivoire md:text-3xl">
+              Conseils sommeil, <em>rendez-vous</em> et essayages en avant-première.
             </h3>
           </div>
           <Link
             href="/#newsletter"
-            className="mt-4 inline-flex items-center gap-2 rounded-pill bg-aurora px-5 py-2.5 font-sora text-sm font-semibold text-midnight transition-all hover:-translate-y-px md:mt-0"
+            className="mt-6 inline-flex items-center gap-3 rounded-pill border border-or bg-transparent px-7 py-3.5 font-sans text-[12px] font-medium uppercase tracking-[0.16em] text-or transition-all hover:bg-or hover:text-noir md:mt-0"
           >
-            Je m'inscris →
+            Je m'inscris
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
           </Link>
         </div>
       </div>
 
       {/* Barre bas */}
-      <div className="mx-auto mt-12 max-w-site border-t border-white/10 px-6 pb-8 pt-6 md:px-8">
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div className="text-xs text-white/40">
-            © {new Date().getFullYear()} DreamsFly · Fabriqué avec ♥ en Europe
+      <div className="mx-auto mt-16 max-w-site border-t border-white/10 px-6 pb-10 pt-8 md:px-8">
+        <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+          <div className="font-sans text-[11px] uppercase tracking-[0.14em] text-ivoire/40">
+            © {new Date().getFullYear()} DreamsFly · Manufacture française
           </div>
-          <ul className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-white/50">
-            <li><Link href="/mentions-legales" className="hover:text-aurora">Mentions légales</Link></li>
-            <li><Link href="/cgv" className="hover:text-aurora">CGV</Link></li>
-            <li><Link href="/confidentialite" className="hover:text-aurora">Confidentialité</Link></li>
-            <li><Link href="/cookies" className="hover:text-aurora">Cookies</Link></li>
+          <ul className="flex flex-wrap gap-x-5 gap-y-1 font-sans text-[12px] text-ivoire/50">
+            <li><Link href="/mentions-legales" className="hover:text-or">Mentions légales</Link></li>
+            <li><Link href="/cgv" className="hover:text-or">CGV</Link></li>
+            <li><Link href="/confidentialite" className="hover:text-or">Confidentialité</Link></li>
+            <li><Link href="/cookies" className="hover:text-or">Cookies</Link></li>
           </ul>
-          <div className="flex flex-wrap gap-1.5">
+          <div className="flex flex-wrap gap-2">
             {payments.map((p) => (
               <span
                 key={p}
-                className="rounded bg-white/10 px-2.5 py-1 text-[10.5px] font-semibold text-white/80"
+                className="rounded-full border border-white/15 bg-transparent px-3 py-1 font-sans text-[10px] font-medium uppercase tracking-[0.1em] text-ivoire/70"
               >
                 {p}
               </span>

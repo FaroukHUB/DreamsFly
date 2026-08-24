@@ -22,37 +22,64 @@ export function WhyUs({ data }: { data?: Data }) {
   const imgUrl = d.image?.asset ? urlFor(d.image).width(1200).quality(85).url() : null;
 
   return (
-    <section className="bg-ivoire py-16 md:py-24">
-      <div className="mx-auto max-w-site px-6 md:px-8">
-        {/* Header : titre + intro à gauche, image à droite si présente */}
-        <div className={`mb-12 grid gap-10 md:mb-16 ${imgUrl ? "md:grid-cols-[1.1fr_1fr] md:items-center md:gap-14" : ""}`}>
-          <div className={imgUrl ? "" : "mx-auto max-w-3xl text-center"}>
-            <div className="eyebrow mb-3">{d.eyebrow}</div>
-            <h2 className="mb-5 font-sora text-3xl font-semibold leading-tight tracking-tight text-ink md:text-5xl">
-              {d.title}
+    <section className="section-noir section-editorial relative">
+      {/* Halo doux en fond */}
+      <div className="pointer-events-none absolute inset-0 opacity-90" aria-hidden="true">
+        <div className="absolute inset-x-0 top-0 h-72 bg-gradient-to-b from-noir-doux/60 to-transparent" />
+        <div className="absolute -bottom-40 -right-40 h-96 w-96 rounded-full bg-or/10 blur-[120px]" />
+      </div>
+
+      <div className="relative mx-auto max-w-site px-6 md:px-8">
+        <div className={`mb-16 grid gap-12 md:mb-24 ${imgUrl ? "md:grid-cols-[1.1fr_1fr] md:items-end md:gap-16" : ""}`}>
+          <div className={`reveal ${imgUrl ? "" : "mx-auto max-w-3xl"}`}>
+            <span className="eyebrow-editorial mb-4">{d.eyebrow}</span>
+            <h2 className="display-serif mt-4 text-[2.2rem] font-normal text-ivoire md:text-[3.8rem]">
+              {typographyEmify(d.title)}
             </h2>
-            <p className={`text-base leading-relaxed text-pierre md:text-lg ${imgUrl ? "max-w-lg" : "max-w-2xl mx-auto"}`}>
+            <p className={`mt-6 font-sans text-[15px] leading-relaxed text-ivoire/70 md:text-base ${imgUrl ? "max-w-lg" : "max-w-2xl"}`}>
               {d.subtitle}
             </p>
           </div>
           {imgUrl && (
-            <div className="relative aspect-[4/3] overflow-hidden rounded-3xl bg-sable md:aspect-[5/4]">
+            <div className="reveal relative aspect-[4/3] overflow-hidden rounded-[28px] bg-noir-doux md:aspect-[5/4]" style={{ transitionDelay: "120ms" }}>
               <Image src={imgUrl} alt={d.image?.alt || d.title} fill sizes="(max-width:768px) 100vw, 40vw" className="object-cover" loading="lazy" />
+              <div className="absolute inset-0 bg-gradient-to-tr from-noir/60 via-noir/10 to-transparent" />
             </div>
           )}
         </div>
 
-        {/* Grille des 6 piliers — SOUS le titre, pleine largeur */}
-        <div className="grid gap-4 sm:grid-cols-2 md:gap-5 lg:grid-cols-3">
+        <div className="rule-noir mb-14" />
+
+        <div className="grid gap-x-10 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
           {d.pillars.map((p, i) => (
-            <div key={i} className="rounded-2xl border border-border bg-white p-5 md:p-6">
-              <span aria-hidden className="mb-3 block text-3xl">{p.icon}</span>
-              <h3 className="font-sora text-lg font-semibold text-ink md:text-xl">{p.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-pierre">{p.text}</p>
+            <div key={i} className="reveal" style={{ transitionDelay: `${i * 70}ms` }}>
+              <div className="mb-5 flex items-baseline gap-4">
+                <span className="num-editorial !text-[38px] !text-or">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <span aria-hidden className="text-2xl">{p.icon}</span>
+              </div>
+              <h3 className="display-serif text-[1.4rem] font-normal text-ivoire md:text-[1.7rem]">{p.title}</h3>
+              <p className="mt-3 font-sans text-[14px] leading-relaxed text-ivoire/65 md:text-[15px] max-w-[38ch]">{p.text}</p>
             </div>
           ))}
         </div>
       </div>
     </section>
+  );
+}
+
+/**
+ * Ajoute des balises <em>…</em> autour du dernier mot d'un titre
+ * pour que la police Fraunces l'affiche en italique or.
+ */
+function typographyEmify(title: string): React.ReactNode {
+  const words = title.trim().split(" ");
+  if (words.length < 2) return title;
+  const last = words.pop() as string;
+  return (
+    <>
+      {words.join(" ")} <em>{last}</em>
+    </>
   );
 }

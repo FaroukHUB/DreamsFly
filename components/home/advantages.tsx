@@ -17,25 +17,32 @@ export function Advantages({ items }: { items?: Advantage[] }) {
   const data = items?.length ? items : DEFAULT_ADVANTAGES;
 
   return (
-    <section className="border-t border-border bg-ivoire px-4 py-14 md:px-8 md:py-20">
+    <section className="section-cream section-editorial border-t border-ink/10">
       <div className="mx-auto max-w-site">
-        <div className="mb-10 text-center md:mb-14">
-          <div className="eyebrow mb-3">Nos engagements</div>
-          <h2 className="font-sora text-2xl font-semibold tracking-tight text-ink md:text-4xl">
-            Tout ce qui rend DreamsFly différent.
-          </h2>
+        <div className="mb-14 grid gap-6 md:mb-20 md:grid-cols-[1fr_auto] md:items-end reveal">
+          <div>
+            <span className="eyebrow-editorial on-cream mb-3">Nos engagements</span>
+            <h2 className="display-serif on-cream mt-4 text-[2rem] font-normal md:text-[3.4rem]">
+              Tout ce qui rend DreamsFly <em>différent</em>.
+            </h2>
+          </div>
+          <p className="max-w-[38ch] font-sans text-[15px] leading-relaxed text-taupe md:text-base md:text-right">
+            Six principes qui guident chaque produit et chaque interaction avec vous.
+          </p>
         </div>
 
-        <ul className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-6">
+        <div className="rule-cream mb-12" />
+
+        <ul className="grid grid-cols-2 gap-x-8 gap-y-12 md:grid-cols-3 lg:grid-cols-6">
           {data.map((a, i) => (
-            <li key={i} className="flex flex-col items-center text-center">
-              <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-sable text-midnight transition-colors hover:bg-aurora/30 md:mb-4 md:h-16 md:w-16">
+            <li key={i} className="reveal group flex flex-col items-start" style={{ transitionDelay: `${i * 60}ms` }}>
+              <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-full border border-ink/15 text-noir transition-all group-hover:border-noir group-hover:bg-noir group-hover:text-or">
                 <Icon name={a.icon || "shield"} />
               </div>
-              <strong className="mb-1 font-sora text-sm font-semibold text-ink md:text-base">
+              <strong className="display-serif on-cream text-[1.05rem] font-normal leading-tight md:text-[1.15rem]">
                 {a.title}
               </strong>
-              <span className="text-[12px] leading-relaxed text-pierre md:text-[13px]">
+              <span className="mt-1.5 font-sans text-[12px] leading-relaxed text-taupe md:text-[13px]">
                 {a.subtitle}
               </span>
             </li>

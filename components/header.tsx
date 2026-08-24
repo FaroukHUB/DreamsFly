@@ -17,27 +17,26 @@ export function Header({ settings }: { settings?: any }) {
   return (
     <>
       {topbar?.enabled !== false && topbar?.message && (
-        <div className="bg-midnight px-4 py-2.5 text-center text-[12px] font-medium text-white md:text-[13px]">
+        <div className="bg-noir px-4 py-2.5 text-center font-sans text-[11px] font-medium uppercase tracking-[0.16em] text-ivoire md:text-[12px]">
           {topbar.link ? (
-            <Link href={topbar.link} className="hover:text-aurora">{topbar.message}</Link>
+            <Link href={topbar.link} className="hover:text-or transition-colors">{topbar.message}</Link>
           ) : (
             topbar.message
           )}
         </div>
       )}
 
-      <header className="sticky top-0 z-50 border-b border-border bg-ivoire/95 backdrop-blur-md">
-        <div className="mx-auto flex max-w-site items-center justify-between px-4 py-3 md:px-8 md:py-4">
+      <header className="sticky top-0 z-50 border-b border-ink/10 bg-page/85 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-site items-center justify-between px-4 py-4 md:px-8 md:py-5">
           {/* Hamburger mobile */}
           <button
             onClick={() => setMobileOpen(true)}
             aria-label="Ouvrir le menu"
-            className="flex h-10 w-10 items-center justify-center rounded-lg text-ink hover:bg-sable lg:hidden"
+            className="flex h-10 w-10 items-center justify-center text-ink lg:hidden"
           >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <line x1="3" y1="6" x2="21" y2="6" />
-              <line x1="3" y1="12" x2="21" y2="12" />
-              <line x1="3" y1="18" x2="21" y2="18" />
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+              <line x1="3" y1="7" x2="21" y2="7" />
+              <line x1="3" y1="17" x2="21" y2="17" />
             </svg>
           </button>
 
@@ -48,12 +47,12 @@ export function Header({ settings }: { settings?: any }) {
 
           {/* Nav desktop */}
           <nav>
-            <ul className="hidden items-center gap-7 lg:flex">
+            <ul className="hidden items-center gap-9 lg:flex">
               {menu.map((item, i) => (
                 <li key={i}>
                   <Link
                     href={item.link || "#"}
-                    className={`text-sm font-medium transition-colors ${item.highlight ? "text-discount font-semibold" : "text-ink hover:text-midnight"}`}
+                    className={`font-sans text-[12px] font-medium uppercase tracking-[0.16em] transition-colors ${item.highlight ? "text-or" : "text-ink hover:text-or"}`}
                   >
                     {item.label}
                   </Link>
@@ -63,21 +62,21 @@ export function Header({ settings }: { settings?: any }) {
           </nav>
 
           {/* Actions droite */}
-          <div className="flex items-center gap-1.5 md:gap-3">
-            <button aria-label="Recherche" className="hidden p-2 text-ink transition-colors hover:text-midnight md:block">
+          <div className="flex items-center gap-1 md:gap-2">
+            <button aria-label="Recherche" className="hidden p-2.5 text-ink transition-colors hover:text-or md:block">
               <SearchIcon />
             </button>
-            <button aria-label="Compte" className="hidden p-2 text-ink transition-colors hover:text-midnight md:block">
+            <button aria-label="Compte" className="hidden p-2.5 text-ink transition-colors hover:text-or md:block">
               <UserIcon />
             </button>
             <button
               onClick={toggle}
               aria-label="Ouvrir le panier"
-              className="flex items-center gap-1.5 p-2 text-sm font-medium text-ink hover:text-midnight"
+              className="flex items-center gap-2 p-2.5 font-sans text-[12px] font-medium uppercase tracking-[0.16em] text-ink hover:text-or"
             >
               <BagIcon />
               <span className="hidden md:inline">Panier</span>
-              <span className="rounded-pill bg-midnight px-2 py-0.5 text-[10px] font-semibold text-white md:text-[11px]">
+              <span className="rounded-full bg-noir px-2 py-0.5 text-[10px] font-semibold text-or">
                 {mounted ? count() : 0}
               </span>
             </button>

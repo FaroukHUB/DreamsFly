@@ -4,6 +4,8 @@ import { Hero } from "@/components/hero";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { UspStrip } from "@/components/usp-strip";
+import { PressMarquee } from "@/components/press-marquee";
+import { ScrollReveal } from "@/components/scroll-reveal";
 import { BestSellers } from "@/components/best-sellers";
 import { MosaicCollections } from "@/components/home/mosaic-collections";
 import { QuizCTA } from "@/components/home/quiz-cta";
@@ -57,9 +59,13 @@ export default async function HomePage() {
   return (
     <>
       <Header settings={siteSettings} />
+      <ScrollReveal />
       <main>
         {/* 1. HERO — préservé */}
         <Hero hero={homepage?.hero} heroSecondary={homepage?.heroSecondary} slides={homepage?.heroSlides} />
+
+        {/* 1b. Bande presse éditoriale */}
+        <PressMarquee tone="noir" />
 
         {/* 2. USP strip */}
         <UspStrip items={homepage?.uspStrip} />

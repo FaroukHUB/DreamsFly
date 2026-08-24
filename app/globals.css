@@ -34,6 +34,119 @@
   .section {
     @apply mx-auto max-w-site px-8 py-20;
   }
+
+  /* ────────────────────────────────────────────
+     DIRECTION A — ÉDITORIAL LUXE
+     ──────────────────────────────────────────── */
+
+  /* Sur-titre éditorial (avec petit trait à gauche) */
+  .eyebrow-editorial {
+    @apply inline-flex items-center gap-3 font-sans text-[11px] font-medium uppercase tracking-[0.22em] text-or;
+  }
+  .eyebrow-editorial::before {
+    content: "";
+    width: 32px;
+    height: 1px;
+    background: currentColor;
+    display: inline-block;
+  }
+  .eyebrow-editorial.on-cream {
+    @apply text-taupe;
+  }
+
+  /* Titres display éditoriaux — Fraunces */
+  .display-serif {
+    @apply font-serif font-light tracking-tight;
+    font-variation-settings: "opsz" 144;
+    text-wrap: balance;
+  }
+  .display-serif em {
+    @apply not-italic text-or;
+    font-family: var(--font-fraunces);
+    font-style: italic;
+    font-weight: 400;
+  }
+  .display-serif.on-cream em {
+    @apply text-taupe;
+  }
+
+  /* Sections éditoriales — alternance noir / crème */
+  .section-noir {
+    @apply bg-noir text-ivoire;
+  }
+  .section-cream {
+    @apply bg-creme text-ink;
+  }
+  .section-editorial {
+    @apply mx-auto max-w-site px-6 py-24 md:px-10 md:py-32;
+  }
+
+  /* Hairline séparateurs éditoriaux */
+  .rule-cream {
+    @apply h-px w-full bg-ink/10;
+  }
+  .rule-noir {
+    @apply h-px w-full bg-white/10;
+  }
+
+  /* Numéro éditorial */
+  .num-editorial {
+    @apply font-serif font-light text-or;
+    font-variation-settings: "opsz" 144;
+    font-size: 68px;
+    line-height: 1;
+  }
+
+  /* Bande presse éditoriale (marquee) */
+  .press-marquee {
+    @apply relative overflow-hidden;
+  }
+  .press-marquee::before,
+  .press-marquee::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 140px;
+    z-index: 2;
+    pointer-events: none;
+  }
+  .press-marquee::before {
+    left: 0;
+    background: linear-gradient(90deg, currentColor 0%, transparent 100%);
+  }
+  .press-marquee::after {
+    right: 0;
+    background: linear-gradient(-90deg, currentColor 0%, transparent 100%);
+  }
+  .press-marquee-track {
+    @apply flex w-max animate-marquee gap-20 whitespace-nowrap;
+  }
+  .press-marquee-track > * {
+    @apply font-serif font-medium tracking-wide opacity-60;
+    font-variation-settings: "opsz" 144;
+    font-size: 22px;
+  }
+}
+
+/* ────────────────────────────────────────────
+   REVEAL au scroll — utilitaire global
+   Ajoute la classe `reveal` sur un bloc et
+   `reveal-visible` viendra par IntersectionObserver
+   (via <ScrollReveal/>). Fallback : le bloc reste visible.
+   ──────────────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
 }
 
 /* Animations utilitaires custom — pour le matelas en couches */

@@ -49,7 +49,7 @@ export function Hero({
       {effectiveSlides.length > 1 ? (
         <HeroSlider slides={effectiveSlides} />
       ) : (
-        <div className="relative min-h-[480px] overflow-hidden bg-midnight md:min-h-[420px] md:rounded-3xl">
+        <div className="relative min-h-[560px] overflow-hidden bg-noir md:min-h-[560px] md:rounded-3xl">
           <HeroSlideMedia slide={effectiveSlides[0]} priority />
           <HeroSlideOverlay slide={effectiveSlides[0]} />
         </div>
@@ -110,73 +110,95 @@ function HeroPromo({ slide }: { slide: HeroSlideData }) {
 
 export function HeroSlideOverlay({ slide }: { slide: HeroSlideData }) {
   return (
-    <div className="relative z-10 flex h-full min-h-[480px] flex-col justify-center p-6 text-white md:min-h-[420px] md:p-12">
-      {slide.promoBadge && (
-        <span className="mb-3 inline-block w-fit rounded-pill bg-sky px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-midnight md:mb-4 md:text-xs">
-          {slide.promoBadge}
-        </span>
-      )}
+    <div className="relative z-10 flex h-full min-h-[520px] flex-col justify-end p-6 text-white md:min-h-[520px] md:p-14 lg:p-16">
+      {/* Vignette sombre pour lisibilité de la typo blanche sur toutes photos */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-transparent md:bg-gradient-to-tr md:from-black/70 md:via-black/20 md:to-transparent" aria-hidden="true" />
 
-      {slide.title && (
-        <h1 className="mb-4 max-w-xl font-sora text-4xl font-semibold leading-[1.05] tracking-tight md:mb-6 md:text-6xl lg:text-7xl">
-          {slide.title.split("\n").map((line, i) => (
-            <span key={i} className="block">
-              {i % 2 === 1 ? <span className="italic text-aurora">{line}</span> : line}
-            </span>
-          ))}
-        </h1>
-      )}
-
-      {slide.subtitle && <p className="mb-6 max-w-md text-base text-white/85 md:mb-8 md:text-lg">{slide.subtitle}</p>}
-
-      <div className="flex flex-wrap items-center gap-3 md:gap-5">
-        {slide.ctaPrimary?.link && slide.ctaPrimary.label && (
-          <Link
-            href={slide.ctaPrimary.link}
-            className="inline-flex items-center gap-2 rounded-pill bg-ivoire px-6 py-3 font-sans text-sm font-semibold text-midnight transition-all hover:bg-aurora hover:-translate-y-px md:px-7 md:py-3.5 md:text-base"
-          >
-            {slide.ctaPrimary.label}
-            <ArrowRight />
-          </Link>
+      <div className="relative">
+        {slide.promoBadge ? (
+          <span className="mb-4 inline-block rounded-pill bg-or px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-noir">
+            {slide.promoBadge}
+          </span>
+        ) : (
+          <span className="eyebrow-editorial text-or/90 mb-4">Édition automne · manufacture</span>
         )}
-        {slide.ctaSecondary?.link && slide.ctaSecondary.label && (
-          <Link
-            href={slide.ctaSecondary.link}
-            className="border-b border-white/40 pb-0.5 text-sm font-medium text-white transition-colors hover:border-aurora hover:text-aurora"
-          >
-            {slide.ctaSecondary.label}
-          </Link>
+
+        {slide.title && (
+          <h1 className="display-serif mb-6 max-w-3xl text-[2.6rem] md:text-[5.6rem] lg:text-[6.8rem]">
+            {slide.title.split("\n").map((line, i) => (
+              <span key={i} className="block">
+                {i % 2 === 1 ? <em>{line}</em> : line}
+              </span>
+            ))}
+          </h1>
+        )}
+
+        {slide.subtitle && (
+          <p className="mb-8 max-w-md font-sans text-[15px] leading-relaxed text-white/80 md:text-base">
+            {slide.subtitle}
+          </p>
+        )}
+
+        <div className="flex flex-wrap items-center gap-4 md:gap-6">
+          {slide.ctaPrimary?.link && slide.ctaPrimary.label && (
+            <Link
+              href={slide.ctaPrimary.link}
+              className="group inline-flex items-center gap-3 rounded-pill bg-ivoire px-7 py-3.5 font-sans text-sm font-semibold text-noir transition-all hover:bg-or hover:text-noir md:text-base"
+            >
+              {slide.ctaPrimary.label}
+              <ArrowRight />
+            </Link>
+          )}
+          {slide.ctaSecondary?.link && slide.ctaSecondary.label && (
+            <Link
+              href={slide.ctaSecondary.link}
+              className="inline-flex items-center gap-2 border-b border-white/40 pb-1 font-sans text-sm font-medium uppercase tracking-[0.14em] text-white transition-colors hover:border-or hover:text-or"
+            >
+              {slide.ctaSecondary.label}
+            </Link>
+          )}
+        </div>
+
+        {slide.trustNote && (
+          <div className="mt-10 flex items-center gap-4 border-t border-white/15 pt-6">
+            <span className="text-or tracking-[0.2em] text-sm">★★★★★</span>
+            <p className="font-sans text-xs uppercase tracking-[0.16em] text-white/70">
+              {slide.trustNote}
+            </p>
+          </div>
         )}
       </div>
-
-      {slide.trustNote && (
-        <p className="mt-6 flex items-center gap-2 text-xs text-white/75 md:mt-8 md:text-sm">
-          <span className="text-or">★★★★★</span>
-          {slide.trustNote}
-        </p>
-      )}
     </div>
   );
 }
 
 function HeroSecondary({ data }: { data: HeroSecondaryData }) {
   return (
-    <div className="relative min-h-[280px] overflow-hidden bg-gradient-to-br from-lin to-sable p-6 md:min-h-[420px] md:rounded-3xl md:p-12">
+    <div className="relative min-h-[280px] overflow-hidden bg-gradient-to-br from-creme via-lin to-sable p-6 md:min-h-[520px] md:rounded-3xl md:p-10">
       {data.image && (
         <div className="absolute inset-0">
-          <Image src={urlFor(data.image).width(800).quality(80).url()} alt="" fill sizes="40vw" className="object-cover opacity-50" />
+          <Image src={urlFor(data.image).width(800).quality(80).url()} alt="" fill sizes="40vw" className="object-cover opacity-45" />
+          <div className="absolute inset-0 bg-gradient-to-t from-creme via-creme/40 to-transparent" />
         </div>
       )}
-      <div className="relative z-10 flex h-full flex-col justify-center">
+      <div className="relative z-10 flex h-full flex-col justify-end">
         {data.badge && (
-          <span className="mb-2 inline-block w-fit rounded-pill bg-midnight px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-white md:mb-3 md:text-xs">
+          <span className="eyebrow-editorial on-cream mb-3">
             {data.badge}
           </span>
         )}
-        {data.title && <h2 className="mb-2 font-sora text-2xl font-semibold leading-tight tracking-tight text-ink md:mb-3 md:text-4xl">{data.title}</h2>}
-        {data.subtitle && <p className="mb-4 max-w-xs text-sm text-pierre md:mb-6 md:text-base">{data.subtitle}</p>}
+        {data.title && (
+          <h2 className="display-serif on-cream mb-4 font-normal text-3xl leading-[1.05] md:text-[2.6rem]">
+            {data.title.split("\n").map((line, i) => (
+              <span key={i} className="block">
+                {i % 2 === 1 ? <em>{line}</em> : line}
+              </span>
+            ))}
+          </h2>
+        )}
+        {data.subtitle && <p className="mb-5 max-w-xs font-sans text-sm leading-relaxed text-taupe md:text-[15px]">{data.subtitle}</p>}
         {data.cta?.link && data.cta.label && (
-          <Link href={data.cta.link} className="inline-flex w-fit items-center gap-2 rounded-pill bg-midnight px-5 py-2.5 font-sans text-sm font-semibold text-white transition-all hover:bg-midnight-dark hover:-translate-y-px md:px-6 md:py-3">
+          <Link href={data.cta.link} className="inline-flex w-fit items-center gap-3 rounded-pill bg-noir px-6 py-3 font-sans text-sm font-semibold uppercase tracking-[0.12em] text-ivoire transition-all hover:bg-ink hover:-translate-y-px md:text-[13px]">
             {data.cta.label}
             <ArrowRight />
           </Link>
@@ -189,18 +211,20 @@ function HeroSecondary({ data }: { data: HeroSecondaryData }) {
 function HeroFallback() {
   return (
     <section className="mx-auto mt-0 max-w-site px-0 md:mt-6 md:px-8">
-      <div className="relative min-h-[480px] overflow-hidden bg-midnight md:min-h-[420px] md:rounded-3xl">
+      <div className="relative min-h-[560px] overflow-hidden bg-noir md:min-h-[560px] md:rounded-3xl">
         <video src="/videos/hero-matelas.mp4" autoPlay muted loop playsInline preload="metadata"
-          className="absolute inset-0 h-full w-full object-cover opacity-90" aria-hidden="true" />
-        <div className="relative z-10 flex h-full min-h-[480px] flex-col justify-center p-6 text-white md:min-h-[420px] md:p-12">
-          <h1 className="mb-4 max-w-xl font-sora text-4xl font-light leading-[1.05] tracking-tight md:mb-6 md:text-7xl">
+          className="absolute inset-0 h-full w-full object-cover opacity-95" aria-hidden="true" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-transparent md:bg-gradient-to-tr md:from-black/70 md:via-black/20 md:to-transparent" />
+        <div className="relative z-10 flex h-full min-h-[560px] flex-col justify-end p-6 text-white md:p-14 lg:p-16">
+          <span className="eyebrow-editorial text-or/90 mb-4">Édition automne · manufacture</span>
+          <h1 className="display-serif mb-6 max-w-3xl text-[2.6rem] md:text-[5.6rem] lg:text-[6.8rem]">
             Là où la nuit<br />
-            <span className="italic font-medium text-aurora">prend son envol.</span>
+            <em>prend son envol.</em>
           </h1>
-          <p className="mb-6 max-w-md text-base font-light text-white/80 md:mb-8 md:text-lg">
+          <p className="mb-8 max-w-md font-sans text-[15px] leading-relaxed text-white/80 md:text-base">
             Le matelas conçu pour votre voyage intérieur.
           </p>
-          <Link href="/matelas" className="inline-flex w-fit items-center gap-2 rounded-pill bg-ivoire px-6 py-3 font-sans text-sm font-semibold text-midnight transition-all hover:bg-aurora hover:-translate-y-px md:px-7 md:py-3.5 md:text-base">
+          <Link href="/matelas" className="inline-flex w-fit items-center gap-3 rounded-pill bg-ivoire px-7 py-3.5 font-sans text-sm font-semibold text-noir transition-all hover:bg-or md:text-base">
             Découvrir nos matelas
             <ArrowRight />
           </Link>

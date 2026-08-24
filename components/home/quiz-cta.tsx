@@ -37,53 +37,60 @@ export function QuizCTA({ data }: { data?: QuizCtaData }) {
   const objectPos = data?.imagePosition || "center";
 
   return (
-    <section className="relative overflow-hidden bg-midnight">
-      {/* Image de fond */}
+    <section className="relative overflow-hidden bg-noir">
       {bgUrl ? (
         <Image
           src={bgUrl}
           alt=""
           fill
           sizes="100vw"
-          className="object-cover"
+          className="object-cover opacity-70"
           style={{ objectPosition: objectPos }}
           aria-hidden="true"
         />
       ) : (
-        /* Fallback gradient si pas d'image */
-        <div className="absolute inset-0 bg-gradient-to-br from-midnight via-[#1E2F6B] to-midnight-dark" />
+        <div className="absolute inset-0 bg-gradient-to-br from-noir via-noir-doux to-noir" />
       )}
 
-      {/* Overlay sombre lisibilité */}
-      <div className="absolute inset-0 bg-gradient-to-b from-ink/55 via-ink/65 to-ink/80" />
-
-      {/* Halo aurora décoratif */}
+      {/* Vignette + halo or */}
+      <div className="absolute inset-0 bg-gradient-to-b from-noir/60 via-noir/50 to-noir/85" />
       <div
         aria-hidden
-        className="absolute -bottom-32 left-1/2 h-[400px] w-[800px] -translate-x-1/2 rounded-full"
+        className="absolute -bottom-32 left-1/2 h-[400px] w-[900px] -translate-x-1/2 rounded-full"
         style={{
-          background: "radial-gradient(circle, rgba(127,212,245,0.20), transparent 65%)",
+          background: "radial-gradient(circle, rgba(200, 168, 118, 0.28), transparent 65%)",
         }}
       />
 
-      <div className="relative z-10 mx-auto flex max-w-3xl flex-col items-center justify-center px-6 py-24 text-center md:px-8 md:py-32">
-        <div className="mb-3 text-[11px] font-semibold uppercase tracking-widest text-aurora md:text-xs">
+      <div className="relative z-10 mx-auto flex max-w-4xl flex-col items-center justify-center px-6 py-28 text-center md:px-8 md:py-40 reveal">
+        <span className="eyebrow-editorial mb-5 mx-auto text-or/90">
           {eyebrow}
-        </div>
-        <h2 className="mb-4 max-w-2xl font-sora text-3xl font-semibold leading-[1.1] tracking-tight text-white md:mb-6 md:text-5xl lg:text-6xl">
-          {title}
+        </span>
+        <h2 className="display-serif mb-6 max-w-3xl text-[2.2rem] font-normal text-ivoire md:mb-8 md:text-[4.6rem] lg:text-[5.4rem]">
+          {typographyEmify(title)}
         </h2>
-        <p className="mb-7 max-w-xl text-base leading-relaxed text-white/85 md:mb-9 md:text-lg">
+        <p className="mb-10 max-w-xl font-sans text-[15px] leading-relaxed text-ivoire/70 md:text-base">
           {subtitle}
         </p>
         <Link
           href={ctaLink}
-          className="inline-flex items-center gap-2 rounded-pill bg-ivoire px-7 py-3.5 font-sora text-sm font-semibold text-midnight transition-all hover:bg-aurora hover:-translate-y-px md:px-8 md:py-4 md:text-base"
+          className="group inline-flex items-center gap-3 rounded-pill bg-ivoire px-8 py-4 font-sans text-[13px] font-medium uppercase tracking-[0.14em] text-noir transition-all hover:bg-or hover:-translate-y-px md:px-10 md:py-4"
         >
           {ctaLabel}
-          <span>→</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="transition-transform group-hover:translate-x-1"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </Link>
       </div>
     </section>
+  );
+}
+
+function typographyEmify(title: string): React.ReactNode {
+  const words = title.trim().split(" ");
+  if (words.length < 2) return title;
+  const last = words.pop() as string;
+  return (
+    <>
+      {words.join(" ")} <em>{last}</em>
+    </>
   );
 }
