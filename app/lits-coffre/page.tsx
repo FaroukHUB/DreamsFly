@@ -71,7 +71,7 @@ const FAQ: { question: string; answer: string }[] = [
   {
     question: "Livraison et montage : comment ça se passe ?",
     answer:
-      "Livraison gratuite en France métropolitaine, sur rendez-vous, avec deux livreurs pour la montée jusqu'à votre chambre. Le lit arrive en pièces détachées (facilite l'accès escaliers). Montage réalisable en 45 minutes à deux personnes — notice détaillée et outillage fourni.",
+      "Livraison à domicile en France métropolitaine (99 €), sur rendez-vous, avec deux livreurs pour la montée jusqu'à votre chambre. Le lit arrive en pièces détachées (facilite l'accès escaliers). Montage réalisable en 45 minutes à deux personnes — notice détaillée et outillage fourni.",
   },
 ];
 
@@ -411,7 +411,7 @@ export default async function LitCoffreGuide() {
               Nos lits coffre en stock
             </h2>
             <p className="mb-8 max-w-2xl text-pierre">
-              {uniqueLits.length} modèles disponibles · Livraison gratuite · Paiement en 3× ou 4× sans frais
+              {uniqueLits.length} modèles disponibles · Livraison à domicile · Paiement en 3× ou 4× sans frais
             </p>
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {uniqueLits.map((p) => (
@@ -488,7 +488,7 @@ export default async function LitCoffreGuide() {
               { label: "Toute la collection Lits", href: "/lits", desc: "Coffre, une place, capitonné" },
               { label: "Matelas compatibles lit coffre", href: "/matelas", desc: "18 à 30 cm d'épaisseur" },
               { label: "Sommiers de rechange", href: "/sommiers", desc: "Pour renouveler sans changer le cadre" },
-              { label: "Livraison & montage", href: "/services/livraison", desc: "Gratuit en France, RDV inclus" },
+              { label: "Livraison & montage", href: "/services/livraison", desc: "99 € en France · RDV inclus" },
               { label: "Garantie DreamsFly", href: "/services/garantie", desc: "8 ans sur les vérins" },
               { label: "Contactez un conseiller", href: "/aide/contact", desc: "Réponse en moins de 4h" },
             ].map((l) => (

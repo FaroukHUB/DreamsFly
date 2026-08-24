@@ -49,14 +49,14 @@ function defaultHighlights(pt, product) {
       { icon: "🛡️", label: "Certifié OEKO-TEX Standard 100" },
       { icon: "🇪🇺", label: "Fabriqué en Europe" },
       { icon: "🛏️", label: "Housse déhoussable lavable" },
-      { icon: "📦", label: "Livraison à domicile offerte" },
+      { icon: "📦", label: "Livraison à domicile (99 €)" },
       { icon: "💳", label: "Paiement en 4× sans frais" },
     ],
     lit: [
       { icon: "📦", label: `Coffre ${product?.litCoffreCapacityL || "≈ 400"} L de rangement` },
       { icon: "🛠️", label: "Vérins hydrauliques 15 000 cycles" },
       { icon: "🇪🇺", label: "Fabriqué en Europe" },
-      { icon: "🚚", label: "Livraison à l'étage incluse" },
+      { icon: "🚚", label: "Livraison à l'étage (99 €)" },
       { icon: "💳", label: "Paiement en 4× sans frais" },
     ],
     sommier: [
@@ -64,7 +64,7 @@ function defaultHighlights(pt, product) {
       { icon: "🦵", label: "Pieds fournis" },
       { icon: "🛏️", label: "Compatible tous matelas 15-30 cm" },
       { icon: "🛡️", label: "Garantie 5 ans" },
-      { icon: "📦", label: "Livraison à domicile offerte" },
+      { icon: "📦", label: "Livraison à domicile (99 €)" },
     ],
     oreiller: [
       { icon: "🧺", label: "Housse lavable en machine 40°C" },
