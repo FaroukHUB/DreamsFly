@@ -227,7 +227,6 @@ export function SearchDialog() {
             onChange={(e) => setQ(e.target.value)}
             placeholder="Rechercher un modèle, un guide, un terme…"
             className="flex-1 bg-transparent font-serif text-[22px] italic text-ink outline-none placeholder:text-taupe/70 md:text-[24px]"
-            style={{ fontVariationSettings: "'opsz' 144" }}
           />
           <kbd className="hidden font-sans text-[11px] font-medium uppercase tracking-[0.14em] text-taupe md:inline">
             Esc

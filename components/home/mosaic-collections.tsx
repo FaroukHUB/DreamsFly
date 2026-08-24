@@ -106,7 +106,6 @@ export function MosaicCollections({ cards }: { cards?: Card[] }) {
                     top: "clamp(20px, 3vw, 44px)",
                     right: "clamp(18px, 2.8vw, 40px)",
                     fontSize: "clamp(110px, 11vw, 200px)",
-                    fontVariationSettings: "'opsz' 144",
                   }}
                 >
                   {num}

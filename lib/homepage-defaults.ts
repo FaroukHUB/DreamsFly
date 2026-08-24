@@ -28,7 +28,6 @@ export const defaultWhyUs: {
     { icon: "🛡️", title: "Qualité", text: "Certifications OEKO-TEX, garanties longues, matériaux traçables." },
     { icon: "🤝", title: "Accompagnement", text: "Conseillers sommeil formés, disponibles par téléphone ou en showroom." },
     { icon: "💬", title: "Service client", text: "Réponse en moins de 4 h, du lundi au samedi. Français, humain, sans script." },
-    { icon: "🚚", title: "Livraison", text: "Partout en France métropolitaine, montée à l'étage incluse, reprise de l'ancien matelas gratuite." },
   ],
 };
 
@@ -82,12 +81,11 @@ export const defaultCommitments: {
   eyebrow: "Nos engagements",
   title: "Ce à quoi nous nous tenons",
   subtitle:
-    "Six promesses concrètes qui guident chaque décision — de la sélection produit au SAV.",
+    "Cinq promesses concrètes qui guident chaque décision — de la sélection produit au SAV.",
   items: [
     { icon: "✨", title: "Qualité", text: "Matériaux certifiés, ateliers audités, tests longévité 10 ans." },
-    { icon: "🌙", title: "Confort", text: "30 nuits d'essai — vous ne gardez que ce qui vous convient." },
+    { icon: "🌙", title: "Confort", text: "Essai libre en showroom — vous choisissez en connaissance de cause." },
     { icon: "♾️", title: "Durabilité", text: "Garanties de 2 à 8 ans selon les produits, pièces détachées dispo." },
-    { icon: "🚚", title: "Livraison", text: "Rendez-vous programmé, à l'étage, sans surprise de dernière minute." },
     { icon: "👥", title: "Accompagnement", text: "Conseillers sommeil formés — un vrai humain, pas un chatbot." },
     { icon: "❤️", title: "Service client", text: "Réponse < 4 h en semaine. Objectif : résolution au 1er contact." },
   ],

@@ -43,6 +43,14 @@ export const allGuideSlugsQuery = groq`
   }
 `;
 
+/** 3 derniers articles publiés — pour la section LatestArticles sur la home. */
+export const latestGuidesForHomeQuery = groq`
+  *[_type == "guide" && defined(publishedAt) && publishedAt <= now()] | order(publishedAt desc) [0...3] {
+    _id, title, "slug": slug.current, excerpt, articleType, publishedAt,
+    "coverImage": coverImage
+  }
+`;
+
 /** Hub magazine — articles récents groupés par catégorie. */
 export const magazineHubQuery = groq`
   {

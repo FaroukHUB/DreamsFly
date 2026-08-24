@@ -144,8 +144,8 @@ export default async function MemoryFoamLanding() {
         {/* Comment ça marche */}
         <section className="mb-16 md:mb-20">
           <div className="mb-8 max-w-2xl">
-            <div className="eyebrow mb-2">Technologie</div>
-            <h2 className="font-sora text-2xl font-semibold tracking-tight text-ink md:text-4xl">
+            <span className="eyebrow-editorial on-cream mb-2">Technologie</span>
+            <h2 className="display-serif on-cream text-[1.9rem] font-normal md:text-[3rem]">
               Comment la mousse à mémoire de forme fonctionne réellement
             </h2>
           </div>
@@ -159,7 +159,7 @@ export default async function MemoryFoamLanding() {
                 <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-full bg-midnight font-sora text-lg font-bold text-white">
                   {s.step}
                 </div>
-                <h3 className="font-sora text-lg font-semibold text-ink md:text-xl">{s.title}</h3>
+                <h3 className="display-serif on-cream text-[1.2rem] font-normal md:text-[1.4rem]">{s.title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-pierre md:text-base">{s.text}</p>
               </article>
             ))}
@@ -169,8 +169,8 @@ export default async function MemoryFoamLanding() {
         {/* Comparatif densités */}
         <section className="mb-16 md:mb-20">
           <div className="mb-8 max-w-2xl">
-            <div className="eyebrow mb-2">Reconnaître la qualité</div>
-            <h2 className="font-sora text-2xl font-semibold tracking-tight text-ink md:text-4xl">
+            <span className="eyebrow-editorial on-cream mb-2">Reconnaître la qualité</span>
+            <h2 className="display-serif on-cream text-[1.9rem] font-normal md:text-[3rem]">
               Le seul critère qui compte vraiment : la densité
             </h2>
             <p className="mt-3 text-pierre">
@@ -221,8 +221,8 @@ export default async function MemoryFoamLanding() {
         {/* Conseils experts sourcés */}
         <section className="mb-16 md:mb-20">
           <div className="mb-8 max-w-2xl">
-            <div className="eyebrow mb-2">Le mot des experts</div>
-            <h2 className="font-sora text-2xl font-semibold tracking-tight text-ink md:text-4xl">
+            <span className="eyebrow-editorial on-cream mb-2">Le mot des experts</span>
+            <h2 className="display-serif on-cream text-[1.9rem] font-normal md:text-[3rem]">
               3 vérités qu'un vendeur ne vous dira pas
             </h2>
           </div>
@@ -230,7 +230,7 @@ export default async function MemoryFoamLanding() {
             {TIPS.map((tip, i) => (
               <article key={i} className="flex flex-col rounded-2xl bg-white p-6 md:p-7">
                 <span aria-hidden className="mb-3 text-3xl">{tip.icon}</span>
-                <h3 className="font-sora text-lg font-semibold text-ink">{tip.title}</h3>
+                <h3 className="display-serif on-cream text-[1.2rem] font-normal">{tip.title}</h3>
                 <p className="mt-2 flex-1 text-sm leading-relaxed text-pierre md:text-base">{tip.text}</p>
                 <p className="mt-4 border-t border-lin pt-3 text-[11px] uppercase tracking-widest text-brume">
                   Source : {tip.source}
@@ -244,8 +244,8 @@ export default async function MemoryFoamLanding() {
         {memoryProducts.length > 0 && (
           <section className="mb-16 rounded-3xl bg-white p-6 md:mb-20 md:p-10">
             <div className="mb-8 max-w-2xl">
-              <div className="eyebrow mb-2">Notre sélection</div>
-              <h2 className="font-sora text-2xl font-semibold tracking-tight text-ink md:text-4xl">
+              <span className="eyebrow-editorial on-cream mb-2">Notre sélection</span>
+              <h2 className="display-serif on-cream text-[1.9rem] font-normal md:text-[3rem]">
                 Nos matelas mémoire de forme Performance
               </h2>
               <p className="mt-3 text-pierre">
@@ -264,7 +264,7 @@ export default async function MemoryFoamLanding() {
                       <Image src={urlFor(p.image).width(500).url()} alt={p.name} fill sizes="(max-width:1024px) 50vw, 33vw" className="object-cover transition-transform duration-500 group-hover:scale-105" />
                     )}
                   </div>
-                  <h3 className="font-sora text-base font-semibold text-ink">{p.name}</h3>
+                  <h3 className="display-serif on-cream text-[1.05rem] font-normal">{p.name}</h3>
                   <p className="mb-3 line-clamp-2 text-[13px] text-pierre">{p.tagline}</p>
                   <div className="mt-auto flex items-baseline gap-2 border-t border-lin pt-3">
                     <span className="text-[11px] text-brume">Dès</span>
@@ -282,8 +282,8 @@ export default async function MemoryFoamLanding() {
         {/* FAQ */}
         <section className="mb-16 md:mb-20">
           <div className="mx-auto mb-8 max-w-2xl text-center">
-            <div className="eyebrow mb-2">FAQ mémoire de forme</div>
-            <h2 className="font-sora text-2xl font-semibold tracking-tight text-ink md:text-4xl">
+            <span className="eyebrow-editorial on-cream mb-2">FAQ mémoire de forme</span>
+            <h2 className="display-serif on-cream text-[1.9rem] font-normal md:text-[3rem]">
               {FAQ.length} questions pour décider en toute confiance
             </h2>
           </div>
@@ -291,7 +291,7 @@ export default async function MemoryFoamLanding() {
             {FAQ.map((f, i) => (
               <details key={i} className="group rounded-2xl bg-white p-5 open:shadow-[0_4px_16px_rgba(15,23,42,0.05)] md:p-6">
                 <summary className="flex cursor-pointer list-none items-start justify-between gap-4">
-                  <h3 className="font-sora text-base font-semibold text-ink md:text-lg">{f.question}</h3>
+                  <h3 className="display-serif on-cream text-[1.15rem] font-normal md:text-[1.3rem]">{f.question}</h3>
                   <span aria-hidden className="mt-1 flex h-6 w-6 flex-none items-center justify-center rounded-full bg-page text-midnight transition-transform group-open:rotate-45">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                       <line x1="12" y1="5" x2="12" y2="19" />

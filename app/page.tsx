@@ -1,10 +1,12 @@
 import { sanityClient } from "@/lib/sanity/client";
 import { homepageQuery, siteSettingsQuery } from "@/lib/sanity/queries";
+import { latestGuidesForHomeQuery } from "@/lib/sanity/guide-queries";
 import { Hero } from "@/components/hero";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { UspStrip } from "@/components/usp-strip";
 import { ScrollReveal } from "@/components/scroll-reveal";
+import { PressMarquee } from "@/components/press-marquee";
 import { BestSellers } from "@/components/best-sellers";
 import { MosaicCollections } from "@/components/home/mosaic-collections";
 import { QuizCTA } from "@/components/home/quiz-cta";
@@ -46,14 +48,28 @@ async function safeFetch<T>(query: string): Promise<T | null> {
 }
 
 export default async function HomePage() {
-  const [homepage, siteSettings] = await Promise.all([
+  const [homepage, siteSettings, latestGuides] = await Promise.all([
     safeFetch<any>(homepageQuery),
     safeFetch<any>(siteSettingsQuery),
+    safeFetch<any[]>(latestGuidesForHomeQuery),
   ]);
 
   const faqQuestions = homepage?.homepageFaq?.questions?.length
     ? homepage.homepageFaq.questions
     : defaultHomepageFaq.questions;
+
+  // Mappe les vrais articles Sanity au format attendu par LatestArticles
+  const latestArticlesItems =
+    latestGuides && latestGuides.length > 0
+      ? latestGuides.map((g: any) => ({
+          category: g.articleType || "Article",
+          title: g.title,
+          excerpt: g.excerpt,
+          date: g.publishedAt,
+          link: `/magazine/${g.slug}`,
+          image: g.coverImage,
+        }))
+      : homepage?.latestArticles?.items;
 
   return (
     <>
@@ -62,6 +78,11 @@ export default async function HomePage() {
       <main>
         {/* 1. HERO — préservé */}
         <Hero hero={homepage?.hero} heroSecondary={homepage?.heroSecondary} slides={homepage?.heroSlides} />
+
+        {/* 1b. Bandeau éditorial défilant — noir + icônes or */}
+        {siteSettings?.editorialStrip?.enabled !== false && (
+          <PressMarquee tone="noir" items={siteSettings?.editorialStrip?.items} />
+        )}
 
         {/* 2. USP strip */}
         <UspStrip items={homepage?.uspStrip} />
@@ -92,8 +113,8 @@ export default async function HomePage() {
           }}
         />
 
-        {/* 11. Derniers articles magazine — NEW */}
-        <LatestArticles data={homepage?.latestArticles} />
+        {/* 11. Derniers articles magazine — priorité aux VRAIS docs Sanity 'guide' */}
+        <LatestArticles data={{ ...homepage?.latestArticles, items: latestArticlesItems }} />
 
         {/* 12. FAQ SEO 20+ questions — NEW */}
         <HomepageFaq data={homepage?.homepageFaq} />

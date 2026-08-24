@@ -284,7 +284,6 @@ export function ChatWidget() {
                 rows={1}
                 disabled={busy}
                 className="flex-1 resize-none bg-transparent px-2 py-3 font-serif text-[15px] italic text-ink outline-none placeholder:text-taupe/70 disabled:opacity-50"
-                style={{ fontVariationSettings: "'opsz' 144" }}
                 autoFocus
               />
               <button

@@ -5,8 +5,8 @@ import { urlFor } from "@/lib/sanity/image";
 
 const components: PortableTextComponents = {
   block: {
-    h2: ({ children }) => <h2 className="mt-14 mb-5 font-serif text-[1.7rem] font-normal leading-tight tracking-tight text-noir md:text-[2.2rem]" style={{ fontVariationSettings: "'opsz' 144" }}>{children}</h2>,
-    h3: ({ children }) => <h3 className="mt-10 mb-3 font-serif text-[1.3rem] font-normal leading-tight text-noir md:text-[1.55rem]" style={{ fontVariationSettings: "'opsz' 144" }}>{children}</h3>,
+    h2: ({ children }) => <h2 className="mt-14 mb-5 font-serif text-[1.7rem] font-normal leading-tight tracking-tight text-noir md:text-[2.2rem]">{children}</h2>,
+    h3: ({ children }) => <h3 className="mt-10 mb-3 font-serif text-[1.3rem] font-normal leading-tight text-noir md:text-[1.55rem]">{children}</h3>,
     normal: ({ children }) => <p className="mb-5 font-sans text-[16px] leading-[1.75] text-ink/85 md:text-[17px]">{children}</p>,
   },
   list: {
@@ -40,7 +40,7 @@ const components: PortableTextComponents = {
     ),
     faqItem: ({ value }: any) => (
       <details className="group my-4 border-b border-ink/10">
-        <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-5 font-serif text-[19px] font-normal text-noir md:text-[21px]" style={{ fontVariationSettings: "'opsz' 144" }}>
+        <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-5 font-serif text-[19px] font-normal text-noir md:text-[21px]">
           <span className="flex-1">{value.question}</span>
           <span className="text-or transition-transform group-open:rotate-45" aria-hidden>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4"><path d="M12 5v14M5 12h14"/></svg>
