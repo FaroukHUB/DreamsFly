@@ -11,11 +11,18 @@ import { buildMetadata } from "@/lib/seo/metadata";
 import { JsonLd, breadcrumbSchema, organizationSchema, faqSchema } from "@/lib/seo/jsonld";
 import { urlFor } from "@/lib/sanity/image";
 import { CategorySeoSections } from "@/components/category/category-seo-sections";
+import { FiltersSidebar } from "@/components/category/filters-sidebar";
 import { categoryFaq } from "@/lib/category-defaults";
 
 export const revalidate = 120;
 
-type SearchParams = Promise<{ material?: string; size?: string }>;
+type SearchParams = Promise<{
+  materials?: string;
+  sizes?: string;
+  priceMin?: string;
+  priceMax?: string;
+  sort?: string;
+}>;
 
 const MATERIAL_LABELS: Record<string, string> = {
   velours: "Velours",
@@ -25,21 +32,36 @@ const MATERIAL_LABELS: Record<string, string> = {
   "simili-cuir": "Simili cuir",
 };
 
-/** Extraction fuzzy des 2 nombres de dimension (marche pour tous séparateurs). */
-function extractDimensionsSet(s?: string): number[] {
+const STANDARD_SIZES = ["90x190", "140x190", "140x200", "160x200", "180x200"];
+const SIZE_LABELS: Record<string, string> = {
+  "90x190": "90 × 190 (une place)",
+  "140x190": "140 × 190 (deux places)",
+  "140x200": "140 × 200",
+  "160x200": "160 × 200 (Queen)",
+  "180x200": "180 × 200 (King)",
+};
+
+function extractDims(s?: string): number[] {
   if (!s) return [];
   const nums = String(s).match(/\d{2,3}/g);
   if (!nums || nums.length < 2) return [];
   return nums.slice(0, 2).map((n) => parseInt(n, 10)).sort((a, b) => a - b);
 }
-function sizesMatch(a?: string, b?: string): boolean {
-  const da = extractDimensionsSet(a);
-  const db = extractDimensionsSet(b);
-  if (da.length !== 2 || db.length !== 2) return false;
-  return da[0] === db[0] && da[1] === db[1];
+
+function productMatchesSize(product: any, sizeKey: string): boolean {
+  const target = extractDims(sizeKey);
+  if (target.length !== 2) return false;
+  const inVariants = (product.variants || []).some((v: any) => {
+    const d = extractDims(v.size);
+    return d.length === 2 && d[0] === target[0] && d[1] === target[1];
+  });
+  if (inVariants) return true;
+  const text = `${product.title || ""} ${product.name || ""} ${product.slug || ""} ${product.tagline || ""}`;
+  const found: string[] = text.match(/\d{2,3}/g) || [];
+  return found.includes(String(target[0])) && found.includes(String(target[1]));
 }
 
-/** Détecte la matière depuis titre/tagline/champ litMaterial. */
+/** Détecte la matière depuis litMaterial ou fallback texte. */
 function detectMaterial(product: any): string | null {
   if (product.litMaterial) return product.litMaterial;
   const text = `${product.title || ""} ${product.tagline || ""} ${product.name || ""}`.toLowerCase();
@@ -52,15 +74,10 @@ function detectMaterial(product: any): string | null {
 }
 
 export async function generateMetadata({ searchParams }: { searchParams: SearchParams }): Promise<Metadata> {
-  const { material, size } = await searchParams;
+  const sp = await searchParams;
   const pillar = sanityClient ? await sanityClient.fetch<any>(pillarLitsQuery).catch(() => null) : null;
-
-  const filterLabel = material
-    ? ` — ${MATERIAL_LABELS[material] || material}`
-    : size
-      ? ` — ${size}`
-      : "";
-
+  const nbFilters = [sp.materials, sp.sizes, sp.priceMin, sp.priceMax].filter(Boolean).length;
+  const filterLabel = nbFilters > 0 ? " — sélection filtrée" : "";
   return buildMetadata({
     title: (pillar?.metaTitle || pillar?.h1 || "Lits coffre & lits une place — DreamsFly") + filterLabel,
     description:
@@ -71,7 +88,7 @@ export async function generateMetadata({ searchParams }: { searchParams: SearchP
 }
 
 export default async function LitsPillar({ searchParams }: { searchParams: SearchParams }) {
-  const { material, size } = await searchParams;
+  const sp = await searchParams;
 
   const [pillar, allProducts, siteSettings] = await Promise.all([
     sanityClient?.fetch<any>(pillarLitsQuery).catch(() => null) ?? null,
@@ -79,214 +96,174 @@ export default async function LitsPillar({ searchParams }: { searchParams: Searc
     sanityClient?.fetch<any>(siteSettingsQuery).catch(() => null) ?? null,
   ]);
 
-  // Filtre server-side
-  let products = allProducts;
-  if (material) {
-    products = products.filter((p: any) => detectMaterial(p) === material);
-  }
-  if (size) {
+  const selectedMaterials = (sp.materials || "").split(",").filter(Boolean);
+  const selectedSizes = (sp.sizes || "").split(",").filter(Boolean);
+  const priceMin = sp.priceMin ? parseInt(sp.priceMin, 10) : undefined;
+  const priceMax = sp.priceMax ? parseInt(sp.priceMax, 10) : undefined;
+  const sort = sp.sort || "featured";
+
+  const allPrices = allProducts.map((p: any) => p.minPrice).filter((n: any) => typeof n === "number" && n > 0);
+  const priceMaxBound = Math.ceil(Math.max(...allPrices, 2000) / 100) * 100;
+  const priceMinBound = Math.floor(Math.min(...allPrices, 200) / 100) * 100;
+
+  let products = allProducts.slice();
+  if (selectedMaterials.length > 0) {
     products = products.filter((p: any) => {
-      const inVariants = (p.variants || []).some((v: any) => sizesMatch(v.size, size));
-      return inVariants || sizesMatch(p.title, size) || sizesMatch(p.name, size) || sizesMatch(p.slug, size) || sizesMatch(p.tagline, size);
+      const m = detectMaterial(p);
+      return m && selectedMaterials.includes(m);
     });
   }
+  if (selectedSizes.length > 0) {
+    products = products.filter((p: any) => selectedSizes.some((s) => productMatchesSize(p, s)));
+  }
+  if (typeof priceMin === "number") products = products.filter((p: any) => (p.minPrice || 0) >= priceMin);
+  if (typeof priceMax === "number") products = products.filter((p: any) => (p.minPrice || 0) <= priceMax);
 
-  // Comptage pour les tuiles (basé sur allProducts, pas products filtré)
+  if (sort === "price-asc") products.sort((a: any, b: any) => (a.minPrice || 0) - (b.minPrice || 0));
+  else if (sort === "price-desc") products.sort((a: any, b: any) => (b.minPrice || 0) - (a.minPrice || 0));
+  else if (sort === "name") products.sort((a: any, b: any) => (a.name || "").localeCompare(b.name || ""));
+
   const countByMaterial: Record<string, number> = {};
   for (const p of allProducts) {
     const m = detectMaterial(p);
     if (m) countByMaterial[m] = (countByMaterial[m] || 0) + 1;
   }
+  const countBySize: Record<string, number> = {};
+  for (const p of allProducts) {
+    for (const s of STANDARD_SIZES) {
+      if (productMatchesSize(p, s)) countBySize[s] = (countBySize[s] || 0) + 1;
+    }
+  }
 
-  const activeFilter = material ? MATERIAL_LABELS[material] || material : size || null;
-  const clearFilterHref = "/lits#modeles";
+  const materialGroup = {
+    key: "materials",
+    label: "Matière",
+    options: Object.entries(MATERIAL_LABELS).map(([value, label]) => ({
+      value,
+      label,
+      count: countByMaterial[value] || 0,
+    })),
+  };
+  const sizeGroup = {
+    key: "sizes",
+    label: "Taille",
+    options: STANDARD_SIZES.map((s) => ({
+      value: s,
+      label: SIZE_LABELS[s] || s,
+      count: countBySize[s] || 0,
+    })),
+  };
+  const priceGroup = {
+    label: "Prix",
+    min: priceMinBound,
+    max: priceMaxBound,
+    suggestions: [
+      { label: "Tous", min: priceMinBound, max: priceMaxBound },
+      { label: "< 600 €", max: 600 },
+      { label: "600 – 900 €", min: 600, max: 900 },
+      { label: "900 – 1 300 €", min: 900, max: 1300 },
+      { label: "> 1 300 €", min: 1300 },
+    ],
+  };
 
   const h1 = pillar?.h1 || "Lits coffre & lits une place DreamsFly";
   const intro =
     pillar?.intro ||
     "Un lit ne se résume pas à un cadre : c'est le socle de vos nuits, souvent la pièce maîtresse de la chambre. Notre sélection combine rangement optimisé (coffre), tissus nobles (velours, lin, capitonné) et fabrication européenne.";
-
   const breadcrumbs = [
     { name: "Accueil", url: "/" },
     { name: "Lits", url: "/lits" },
   ];
 
-  const MATERIAL_TILES = [
-    { slug: "velours", title: "Velours", subtitle: "Toucher chaleureux", accent: "from-midnight to-midnight-dark text-white" },
-    { slug: "tissu-trame", title: "Tissu tramé", subtitle: "Sobriété contemporaine", accent: "from-aurora to-ivoire text-ink" },
-    { slug: "capitonne", title: "Capitonné", subtitle: "Élégance travaillée", accent: "from-sable to-ivoire text-ink" },
-  ];
-
-  const SIZE_TILES = [
-    { label: "90 × 190", subtitle: "Une place", param: "90x190" },
-    { label: "140 × 190", subtitle: "Deux places", param: "140x190" },
-    { label: "140 × 200", subtitle: "Deux places", param: "140x200" },
-    { label: "160 × 200", subtitle: "Queen", param: "160x200" },
-    { label: "180 × 200", subtitle: "King", param: "180x200" },
-  ];
-
   return (
     <>
       <Header settings={siteSettings} />
-
       <main className="mx-auto max-w-site px-6 py-10 md:px-8 md:py-16">
-        {/* Breadcrumbs */}
         <nav aria-label="Fil d'Ariane" className="mb-8 flex items-center gap-1.5 text-sm text-pierre">
           <Link href="/" className="hover:text-midnight">Accueil</Link>
           <span className="text-brume">/</span>
           <span className="font-medium text-ink">Lits</span>
         </nav>
 
-        {/* H1 + intro */}
-        <header className="mb-14 max-w-3xl md:mb-16">
+        <header className="mb-10 max-w-3xl md:mb-14">
           <div className="eyebrow mb-3">Collection lits</div>
-          <h1 className="font-sora text-3xl font-semibold leading-tight tracking-tight text-ink md:text-5xl lg:text-6xl">
-            {h1}
-          </h1>
-          <p className="mt-5 text-base leading-relaxed text-pierre md:mt-6 md:text-xl">{intro}</p>
+          <h1 className="font-sora text-3xl font-semibold leading-tight tracking-tight text-ink md:text-5xl lg:text-6xl">{h1}</h1>
+          <p className="mt-5 text-base leading-relaxed text-pierre md:mt-6 md:text-lg">{intro}</p>
         </header>
 
-        {/* Explorer par matière */}
-        <section className="mb-16 md:mb-20">
-          <h2 className="mb-2 font-sora text-xl font-semibold tracking-tight text-ink md:text-3xl">
-            Par matière
-          </h2>
-          <p className="mb-6 max-w-xl text-pierre md:mb-8">
-            Chaque tissu a sa personnalité — cliquez pour filtrer la collection.
-          </p>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-            {MATERIAL_TILES.map((t) => {
-              const count = countByMaterial[t.slug] || 0;
-              const isActive = material === t.slug;
-              return (
-                <Link
-                  key={t.slug}
-                  href={`/lits?material=${t.slug}#modeles`}
-                  className={`group relative flex flex-col justify-between rounded-2xl bg-gradient-to-br p-6 transition-all hover:-translate-y-1 ${t.accent} ${
-                    isActive ? "ring-2 ring-midnight ring-offset-2" : ""
-                  } min-h-[140px]`}
-                >
-                  <div>
-                    <h3 className="font-sora text-xl font-semibold tracking-tight">{t.title}</h3>
-                    <p className="mt-1.5 text-[13px] opacity-80">
-                      {count} modèle{count > 1 ? "s" : ""} · {t.subtitle}
-                    </p>
-                  </div>
-                  <span className="mt-4 text-xs font-semibold uppercase tracking-wide opacity-90">
-                    {isActive ? "Filtré ✓" : "Filtrer →"}
-                  </span>
-                </Link>
-              );
-            })}
-          </div>
-        </section>
-
-        {/* Explorer par taille */}
-        <section className="mb-16 md:mb-20">
-          <h2 className="mb-2 font-sora text-xl font-semibold tracking-tight text-ink md:text-3xl">
-            Par taille
-          </h2>
-          <p className="mb-6 max-w-xl text-pierre md:mb-8">
-            Du lit une place pour la chambre d'ami au format king size pour la chambre parentale.
-          </p>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-4 lg:grid-cols-5">
-            {SIZE_TILES.map((s) => {
-              const isActive = sizesMatch(size, s.param);
-              return (
-                <Link
-                  key={s.param}
-                  href={`/lits?size=${s.param}#modeles`}
-                  className={`flex flex-col justify-between rounded-2xl border p-4 transition-all hover:-translate-y-1 md:p-5 ${
-                    isActive
-                      ? "border-midnight bg-midnight text-white"
-                      : "border-border bg-ivoire text-ink hover:border-midnight"
-                  } min-h-[80px] md:min-h-[90px]`}
-                >
-                  <div>
-                    <h3 className="font-sora text-sm font-semibold tracking-tight md:text-base">
-                      {s.label}
-                    </h3>
-                    <p className={`mt-1 text-[11px] md:text-[13px] ${isActive ? "text-white/75" : "text-pierre"}`}>
-                      {s.subtitle}
-                    </p>
-                  </div>
-                  <span className={`mt-2 text-[10px] font-semibold uppercase tracking-widest md:text-xs ${isActive ? "text-aurora" : "text-midnight"}`}>
-                    {isActive ? "Filtré ✓" : "Filtrer →"}
-                  </span>
-                </Link>
-              );
-            })}
-          </div>
-        </section>
-
-        {/* Tous les lits + indicateur de filtre */}
-        <section id="modeles" className="mb-16 scroll-mt-20 md:mb-20">
-          <div className="mb-6 flex flex-col gap-3 md:mb-8 md:flex-row md:items-end md:justify-between">
+        <section id="modeles" className="scroll-mt-20">
+          <div className="md:grid md:grid-cols-[260px_1fr] md:gap-10 lg:gap-12">
+            <FiltersSidebar
+              groups={[materialGroup, sizeGroup]}
+              price={priceGroup}
+              totalCount={allProducts.length}
+              filteredCount={products.length}
+            />
             <div>
-              <h2 className="font-sora text-xl font-semibold tracking-tight text-ink md:text-3xl">
-                {activeFilter ? `Lits — ${activeFilter}` : "La collection complète"}
-              </h2>
-              <p className="mt-1 text-sm text-pierre md:text-base">
-                {products.length} lit{products.length > 1 ? "s" : ""}
-                {activeFilter && ` (sur ${allProducts.length})`}
-                {" · Livraison gratuite · Paiement en plusieurs fois"}
-              </p>
-            </div>
-            {activeFilter && (
-              <Link
-                href={clearFilterHref}
-                className="inline-flex w-fit items-center gap-2 rounded-pill border border-border bg-white px-4 py-2 text-sm font-medium text-midnight hover:border-midnight"
-              >
-                ✕ Retirer le filtre
-              </Link>
-            )}
-          </div>
+              <div className="mb-6 flex items-baseline justify-between">
+                <h2 className="font-sora text-xl font-semibold tracking-tight text-ink md:text-2xl">
+                  {products.length} lit{products.length > 1 ? "s" : ""}
+                  <span className="ml-2 text-sm font-normal text-pierre">
+                    {selectedMaterials.length + selectedSizes.length + (priceMin || priceMax ? 1 : 0) > 0
+                      ? `sur ${allProducts.length}`
+                      : "disponibles"}
+                  </span>
+                </h2>
+              </div>
 
-          {products.length > 0 ? (
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {products.map((p: any) => (
-                <Link
-                  key={p._id}
-                  href={`/lits/${p.slug}`}
-                  className="group flex flex-col rounded-2xl border border-border bg-ivoire p-4 transition-all hover:-translate-y-1 hover:border-midnight"
-                >
-                  <div className="relative mb-4 aspect-[5/4] overflow-hidden rounded-xl bg-sable">
-                    {p.image && (
-                      <Image
-                        src={urlFor(p.image).width(500).url()}
-                        alt={p.name}
-                        fill
-                        sizes="(max-width:1024px) 50vw, 25vw"
-                        className="object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                    )}
-                  </div>
-                  <h3 className="font-sora text-base font-semibold text-ink">{p.name}</h3>
-                  <p className="mb-3 line-clamp-2 text-[13px] text-pierre">{p.tagline}</p>
-                  <div className="mt-auto flex items-baseline gap-2 border-t border-border pt-3">
-                    <span className="text-[11px] text-brume">Dès</span>
-                    <span className="font-sora text-lg font-bold text-discount">{p.minPrice} €</span>
-                    {p.compareAtPrice && p.compareAtPrice > p.minPrice && (
-                      <span className="text-xs text-brume line-through">{p.compareAtPrice} €</span>
-                    )}
-                  </div>
-                </Link>
-              ))}
+              {products.length > 0 ? (
+                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
+                  {products.map((p: any) => {
+                    const m = detectMaterial(p);
+                    return (
+                      <Link
+                        key={p._id}
+                        href={`/lits/${p.slug}`}
+                        className="group flex flex-col rounded-2xl border border-border bg-ivoire p-4 transition-all hover:-translate-y-1 hover:border-midnight"
+                      >
+                        <div className="relative mb-4 aspect-[5/4] overflow-hidden rounded-xl bg-sable">
+                          {p.image && (
+                            <Image
+                              src={urlFor(p.image).width(600).url()}
+                              alt={p.name}
+                              fill
+                              sizes="(max-width:1024px) 50vw, 33vw"
+                              className="object-cover transition-transform duration-500 group-hover:scale-105"
+                            />
+                          )}
+                          {m && MATERIAL_LABELS[m] && (
+                            <span className="absolute left-2 top-2 rounded-pill bg-white/90 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-widest text-midnight backdrop-blur-sm">
+                              {MATERIAL_LABELS[m]}
+                            </span>
+                          )}
+                        </div>
+                        <h3 className="font-sora text-base font-semibold text-ink">{p.name}</h3>
+                        <p className="mb-3 line-clamp-2 text-[13px] text-pierre">{p.tagline}</p>
+                        <div className="mt-auto flex items-baseline gap-2 border-t border-border pt-3">
+                          <span className="text-[11px] text-brume">Dès</span>
+                          <span className="font-sora text-lg font-bold text-discount">{p.minPrice} €</span>
+                          {p.compareAtPrice && p.compareAtPrice > p.minPrice && (
+                            <span className="text-xs text-brume line-through">{p.compareAtPrice} €</span>
+                          )}
+                        </div>
+                      </Link>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="rounded-2xl border border-border bg-sable p-8 text-center">
+                  <p className="text-pierre">Aucun lit ne correspond à ces filtres.</p>
+                  <Link href="/lits#modeles" className="mt-4 inline-block text-sm font-semibold text-midnight underline">
+                    Effacer les filtres
+                  </Link>
+                </div>
+              )}
             </div>
-          ) : (
-            <div className="rounded-2xl border border-border bg-sable p-8 text-center">
-              <p className="text-pierre">Aucun lit ne correspond à ce filtre.</p>
-              <Link href={clearFilterHref} className="mt-4 inline-block text-sm font-semibold text-midnight underline">
-                Voir tous les lits
-              </Link>
-            </div>
-          )}
+          </div>
         </section>
 
-        {/* Sections SEO enrichies */}
         <CategorySeoSections productType="lit" categoryLabel="lit" overrides={pillar} />
 
-        {/* Sections éditoriales depuis Sanity */}
         {pillar?.sections && (
           <div className="mt-16 md:mt-20">
             <Sections sections={pillar.sections} />
