@@ -73,6 +73,35 @@ export const guide = defineType({
             { name: "image", title: "Visuel", type: "image", options: { hotspot: true } },
           ],
         },
+        {
+          name: "htmlBlock",
+          type: "object",
+          title: "🧩 HTML + CSS libre (bloc avancé)",
+          description:
+            "Colle du HTML/CSS brut pour un rendu totalement custom (tableaux stylés, encarts colorés, iframe, etc.). ATTENTION : le contenu est injecté tel quel — ne colle que du HTML de confiance.",
+          fields: [
+            {
+              name: "html",
+              title: "Code HTML (peut inclure <style> et <script> — attention XSS)",
+              type: "text",
+              rows: 12,
+              description:
+                "Exemples : <div class='ma-classe'>…</div> · <style>.ma-classe { color: gold; }</style> · <iframe src='…'></iframe>",
+            },
+            {
+              name: "label",
+              title: "Label interne (pour se repérer dans la liste des blocs)",
+              type: "string",
+            },
+          ],
+          preview: {
+            select: { label: "label", html: "html" },
+            prepare: ({ label, html }) => ({
+              title: label || "Bloc HTML libre",
+              subtitle: html ? html.slice(0, 60).replace(/\n/g, " ") + "…" : "(vide)",
+            }),
+          },
+        },
       ],
     }),
     defineField({

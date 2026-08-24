@@ -38,6 +38,13 @@ const components: PortableTextComponents = {
         <p className="font-sans text-[15px] leading-relaxed text-ink">{value.text}</p>
       </aside>
     ),
+    htmlBlock: ({ value }: any) =>
+      value?.html ? (
+        <div
+          className="my-8 df-html-block"
+          dangerouslySetInnerHTML={{ __html: value.html }}
+        />
+      ) : null,
     faqItem: ({ value }: any) => (
       <details className="group my-4 border-b border-ink/10">
         <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-5 font-serif text-[19px] font-normal text-noir md:text-[21px]">

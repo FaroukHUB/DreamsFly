@@ -67,6 +67,24 @@ export const staticPage = defineType({
             { name: "answer", type: "text", rows: 4, title: "Réponse" },
           ],
         },
+        {
+          name: "htmlBlock",
+          type: "object",
+          title: "🧩 HTML + CSS libre",
+          description:
+            "Colle du HTML/CSS brut pour un rendu totalement custom. ATTENTION : injection XSS possible — ne colle que du code de confiance.",
+          fields: [
+            { name: "html", title: "Code HTML", type: "text", rows: 12 },
+            { name: "label", title: "Label interne", type: "string" },
+          ],
+          preview: {
+            select: { label: "label", html: "html" },
+            prepare: ({ label, html }) => ({
+              title: label || "Bloc HTML libre",
+              subtitle: html ? html.slice(0, 60).replace(/\n/g, " ") + "…" : "(vide)",
+            }),
+          },
+        },
       ],
     }),
     defineField({ name: "metaTitle", title: "Meta title", type: "string", validation: (r) => r.max(70) }),

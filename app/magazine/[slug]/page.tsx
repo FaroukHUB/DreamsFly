@@ -106,13 +106,22 @@ const portableComponents: PortableTextComponents = {
         </figure>
       ) : null,
     calloutBlock: ({ value }: any) => (
-      <aside className="my-8 rounded-2xl border border-sky/30 bg-aurora/20 p-6">
+      <aside className="my-10 border-l-2 border-or bg-creme/40 px-6 py-5">
         {value.title && (
-          <h4 className="mb-2 font-sora text-base font-semibold text-midnight">💡 {value.title}</h4>
+          <h4 className="mb-2 font-serif text-[18px] font-normal text-noir">
+            <span className="mr-2 text-or">◆</span>{value.title}
+          </h4>
         )}
-        <p className="text-[16px] leading-relaxed text-ink">{value.text}</p>
+        <p className="font-sans text-[15px] leading-relaxed text-ink">{value.text}</p>
       </aside>
     ),
+    htmlBlock: ({ value }: any) =>
+      value?.html ? (
+        <div
+          className="my-8 df-html-block"
+          dangerouslySetInnerHTML={{ __html: value.html }}
+        />
+      ) : null,
     howToStep: ({ value }: any) => (
       <div className="my-6 flex gap-5 rounded-2xl border border-border bg-ivoire p-5">
         <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-midnight font-sora text-sm font-bold text-white">
