@@ -103,14 +103,14 @@ function ProductCard({ product: p }: { product: Product }) {
       href={`/matelas/${p.slug}`}
       className="group relative flex flex-col rounded-[28px] border border-ink/10 bg-ivoire p-6 transition-all duration-500 hover:-translate-y-2 hover:border-noir/40 hover:shadow-[0_30px_60px_-20px_rgba(11,11,15,0.25)] md:p-7"
     >
-      <div className="relative mb-7 aspect-[4/5] overflow-hidden rounded-[20px] bg-creme">
+      <div className="relative mb-7 aspect-[4/3] overflow-hidden rounded-[20px] bg-creme p-4">
         {p.image ? (
           <Image
             src={urlFor(p.image).width(700).quality(88).url()}
             alt={(p.image as any)?.alt || p.name}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
-            className="object-cover transition-transform duration-[900ms] group-hover:scale-105"
+            className="object-contain transition-transform duration-[900ms] group-hover:scale-105"
           />
         ) : (
           <div className="flex h-full items-center justify-center text-taupe">
