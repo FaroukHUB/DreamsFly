@@ -3,6 +3,7 @@ import { Sora, Plus_Jakarta_Sans, Fraunces } from "next/font/google";
 import "./globals.css";
 import { CartDrawer } from "@/components/cart/cart-drawer";
 import { SearchDialog } from "@/components/search-dialog";
+import { ChatWidget } from "@/components/chat-widget";
 
 const sora = Sora({
   subsets: ["latin"],
@@ -59,6 +60,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {children}
         <CartDrawer />
         <SearchDialog />
+        <ChatWidget />
       </body>
     </html>
   );
