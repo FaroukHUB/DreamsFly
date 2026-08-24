@@ -57,20 +57,20 @@ export function Testimonials({ data }: { data?: Data }) {
   };
 
   return (
-    <section className="bg-ivoire py-16 md:py-24">
-      <div className="mx-auto max-w-site px-6 md:px-8">
-        <div className="mx-auto mb-10 max-w-2xl text-center md:mb-14">
-          <div className="eyebrow mb-3">{d.eyebrow}</div>
-          <h2 className="mb-4 font-sora text-3xl font-semibold tracking-tight text-ink md:text-5xl">{d.title}</h2>
-          {d.subtitle && <p className="text-base text-pierre md:text-lg">{d.subtitle}</p>}
+    <section className="section-cream section-editorial">
+      <div className="mx-auto max-w-site">
+        <div className="mx-auto mb-14 max-w-2xl text-center md:mb-20 reveal">
+          <span className="eyebrow-editorial on-cream mb-3 mx-auto">{d.eyebrow}</span>
+          <h2 className="display-serif on-cream mt-5 text-[2.4rem] font-normal md:text-[4rem]">{d.title}</h2>
+          {d.subtitle && <p className="mt-6 font-serif text-[17px] italic leading-relaxed text-taupe md:text-[19px]">{d.subtitle}</p>}
 
           {/* Note globale style Google */}
-          <div className="mt-6 inline-flex items-center gap-3 rounded-full border border-border bg-white px-5 py-2.5 shadow-sm">
+          <div className="mt-8 inline-flex items-center gap-3 rounded-full border border-ink/15 bg-ivoire px-6 py-3">
             <GoogleG size={20} />
             <div className="flex items-center gap-2">
               <Stars n={Math.round(d.averageRating)} />
-              <strong className="font-sora text-base text-ink">{d.averageRating.toFixed(1)}</strong>
-              <span className="text-sm text-pierre">
+              <strong className="font-serif text-[17px] font-normal text-noir">{d.averageRating.toFixed(1)}</strong>
+              <span className="font-sans text-[13px] text-taupe">
                 · {d.totalReviews.toLocaleString("fr-FR")} avis
               </span>
             </div>
@@ -80,16 +80,16 @@ export function Testimonials({ data }: { data?: Data }) {
         {d.items.length > 0 && <TestimonialsSlider items={d.items} />}
 
         {d.moreReviewsUrl && (
-          <div className={`text-center ${d.items.length > 0 ? "mt-10 md:mt-12" : "mt-8"}`}>
+          <div className={`text-center ${d.items.length > 0 ? "mt-12 md:mt-16" : "mt-10"}`}>
             <a
               href={d.moreReviewsUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-3 rounded-full border border-border bg-white px-6 py-3.5 font-sora text-sm font-semibold text-ink shadow-sm transition-all hover:-translate-y-px hover:border-midnight md:text-base"
+              className="inline-flex items-center gap-3 rounded-pill border border-noir bg-transparent px-7 py-3.5 font-sans text-[12px] font-medium uppercase tracking-[0.14em] text-noir transition-all hover:bg-noir hover:text-or"
             >
-              <GoogleG size={18} />
+              <GoogleG size={16} />
               {d.moreReviewsLabel}
-              <span aria-hidden>↗</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M7 17 17 7M17 7H8M17 7V16"/></svg>
             </a>
           </div>
         )}

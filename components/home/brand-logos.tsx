@@ -13,13 +13,13 @@ export function BrandLogos({ data }: { data?: Data }) {
   };
 
   return (
-    <section className="border-t border-border bg-white py-12 md:py-16">
-      <div className="mx-auto max-w-site px-6 md:px-8">
-        <div className="mb-8 text-center md:mb-10">
-          {d.eyebrow && <div className="text-[11px] font-semibold uppercase tracking-widest text-brume">{d.eyebrow}</div>}
-          {d.title && <h2 className="mt-2 font-sora text-xl font-semibold tracking-tight text-ink md:text-2xl">{d.title}</h2>}
+    <section className="border-t border-ink/10 bg-creme py-14 md:py-20">
+      <div className="mx-auto max-w-site px-6 md:px-10">
+        <div className="mb-10 text-center md:mb-14">
+          {d.eyebrow && <span className="eyebrow-editorial on-cream mb-3 mx-auto">{d.eyebrow}</span>}
+          {d.title && <h2 className="display-serif on-cream mt-4 text-[1.6rem] font-normal md:text-[2.2rem]">{d.title}</h2>}
         </div>
-        <ul className="grid grid-cols-3 items-center justify-items-center gap-6 sm:grid-cols-4 md:grid-cols-6 md:gap-10">
+        <ul className="grid grid-cols-3 items-center justify-items-center gap-8 sm:grid-cols-4 md:grid-cols-6 md:gap-12">
           {d.items.map((b, i) => {
             const inner = b.logo?.asset ? (
               <Image
@@ -31,7 +31,7 @@ export function BrandLogos({ data }: { data?: Data }) {
                 loading="lazy"
               />
             ) : (
-              <span className="font-sora text-sm font-semibold uppercase tracking-widest text-pierre transition-colors hover:text-ink md:text-base">
+              <span className="font-serif text-[15px] font-normal uppercase tracking-[0.14em] text-taupe transition-colors hover:text-noir md:text-[17px]">
                 {b.name}
               </span>
             );

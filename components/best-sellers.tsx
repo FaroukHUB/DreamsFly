@@ -70,22 +70,23 @@ export async function BestSellers({ manualProducts }: { manualProducts?: Product
   if (!products.length) return null;
 
   return (
-    <section className="mx-auto max-w-site px-6 py-16 md:px-8 md:py-24">
-      <div className="mb-10 text-center md:mb-12">
-        <div className="eyebrow mb-3">Notre collection signature</div>
-        <h2 className="font-sora text-3xl font-semibold tracking-tight text-ink md:text-5xl">
-          Le sommeil porte un nom.
-        </h2>
-        <p className="mx-auto mt-4 max-w-md text-pierre">
-          Chaque matelas porte le nom d'une ville du monde.
-          Choisissez votre destination de sommeil.
-        </p>
-      </div>
+    <section className="section-cream section-editorial">
+      <div className="mx-auto max-w-site">
+        <div className="mb-14 max-w-3xl reveal md:mb-20">
+          <span className="eyebrow-editorial on-cream mb-3">Notre collection signature</span>
+          <h2 className="display-serif on-cream mt-5 text-[2.4rem] font-normal md:text-[4rem]">
+            Le sommeil porte un <em>nom</em>.
+          </h2>
+          <p className="mt-6 max-w-lg font-sans text-[15px] leading-relaxed text-taupe md:text-[17px]">
+            Chaque matelas porte le nom d'une ville du monde. Choisissez votre destination de sommeil.
+          </p>
+        </div>
 
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-        {products.map((p) => (
-          <ProductCard key={p._id} product={p} />
-        ))}
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 md:gap-8">
+          {products.map((p) => (
+            <ProductCard key={p._id} product={p} />
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -100,49 +101,49 @@ function ProductCard({ product: p }: { product: Product }) {
   return (
     <Link
       href={`/matelas/${p.slug}`}
-      className="group relative flex flex-col rounded-2xl border border-border bg-ivoire p-4 transition-all duration-300 hover:-translate-y-1 hover:border-midnight hover:shadow-[0_14px_36px_rgba(15,23,42,0.08)]"
+      className="group relative flex flex-col rounded-[24px] border border-ink/10 bg-ivoire p-5 transition-all duration-500 hover:-translate-y-1 hover:border-noir/40 hover:shadow-[0_24px_50px_-20px_rgba(11,11,15,0.2)]"
     >
-      <div className="relative mb-5 aspect-[5/4] overflow-hidden rounded-xl bg-sable">
+      <div className="relative mb-6 aspect-[5/4] overflow-hidden rounded-[16px] bg-creme">
         {p.image ? (
           <Image
-            src={urlFor(p.image).width(600).quality(85).url()}
+            src={urlFor(p.image).width(700).quality(88).url()}
             alt={(p.image as any)?.alt || p.name}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
-            className="object-cover transition-transform duration-700 group-hover:scale-105"
+            className="object-cover transition-transform duration-[900ms] group-hover:scale-105"
           />
         ) : (
-          <div className="flex h-full items-center justify-center text-brume">
+          <div className="flex h-full items-center justify-center text-taupe">
             <MattressIcon />
           </div>
         )}
         {discount !== null && discount > 0 && (
-          <span className="absolute left-3 top-3 rounded bg-discount px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider text-white">
-            -{discount}%
+          <span className="absolute left-3 top-3 rounded-full bg-noir px-3 py-1 font-sans text-[10px] font-medium uppercase tracking-[0.14em] text-or">
+            −{discount}%
           </span>
         )}
         {p.badges?.includes("new") && (
-          <span className="absolute right-3 top-3 rounded bg-midnight px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider text-white">
+          <span className="absolute right-3 top-3 rounded-full border border-noir bg-ivoire px-3 py-1 font-sans text-[10px] font-medium uppercase tracking-[0.14em] text-noir">
             Nouveau
           </span>
         )}
       </div>
 
-      <h3 className="font-sora text-lg font-semibold tracking-tight text-ink">
+      <h3 className="display-serif on-cream text-[1.2rem] font-normal leading-tight md:text-[1.4rem]">
         {p.name}
       </h3>
-      <p className="mb-4 line-clamp-2 text-[13px] text-pierre">
+      <p className="mt-2 line-clamp-2 font-sans text-[13px] leading-relaxed text-taupe md:text-[14px]">
         {p.tagline || p.title}
       </p>
 
-      <div className="mt-auto flex items-baseline gap-2 border-t border-border pt-3">
-        <span className="text-[11px] uppercase tracking-wide text-brume">Dès</span>
-        <span className="font-sora text-xl font-bold text-discount">
-          {p.minPrice} €
+      <div className="mt-5 flex items-baseline gap-2 border-t border-ink/10 pt-4">
+        <span className="font-sans text-[11px] uppercase tracking-[0.14em] text-taupe">Dès</span>
+        <span className="font-serif text-[1.4rem] font-normal text-noir">
+          {p.minPrice}€
         </span>
         {p.compareAtPrice && p.compareAtPrice > (p.minPrice || 0) && (
-          <span className="text-[13px] text-brume line-through">
-            {p.compareAtPrice} €
+          <span className="font-sans text-[13px] text-taupe line-through">
+            {p.compareAtPrice}€
           </span>
         )}
       </div>

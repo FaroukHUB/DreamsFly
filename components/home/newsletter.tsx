@@ -38,36 +38,34 @@ export function Newsletter({
   }
 
   return (
-    <section className="mx-auto max-w-site px-8 py-20">
-      <div className="relative overflow-hidden rounded-3xl bg-midnight px-8 py-16 text-center md:px-12 md:py-20">
-        {/* Halo aurora */}
+    <section className="mx-auto max-w-site px-6 py-24 md:px-10">
+      <div className="relative overflow-hidden rounded-[32px] bg-noir px-8 py-20 text-center md:px-16 md:py-28">
+        {/* Halo or */}
         <div
           aria-hidden
           className="absolute -top-32 left-1/2 h-[400px] w-[800px] -translate-x-1/2 rounded-full"
           style={{
-            background: "radial-gradient(circle, rgba(127,212,245,0.2), transparent 60%)",
+            background: "radial-gradient(circle, rgba(200,168,118,0.28), transparent 60%)",
           }}
         />
 
         <div className="relative z-10 mx-auto max-w-xl">
-          <div className="mb-3 text-xs font-semibold uppercase tracking-widest text-aurora">
-            Newsletter
-          </div>
-          <h2 className="font-sora text-3xl font-semibold leading-tight tracking-tight text-white md:text-4xl">
+          <span className="eyebrow-editorial mb-3 mx-auto">Newsletter</span>
+          <h2 className="display-serif mt-5 text-[2rem] font-normal text-ivoire md:text-[3.4rem]">
             {title}
           </h2>
-          <p className="mt-4 text-base leading-relaxed text-white/80">{subtitle}</p>
+          <p className="mt-6 font-serif text-[17px] italic leading-relaxed text-ivoire/70 md:text-[19px]">{subtitle}</p>
 
           {status === "success" ? (
-            <div className="mt-8 rounded-2xl border border-aurora/40 bg-aurora/10 p-6 text-center text-white">
-              <div className="text-2xl">✓</div>
-              <div className="mt-2 font-sora text-lg font-semibold">Inscription confirmée !</div>
-              <p className="mt-1 text-sm text-white/75">
+            <div className="mt-10 border-t border-white/15 pt-8">
+              <span className="text-or text-2xl">◆</span>
+              <div className="mt-3 display-serif text-[1.4rem] font-normal text-ivoire">Inscription confirmée</div>
+              <p className="mt-2 font-sans text-[14px] leading-relaxed text-ivoire/70">
                 Votre code de réduction arrive par email dans quelques instants.
               </p>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="mt-8 space-y-4">
+            <form onSubmit={handleSubmit} className="mt-10 space-y-4">
               <div className="flex flex-col gap-2 sm:flex-row">
                 <input
                   type="email"
@@ -75,28 +73,28 @@ export function Newsletter({
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="votre@email.fr"
-                  className="flex-1 rounded-pill border border-white/20 bg-white/10 px-5 py-3.5 font-sans text-[15px] text-white placeholder:text-white/45 focus:border-aurora focus:outline-none focus:ring-2 focus:ring-aurora/30"
+                  className="flex-1 rounded-pill border border-white/15 bg-white/5 px-6 py-4 font-serif text-[16px] italic text-ivoire placeholder:text-ivoire/40 focus:border-or focus:outline-none focus:ring-2 focus:ring-or/30"
                 />
                 <button
                   type="submit"
                   disabled={status === "loading"}
-                  className="rounded-pill bg-ivoire px-7 py-3.5 font-sora text-[15px] font-semibold text-midnight transition-all hover:bg-aurora hover:-translate-y-px disabled:opacity-60"
+                  className="rounded-pill bg-or px-8 py-4 font-sans text-[12px] font-medium uppercase tracking-[0.16em] text-noir transition-all hover:bg-or-dark hover:-translate-y-px disabled:opacity-60"
                 >
                   {status === "loading" ? "Envoi…" : "S'inscrire"}
                 </button>
               </div>
 
-              <label className="flex cursor-pointer items-start gap-2 text-left text-xs text-white/70">
+              <label className="flex cursor-pointer items-start gap-3 text-left font-sans text-[12px] leading-relaxed text-ivoire/60">
                 <input
                   type="checkbox"
                   checked={rgpd}
                   onChange={(e) => setRgpd(e.target.checked)}
-                  className="mt-0.5 accent-aurora"
+                  className="mt-0.5 accent-or"
                 />
                 <span>{rgpdText}</span>
               </label>
 
-              {error && <p className="text-sm text-error">{error}</p>}
+              {error && <p className="font-sans text-[13px] text-error">{error}</p>}
             </form>
           )}
         </div>

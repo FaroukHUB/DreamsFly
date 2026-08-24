@@ -41,14 +41,14 @@ export function CategoryTiles({ tiles }: { tiles?: Tile[] }) {
   const data = tiles && tiles.length > 0 ? tiles : FALLBACK_TILES;
 
   return (
-    <section className="bg-sable px-4 py-16 md:px-8 md:py-24">
+    <section className="section-cream section-editorial">
       <div className="mx-auto max-w-site">
-        <div className="mb-8 md:mb-12">
-          <div className="eyebrow mb-3">Nos catégories</div>
-          <h2 className="font-sora text-3xl font-semibold tracking-tight text-ink md:text-5xl">
-            Tout pour la chambre.
+        <div className="mb-14 md:mb-20 reveal">
+          <span className="eyebrow-editorial on-cream mb-3">Chapitre II · Nos catégories</span>
+          <h2 className="display-serif on-cream mt-5 text-[2.4rem] font-normal md:text-[4rem]">
+            Tout pour la <em>chambre</em>.
           </h2>
-          <p className="mt-3 max-w-md text-base text-pierre md:text-lg">
+          <p className="mt-6 max-w-md font-sans text-[15px] leading-relaxed text-taupe md:text-[17px]">
             Des matelas aux oreillers, retrouvez l'essentiel pour la chambre signé DreamsFly.
           </p>
         </div>
@@ -88,7 +88,7 @@ export function CategoryTiles({ tiles }: { tiles?: Tile[] }) {
 
                 {/* Contenu */}
                 <div className="relative z-10 flex flex-col gap-2 p-6 text-white md:gap-3 md:p-8">
-                  <h3 className="font-sora text-3xl font-semibold leading-tight tracking-tight md:text-4xl">
+                  <h3 className="display-serif font-normal leading-tight" style={{ fontSize: "clamp(1.7rem, 2.2vw, 2.4rem)" }}>
                     {t.name}
                   </h3>
                   {t.promo && (
