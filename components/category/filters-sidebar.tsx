@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 
 type Group = {
-  key: string; // "types" | "sizes" | ...
+  key: string;
   label: string;
   options: { value: string; label: string; count: number }[];
 };
@@ -31,7 +31,6 @@ export function FiltersSidebar({
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  // Récupère les valeurs sélectionnées depuis l'URL
   const selected = useMemo(() => {
     const map: Record<string, Set<string>> = {};
     for (const g of groups) {
@@ -41,13 +40,15 @@ export function FiltersSidebar({
     return map;
   }, [groups, searchParams]);
 
-  const priceMin = Number(searchParams.get("priceMin") || price?.min || 0);
-  const priceMax = Number(searchParams.get("priceMax") || price?.max || 5000);
+  const priceMinURL = searchParams.get("priceMin");
+  const priceMaxURL = searchParams.get("priceMax");
+  const priceMin = Number(priceMinURL || price?.min || 0);
+  const priceMax = Number(priceMaxURL || price?.max || 5000);
   const sort = searchParams.get("sort") || "featured";
 
   const activeCount =
     groups.reduce((n, g) => n + selected[g.key].size, 0) +
-    (searchParams.get("priceMin") || searchParams.get("priceMax") ? 1 : 0);
+    (priceMinURL || priceMaxURL ? 1 : 0);
 
   const updateUrl = (key: string, value?: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -67,29 +68,75 @@ export function FiltersSidebar({
     router.push(`${pathname}#modeles`, { scroll: false });
   };
 
+  // Chips actifs — pour affichage en haut
+  const activeChips: { key: string; value: string; label: string }[] = [];
+  for (const g of groups) {
+    for (const val of selected[g.key]) {
+      const opt = g.options.find((o) => o.value === val);
+      if (opt) activeChips.push({ key: g.key, value: val, label: opt.label });
+    }
+  }
+  if (priceMinURL || priceMaxURL) {
+    activeChips.push({
+      key: "__price",
+      value: "__price",
+      label: `${priceMin} € — ${priceMax} €`,
+    });
+  }
+
+  const removeChip = (chip: { key: string; value: string }) => {
+    if (chip.key === "__price") {
+      const params = new URLSearchParams(searchParams.toString());
+      params.delete("priceMin");
+      params.delete("priceMax");
+      router.push(`${pathname}?${params.toString()}#modeles`, { scroll: false });
+      return;
+    }
+    toggleValue(chip.key, chip.value);
+  };
+
   return (
     <>
-      {/* Bouton mobile */}
+      {/* Bouton mobile flottant */}
       <button
         type="button"
         onClick={() => setMobileOpen(true)}
-        className="mb-4 flex w-full items-center justify-center gap-2 rounded-pill border border-border bg-white px-5 py-3 font-sora text-sm font-semibold text-ink md:hidden"
+        className="mb-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-white px-5 py-4 font-sora text-sm font-semibold text-ink shadow-[0_2px_12px_rgba(15,23,42,0.06)] transition-all hover:shadow-[0_4px_16px_rgba(15,23,42,0.1)] md:hidden"
       >
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-          <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <line x1="6" y1="12" x2="18" y2="12" />
+          <line x1="10" y1="18" x2="14" y2="18" />
         </svg>
         Filtrer & trier
         {activeCount > 0 && (
-          <span className="ml-1 rounded-full bg-midnight px-2 py-0.5 text-xs font-bold text-white">
+          <span className="ml-1 flex h-6 min-w-[24px] items-center justify-center rounded-full bg-midnight px-2 text-xs font-bold text-white">
             {activeCount}
           </span>
         )}
       </button>
 
+      {/* Chips actifs mobile (hors drawer) */}
+      {activeChips.length > 0 && (
+        <div className="mb-5 flex flex-wrap gap-2 md:hidden">
+          {activeChips.map((c) => (
+            <button
+              key={`${c.key}-${c.value}`}
+              type="button"
+              onClick={() => removeChip(c)}
+              className="inline-flex items-center gap-1.5 rounded-full bg-midnight px-3 py-1.5 text-xs font-medium text-white transition-transform hover:-translate-y-px"
+            >
+              {c.label}
+              <span aria-hidden className="text-white/70">✕</span>
+            </button>
+          ))}
+        </div>
+      )}
+
       {/* Overlay mobile */}
       {mobileOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm md:hidden"
+          className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm md:hidden"
           onClick={() => setMobileOpen(false)}
           aria-hidden
         />
@@ -97,110 +144,132 @@ export function FiltersSidebar({
 
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex w-full max-w-sm flex-col overflow-hidden bg-white shadow-xl transition-transform md:sticky md:top-24 md:z-auto md:h-fit md:max-w-none md:translate-x-0 md:shadow-none md:bg-transparent ${
+        className={`fixed inset-y-0 left-0 z-50 flex w-full max-w-sm flex-col overflow-hidden bg-white shadow-2xl transition-transform duration-300 md:sticky md:top-24 md:z-auto md:h-fit md:max-w-none md:translate-x-0 md:overflow-visible md:rounded-3xl md:bg-white md:shadow-[0_2px_20px_rgba(15,23,42,0.05)] ${
           mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         }`}
       >
         {/* Header mobile */}
-        <div className="flex items-center justify-between border-b border-border p-5 md:hidden">
-          <h2 className="font-sora text-lg font-semibold text-ink">Filtres</h2>
+        <div className="flex items-center justify-between border-b border-lin p-5 md:hidden">
+          <div>
+            <h2 className="font-sora text-lg font-semibold text-ink">Filtres</h2>
+            <p className="mt-0.5 text-xs text-pierre">{filteredCount} résultat{filteredCount > 1 ? "s" : ""}</p>
+          </div>
           <button
             type="button"
             onClick={() => setMobileOpen(false)}
             aria-label="Fermer"
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-border text-ink hover:border-midnight"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-page text-ink transition-colors hover:bg-lin"
           >
-            ✕
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-5 md:p-0">
-          {/* Tri (desktop et mobile) */}
-          <details open className="group mb-6 border-b border-border pb-6 last:border-0 md:mb-5 md:pb-5">
-            <summary className="flex cursor-pointer list-none items-center justify-between font-sora text-sm font-semibold uppercase tracking-widest text-ink">
-              Trier par
-              <svg className="text-brume transition-transform group-open:rotate-180" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="6 9 12 15 18 9" />
-              </svg>
-            </summary>
-            <div className="mt-4 space-y-2">
-              {[
-                { value: "featured", label: "Sélection DreamsFly" },
-                { value: "price-asc", label: "Prix croissant" },
-                { value: "price-desc", label: "Prix décroissant" },
-                { value: "name", label: "Nom (A → Z)" },
-              ].map((s) => (
-                <label key={s.value} className="flex cursor-pointer items-center gap-3 text-sm">
-                  <input
-                    type="radio"
-                    name="sort"
-                    value={s.value}
-                    checked={sort === s.value}
-                    onChange={() => updateUrl("sort", s.value === "featured" ? undefined : s.value)}
-                    className="h-4 w-4 accent-midnight"
-                  />
-                  <span className="text-ink">{s.label}</span>
-                </label>
-              ))}
+        <div className="flex-1 overflow-y-auto p-5 md:p-6">
+          {/* Chips actifs desktop */}
+          {activeChips.length > 0 && (
+            <div className="mb-6 hidden md:block">
+              <div className="mb-3 flex items-center justify-between">
+                <div className="text-xs font-semibold text-pierre">
+                  {activeCount} filtre{activeCount > 1 ? "s" : ""} actif{activeCount > 1 ? "s" : ""}
+                </div>
+                <button
+                  type="button"
+                  onClick={clearAll}
+                  className="text-xs font-medium text-midnight hover:underline"
+                >
+                  Tout effacer
+                </button>
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {activeChips.map((c) => (
+                  <button
+                    key={`${c.key}-${c.value}`}
+                    type="button"
+                    onClick={() => removeChip(c)}
+                    className="group inline-flex items-center gap-1.5 rounded-full bg-midnight/[0.06] px-3 py-1.5 text-xs font-medium text-midnight transition-colors hover:bg-midnight hover:text-white"
+                  >
+                    {c.label}
+                    <span aria-hidden className="text-midnight/50 transition-colors group-hover:text-white/70">✕</span>
+                  </button>
+                ))}
+              </div>
             </div>
-          </details>
+          )}
 
-          {/* Chaque groupe de filtres */}
+          {/* TRI */}
+          <FilterSection title="Trier par" defaultOpen>
+            <div className="space-y-1">
+              {[
+                { value: "featured", label: "Sélection DreamsFly", icon: "★" },
+                { value: "price-asc", label: "Prix croissant", icon: "↑" },
+                { value: "price-desc", label: "Prix décroissant", icon: "↓" },
+                { value: "name", label: "Nom (A → Z)", icon: "A" },
+              ].map((s) => {
+                const isActive = sort === s.value;
+                return (
+                  <button
+                    key={s.value}
+                    type="button"
+                    onClick={() => updateUrl("sort", s.value === "featured" ? undefined : s.value)}
+                    className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition-all ${
+                      isActive
+                        ? "bg-midnight text-white"
+                        : "bg-transparent text-ink hover:bg-page"
+                    }`}
+                  >
+                    <span aria-hidden className={`flex h-5 w-5 flex-none items-center justify-center rounded-full text-[10px] font-bold ${isActive ? "bg-white/20" : "bg-lin"}`}>
+                      {s.icon}
+                    </span>
+                    <span className="flex-1 font-medium">{s.label}</span>
+                    {isActive && (
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </FilterSection>
+
+          {/* Groupes de filtres (chips modernes) */}
           {groups.map((g) => (
-            <details key={g.key} open className="group mb-6 border-b border-border pb-6 last:border-0 md:mb-5 md:pb-5">
-              <summary className="flex cursor-pointer list-none items-center justify-between font-sora text-sm font-semibold uppercase tracking-widest text-ink">
-                {g.label}
-                {selected[g.key].size > 0 && (
-                  <span className="ml-auto mr-3 rounded-full bg-midnight px-2 py-0.5 text-[10px] font-bold text-white">
-                    {selected[g.key].size}
-                  </span>
-                )}
-                <svg className="text-brume transition-transform group-open:rotate-180" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="6 9 12 15 18 9" />
-                </svg>
-              </summary>
-              <ul className="mt-4 space-y-2">
+            <FilterSection key={g.key} title={g.label} count={selected[g.key].size} defaultOpen>
+              <div className="flex flex-wrap gap-2">
                 {g.options.map((opt) => {
-                  const isChecked = selected[g.key].has(opt.value);
-                  const disabled = opt.count === 0 && !isChecked;
+                  const isSelected = selected[g.key].has(opt.value);
+                  const isDisabled = opt.count === 0 && !isSelected;
                   return (
-                    <li key={opt.value}>
-                      <label
-                        className={`flex cursor-pointer items-center gap-3 text-sm transition-colors ${
-                          disabled ? "cursor-not-allowed opacity-40" : "hover:text-midnight"
-                        }`}
-                      >
-                        <input
-                          type="checkbox"
-                          checked={isChecked}
-                          disabled={disabled}
-                          onChange={() => toggleValue(g.key, opt.value)}
-                          className="h-4 w-4 accent-midnight"
-                        />
-                        <span className="flex-1 text-ink">{opt.label}</span>
-                        <span className="text-xs text-brume">{opt.count}</span>
-                      </label>
-                    </li>
+                    <button
+                      key={opt.value}
+                      type="button"
+                      disabled={isDisabled}
+                      onClick={() => toggleValue(g.key, opt.value)}
+                      className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-2 text-xs font-medium transition-all ${
+                        isSelected
+                          ? "border-midnight bg-midnight text-white shadow-sm"
+                          : isDisabled
+                            ? "cursor-not-allowed border-lin bg-page/60 text-brume opacity-60"
+                            : "border-lin bg-white text-ink hover:border-midnight hover:-translate-y-px"
+                      }`}
+                    >
+                      {opt.label}
+                      <span className={`text-[10px] ${isSelected ? "text-white/70" : "text-brume"}`}>
+                        {opt.count}
+                      </span>
+                    </button>
                   );
                 })}
-              </ul>
-            </details>
+              </div>
+            </FilterSection>
           ))}
 
           {/* Prix */}
           {price && (
-            <details open className="group mb-6 border-b border-border pb-6 last:border-0 md:mb-5 md:pb-5">
-              <summary className="flex cursor-pointer list-none items-center justify-between font-sora text-sm font-semibold uppercase tracking-widest text-ink">
-                Prix
-                {(searchParams.get("priceMin") || searchParams.get("priceMax")) && (
-                  <span className="ml-auto mr-3 rounded-full bg-midnight px-2 py-0.5 text-[10px] font-bold text-white">
-                    1
-                  </span>
-                )}
-                <svg className="text-brume transition-transform group-open:rotate-180" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="6 9 12 15 18 9" />
-                </svg>
-              </summary>
+            <FilterSection title="Budget" count={priceMinURL || priceMaxURL ? 1 : 0} defaultOpen>
               <PriceFilter
                 min={price.min}
                 max={price.max}
@@ -216,40 +285,83 @@ export function FiltersSidebar({
                   router.push(`${pathname}?${params.toString()}#modeles`, { scroll: false });
                 }}
               />
-            </details>
+            </FilterSection>
           )}
         </div>
 
-        {/* Footer */}
-        <div className="border-t border-border bg-white p-4 md:border-0 md:bg-transparent md:p-0">
-          <div className="mb-3 flex items-center justify-between text-sm">
-            <span className="text-pierre">
-              <strong className="text-ink">{filteredCount}</strong> résultat{filteredCount > 1 ? "s" : ""}
-              {activeCount > 0 && ` (sur ${totalCount})`}
-            </span>
-            {activeCount > 0 && (
-              <button
-                type="button"
-                onClick={clearAll}
-                className="text-xs font-semibold text-midnight underline decoration-dotted underline-offset-4 hover:decoration-solid"
-              >
-                Tout effacer
-              </button>
-            )}
-          </div>
+        {/* Footer mobile */}
+        <div className="border-t border-lin bg-white p-4 md:hidden">
           <button
             type="button"
             onClick={() => setMobileOpen(false)}
-            className="w-full rounded-pill bg-midnight px-5 py-3 font-sora text-sm font-semibold text-white md:hidden"
+            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-midnight px-5 py-4 font-sora text-sm font-semibold text-white transition-all hover:bg-midnight-dark"
           >
             Voir les {filteredCount} résultat{filteredCount > 1 ? "s" : ""}
           </button>
+          {activeCount > 0 && (
+            <button
+              type="button"
+              onClick={clearAll}
+              className="mt-2 flex w-full items-center justify-center py-2 text-xs font-medium text-pierre hover:text-midnight"
+            >
+              Effacer tous les filtres
+            </button>
+          )}
         </div>
       </aside>
     </>
   );
 }
 
+// ─────────────────────────────────────────────────────────────
+// FilterSection — accordéon moderne
+// ─────────────────────────────────────────────────────────────
+function FilterSection({
+  title,
+  count,
+  defaultOpen = false,
+  children,
+}: {
+  title: string;
+  count?: number;
+  defaultOpen?: boolean;
+  children: React.ReactNode;
+}) {
+  const [open, setOpen] = useState(defaultOpen);
+  return (
+    <div className="border-b border-lin py-5 last:border-0">
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="flex w-full items-center justify-between gap-3 py-1 text-left font-sora"
+      >
+        <div className="flex items-center gap-2">
+          <span className="text-[15px] font-semibold text-ink">{title}</span>
+          {count !== undefined && count > 0 && (
+            <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-midnight px-1.5 text-[10px] font-bold text-white">
+              {count}
+            </span>
+          )}
+        </div>
+        <span
+          aria-hidden
+          className={`flex h-6 w-6 items-center justify-center rounded-full bg-page text-ink transition-transform ${
+            open ? "rotate-180" : ""
+          }`}
+        >
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </span>
+      </button>
+      {open && <div className="mt-4">{children}</div>}
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// Price filter — presets + range slider custom
+// ─────────────────────────────────────────────────────────────
 function PriceFilter({
   min,
   max,
@@ -268,19 +380,21 @@ function PriceFilter({
   const [localMin, setLocalMin] = useState(currentMin);
   const [localMax, setLocalMax] = useState(currentMax);
 
-  // Sync local state when URL changes externally
   useEffect(() => {
     setLocalMin(currentMin);
     setLocalMax(currentMax);
   }, [currentMin, currentMax]);
 
   const commit = () => onChange(localMin, localMax);
+  const range = max - min;
+  const leftPct = range > 0 ? ((localMin - min) / range) * 100 : 0;
+  const rightPct = range > 0 ? ((max - localMax) / range) * 100 : 0;
 
   return (
-    <div className="mt-4">
-      {/* Suggestions rapides */}
+    <div>
+      {/* Presets */}
       {suggestions && suggestions.length > 0 && (
-        <div className="mb-4 flex flex-wrap gap-1.5">
+        <div className="mb-5 flex flex-wrap gap-1.5">
           {suggestions.map((s, i) => {
             const isActive = (s.min ?? min) === localMin && (s.max ?? max) === localMax;
             return (
@@ -288,10 +402,10 @@ function PriceFilter({
                 key={i}
                 type="button"
                 onClick={() => onChange(s.min ?? min, s.max ?? max)}
-                className={`rounded-pill border px-3 py-1.5 text-[11px] font-medium transition-all ${
+                className={`rounded-full border px-3 py-1.5 text-[11px] font-medium transition-all ${
                   isActive
                     ? "border-midnight bg-midnight text-white"
-                    : "border-border bg-white text-ink hover:border-midnight"
+                    : "border-lin bg-white text-ink hover:border-midnight"
                 }`}
               >
                 {s.label}
@@ -301,43 +415,59 @@ function PriceFilter({
         </div>
       )}
 
-      {/* Fourchette actuelle */}
-      <div className="mb-3 flex items-center justify-between text-sm">
-        <span className="font-medium text-ink">{localMin} €</span>
+      {/* Fourchette actuelle en gros */}
+      <div className="mb-4 flex items-baseline justify-between rounded-2xl bg-page px-4 py-3">
+        <div>
+          <div className="text-[10px] uppercase tracking-widest text-brume">Min</div>
+          <div className="font-sora text-lg font-bold text-ink">{localMin} €</div>
+        </div>
         <span className="text-brume">—</span>
-        <span className="font-medium text-ink">{localMax} €</span>
+        <div className="text-right">
+          <div className="text-[10px] uppercase tracking-widest text-brume">Max</div>
+          <div className="font-sora text-lg font-bold text-ink">{localMax} €</div>
+        </div>
       </div>
 
-      {/* Sliders min/max */}
-      <div className="space-y-3">
-        <label className="block">
-          <span className="mb-1 block text-[11px] uppercase tracking-widest text-brume">Minimum</span>
-          <input
-            type="range"
-            min={min}
-            max={max}
-            step={50}
-            value={localMin}
-            onChange={(e) => setLocalMin(Math.min(parseInt(e.target.value, 10), localMax))}
-            onMouseUp={commit}
-            onTouchEnd={commit}
-            className="w-full accent-midnight"
-          />
-        </label>
-        <label className="block">
-          <span className="mb-1 block text-[11px] uppercase tracking-widest text-brume">Maximum</span>
-          <input
-            type="range"
-            min={min}
-            max={max}
-            step={50}
-            value={localMax}
-            onChange={(e) => setLocalMax(Math.max(parseInt(e.target.value, 10), localMin))}
-            onMouseUp={commit}
-            onTouchEnd={commit}
-            className="w-full accent-midnight"
-          />
-        </label>
+      {/* Range slider double — rail rempli visuel */}
+      <div className="relative mb-3 h-6">
+        {/* Track background */}
+        <div className="absolute inset-x-0 top-1/2 h-1 -translate-y-1/2 rounded-full bg-lin" aria-hidden />
+        {/* Track filled */}
+        <div
+          aria-hidden
+          className="absolute top-1/2 h-1 -translate-y-1/2 rounded-full bg-midnight transition-all"
+          style={{ left: `${leftPct}%`, right: `${rightPct}%` }}
+        />
+        {/* Inputs superposés */}
+        <input
+          type="range"
+          min={min}
+          max={max}
+          step={50}
+          value={localMin}
+          onChange={(e) => setLocalMin(Math.min(parseInt(e.target.value, 10), localMax - 50))}
+          onMouseUp={commit}
+          onTouchEnd={commit}
+          className="pointer-events-none absolute inset-0 h-6 w-full appearance-none bg-transparent [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-midnight [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-midnight [&::-moz-range-thumb]:bg-white"
+          aria-label="Prix minimum"
+        />
+        <input
+          type="range"
+          min={min}
+          max={max}
+          step={50}
+          value={localMax}
+          onChange={(e) => setLocalMax(Math.max(parseInt(e.target.value, 10), localMin + 50))}
+          onMouseUp={commit}
+          onTouchEnd={commit}
+          className="pointer-events-none absolute inset-0 h-6 w-full appearance-none bg-transparent [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-midnight [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-midnight [&::-moz-range-thumb]:bg-white"
+          aria-label="Prix maximum"
+        />
+      </div>
+
+      <div className="flex justify-between text-[10px] text-brume">
+        <span>{min} €</span>
+        <span>{max} €</span>
       </div>
     </div>
   );

@@ -7,7 +7,7 @@
     scroll-behavior: smooth;
   }
   body {
-    @apply bg-ivoire text-ink antialiased;
+    @apply bg-page text-ink antialiased;
     font-feature-settings: "ss01", "ss02";
   }
   ::selection {

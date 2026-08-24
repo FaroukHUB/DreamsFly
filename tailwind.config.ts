@@ -9,8 +9,9 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // ─── Fonds (blanc + gris clairs cool) ───
-        ivoire: "#FFFFFF",        // blanc pur
+        // ─── Fonds (warm neutral + gris clairs cool) ───
+        page: "#F4EFE7",          // beige chaud — fond global du site
+        ivoire: "#FFFFFF",        // blanc pur (cards, buy box)
         sable: "#F6F7F9",         // gris très très clair (sections alternées)
         lin: "#EEF0F4",           // gris clair (cards, hover)
         "beige-profond": "#D9DDE4", // gris medium (séparateurs forts)
