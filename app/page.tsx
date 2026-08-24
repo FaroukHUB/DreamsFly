@@ -6,7 +6,6 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { UspStrip } from "@/components/usp-strip";
 import { ScrollReveal } from "@/components/scroll-reveal";
-import { PressMarquee } from "@/components/press-marquee";
 import { BestSellers } from "@/components/best-sellers";
 import { MosaicCollections } from "@/components/home/mosaic-collections";
 import { QuizCTA } from "@/components/home/quiz-cta";
@@ -79,13 +78,8 @@ export default async function HomePage() {
         {/* 1. HERO — préservé */}
         <Hero hero={homepage?.hero} heroSecondary={homepage?.heroSecondary} slides={homepage?.heroSlides} />
 
-        {/* 1b. Bandeau éditorial défilant — noir + icônes or */}
-        {siteSettings?.editorialStrip?.enabled !== false && (
-          <PressMarquee tone="noir" items={siteSettings?.editorialStrip?.items} />
-        )}
-
-        {/* 2. USP strip */}
-        <UspStrip items={homepage?.uspStrip} />
+        {/* 2. USP strip — sous le hero, en noir + icônes or */}
+        <UspStrip items={homepage?.uspStrip} tone="noir" />
 
         {/* 3. Best-sellers matelas */}
         <BestSellers manualProducts={homepage?.bestSellers} />
