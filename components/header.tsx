@@ -63,7 +63,20 @@ export function Header({ settings }: { settings?: any }) {
 
           {/* Actions droite */}
           <div className="flex items-center gap-1 md:gap-2">
-            <button aria-label="Recherche" className="hidden p-2.5 text-ink transition-colors hover:text-or md:block">
+            <button
+              aria-label="Rechercher (⌘K)"
+              onClick={() => window.dispatchEvent(new Event("df:open-search"))}
+              className="group hidden items-center gap-2 rounded-full border border-ink/15 px-3 py-2 font-sans text-[11px] uppercase tracking-[0.14em] text-taupe transition-all hover:border-noir hover:text-noir md:inline-flex"
+            >
+              <SearchIcon />
+              <span className="hidden lg:inline">Rechercher</span>
+              <kbd className="hidden rounded border border-ink/15 bg-page px-1.5 py-0.5 text-[10px] font-medium lg:inline">⌘K</kbd>
+            </button>
+            <button
+              aria-label="Rechercher"
+              onClick={() => window.dispatchEvent(new Event("df:open-search"))}
+              className="p-2.5 text-ink transition-colors hover:text-or md:hidden"
+            >
               <SearchIcon />
             </button>
             <button aria-label="Compte" className="hidden p-2.5 text-ink transition-colors hover:text-or md:block">

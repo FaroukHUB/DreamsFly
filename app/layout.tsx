@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Sora, Plus_Jakarta_Sans, Fraunces } from "next/font/google";
 import "./globals.css";
 import { CartDrawer } from "@/components/cart/cart-drawer";
+import { SearchDialog } from "@/components/search-dialog";
 
 const sora = Sora({
   subsets: ["latin"],
@@ -57,6 +58,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         {children}
         <CartDrawer />
+        <SearchDialog />
       </body>
     </html>
   );
