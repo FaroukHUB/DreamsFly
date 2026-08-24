@@ -4,6 +4,7 @@ import { PortableText } from "@portabletext/react";
 import { urlFor } from "@/lib/sanity/image";
 import type { CareStep, Advantage, Audience, Tip } from "@/lib/product-defaults";
 import { deliveryInfo } from "@/lib/product-defaults";
+import { LineIcon, iconNameForEmoji } from "@/components/line-icon";
 
 /** Points forts en badges. */
 export function ProductHighlights({ highlights }: { highlights?: { icon?: string; label?: string }[] }) {
@@ -13,9 +14,9 @@ export function ProductHighlights({ highlights }: { highlights?: { icon?: string
       {highlights.map((h, i) => (
         <span
           key={i}
-          className="inline-flex items-center gap-2 rounded-pill border border-border bg-ivoire px-3.5 py-2 text-xs font-medium text-ink md:px-4 md:text-sm"
+          className="inline-flex items-center gap-2 rounded-pill border border-ink/15 bg-ivoire px-4 py-2 font-sans text-[11px] font-medium uppercase tracking-[0.14em] text-noir md:px-5"
         >
-          {h.icon && <span aria-hidden>{h.icon}</span>}
+          {h.icon && <LineIcon name={iconNameForEmoji(h.icon)} size={13} className="text-or" strokeWidth={1.4} />}
           {h.label}
         </span>
       ))}
@@ -45,16 +46,18 @@ export function ProductAdvantages({ advantages }: { advantages?: Advantage[] }) 
   if (!advantages?.length) return null;
   return (
     <section>
-      <div className="eyebrow mb-3">Ses avantages</div>
-      <h2 className="mb-8 font-sora text-2xl font-semibold tracking-tight text-ink md:text-3xl">
+      <span className="eyebrow-editorial on-cream mb-3">Ses avantages</span>
+      <h2 className="mb-8 display-serif on-cream text-[1.8rem] font-normal md:text-[2.6rem]">
         Ce que vous allez ressentir
       </h2>
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-5">
+      <div className="grid grid-cols-2 gap-5 md:grid-cols-3 md:gap-6">
         {advantages.map((a, i) => (
-          <div key={i} className="flex flex-col rounded-2xl border border-border bg-white p-5 md:p-6">
-            <span aria-hidden className="mb-3 text-3xl">{a.icon}</span>
-            <h3 className="font-sora text-base font-semibold text-ink md:text-lg">{a.title}</h3>
-            <p className="mt-1 text-sm leading-relaxed text-pierre">{a.text}</p>
+          <div key={i} className="flex flex-col rounded-[20px] border border-ink/10 bg-ivoire p-6 md:p-7">
+            <span className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-full border border-ink/15 text-noir">
+              <LineIcon name={iconNameForEmoji(a.icon)} size={20} strokeWidth={1.3} />
+            </span>
+            <h3 className="display-serif on-cream text-[1.15rem] font-normal md:text-[1.35rem]">{a.title}</h3>
+            <p className="mt-2 font-sans text-[14px] leading-relaxed text-taupe">{a.text}</p>
           </div>
         ))}
       </div>
@@ -66,22 +69,22 @@ export function ProductAdvantages({ advantages }: { advantages?: Advantage[] }) 
 export function ProductAudiences({ audiences }: { audiences?: Audience[] }) {
   if (!audiences?.length) return null;
   return (
-    <section className="rounded-3xl bg-sable p-6 md:p-10">
-      <div className="mb-6 max-w-2xl md:mb-8">
-        <div className="eyebrow mb-2">Pour qui ?</div>
-        <h2 className="font-sora text-2xl font-semibold tracking-tight text-ink md:text-3xl">
-          Est-ce fait pour vous ?
+    <section className="rounded-[28px] bg-creme p-8 md:p-12">
+      <div className="mb-10 max-w-2xl md:mb-12">
+        <span className="eyebrow-editorial on-cream mb-2">Pour qui ?</span>
+        <h2 className="display-serif on-cream mt-3 text-[1.8rem] font-normal md:text-[2.6rem]">
+          Est-ce fait pour <em>vous</em> ?
         </h2>
       </div>
-      <div className="grid gap-3 md:grid-cols-2 md:gap-4">
+      <div className="grid gap-5 md:grid-cols-2 md:gap-6">
         {audiences.map((a, i) => (
-          <div key={i} className="flex items-start gap-4 rounded-2xl bg-white p-4 md:p-5">
-            <span aria-hidden className="flex h-10 w-10 flex-none items-center justify-center rounded-full bg-aurora text-xl md:h-12 md:w-12">
-              {a.icon}
+          <div key={i} className="flex items-start gap-5 rounded-[20px] bg-ivoire p-6">
+            <span className="flex h-11 w-11 flex-none items-center justify-center rounded-full border border-ink/15 text-noir">
+              <LineIcon name={iconNameForEmoji(a.icon)} size={20} strokeWidth={1.3} />
             </span>
             <div>
-              <h3 className="font-sora text-base font-semibold text-ink md:text-lg">{a.title}</h3>
-              <p className="mt-1 text-sm leading-relaxed text-pierre">{a.text}</p>
+              <h3 className="display-serif on-cream text-[1.15rem] font-normal md:text-[1.35rem]">{a.title}</h3>
+              <p className="mt-1 font-sans text-[14px] leading-relaxed text-taupe">{a.text}</p>
             </div>
           </div>
         ))}
@@ -95,30 +98,34 @@ export function ProductTips({ tips }: { tips?: Tip[] }) {
   if (!tips?.length) return null;
   return (
     <section>
-      <div className="eyebrow mb-3">Le mot des experts</div>
-      <h2 className="mb-2 font-sora text-2xl font-semibold tracking-tight text-ink md:text-3xl">
+      <span className="eyebrow-editorial on-cream mb-3">Le mot des experts</span>
+      <h2 className="mb-2 display-serif on-cream text-[1.8rem] font-normal md:text-[2.6rem]">
         Ce qu'on aurait aimé savoir avant
       </h2>
       <p className="mb-8 max-w-2xl text-pierre">
         Conseils issus des recommandations d'organismes de référence — INSV, INSERM, ANSES, ADEME.
       </p>
-      <div className="grid gap-4 md:grid-cols-2 md:gap-5">
+      <div className="grid gap-6 md:grid-cols-2 md:gap-8">
         {tips.map((t, i) => (
-          <div key={i} className="flex flex-col rounded-2xl border border-border bg-ivoire p-5 md:p-6">
-            <div className="mb-2 flex items-center gap-3">
-              {t.icon && <span aria-hidden className="text-2xl">{t.icon}</span>}
-              <h3 className="font-sora text-lg font-semibold text-ink">{t.title}</h3>
+          <div key={i} className="flex flex-col rounded-[20px] border border-ink/10 bg-ivoire p-7 md:p-8">
+            <div className="mb-3 flex items-center gap-3">
+              {t.icon && (
+                <span className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-ink/15 text-noir">
+                  <LineIcon name={iconNameForEmoji(t.icon)} size={16} strokeWidth={1.3} />
+                </span>
+              )}
+              <h3 className="display-serif on-cream text-[1.2rem] font-normal">{t.title}</h3>
             </div>
-            {t.text && <p className="text-sm leading-relaxed text-pierre md:text-base">{t.text}</p>}
+            {t.text && <p className="font-sans text-[14.5px] leading-relaxed text-taupe md:text-[15px]">{t.text}</p>}
             {t.source && (
-              <p className="mt-4 border-t border-border pt-3 text-[11px] uppercase tracking-widest text-brume md:text-xs">
-                Source :{" "}
+              <p className="mt-5 border-t border-ink/10 pt-3 font-sans text-[10.5px] uppercase tracking-[0.16em] text-taupe">
+                <span className="mr-2 text-or">◆</span>Source :{" "}
                 {t.source.url ? (
-                  <a href={t.source.url} target="_blank" rel="noopener noreferrer nofollow" className="text-midnight underline decoration-dotted underline-offset-2 hover:decoration-solid">
+                  <a href={t.source.url} target="_blank" rel="noopener noreferrer nofollow" className="text-noir underline decoration-or decoration-2 underline-offset-2">
                     {t.source.label}
                   </a>
                 ) : (
-                  <span className="text-pierre">{t.source.label}</span>
+                  <span className="text-taupe">{t.source.label}</span>
                 )}
               </p>
             )}
@@ -134,22 +141,24 @@ export function ProductCareSteps({ steps }: { steps?: CareStep[] }) {
   if (!steps?.length) return null;
   return (
     <section>
-      <div className="eyebrow mb-3">Entretien</div>
-      <h2 className="mb-2 font-sora text-2xl font-semibold tracking-tight text-ink md:text-3xl">
+      <span className="eyebrow-editorial on-cream mb-3">Entretien</span>
+      <h2 className="mb-2 display-serif on-cream text-[1.8rem] font-normal md:text-[2.6rem]">
         Bien l'entretenir en 4 gestes
       </h2>
       <p className="mb-8 max-w-2xl text-pierre">
         Rien de compliqué. Juste des habitudes qui doublent la durée de vie.
       </p>
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {steps.map((s, i) => (
-          <div key={i} className="flex flex-col rounded-2xl border border-border bg-white p-5">
-            <span aria-hidden className="mb-3 text-3xl">{s.icon}</span>
-            <div className="mb-1 text-[11px] font-semibold uppercase tracking-widest text-or">
+          <div key={i} className="flex flex-col rounded-[20px] border border-ink/10 bg-ivoire p-6">
+            <span className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-full border border-ink/15 text-noir">
+              <LineIcon name={iconNameForEmoji(s.icon)} size={18} strokeWidth={1.3} />
+            </span>
+            <div className="mb-2 font-sans text-[10.5px] font-medium uppercase tracking-[0.18em] text-or">
               {s.frequency}
             </div>
-            <h3 className="font-sora text-base font-semibold text-ink">{s.title}</h3>
-            <p className="mt-2 text-sm leading-relaxed text-pierre">{s.text}</p>
+            <h3 className="display-serif on-cream text-[1.05rem] font-normal">{s.title}</h3>
+            <p className="mt-2 font-sans text-[14px] leading-relaxed text-taupe">{s.text}</p>
           </div>
         ))}
       </div>
@@ -162,8 +171,8 @@ export function ProductCareGuide({ careGuide }: { careGuide?: any }) {
   if (!careGuide?.length) return null;
   return (
     <section>
-      <div className="eyebrow mb-3">Guide d'entretien</div>
-      <h2 className="mb-4 font-sora text-2xl font-semibold tracking-tight text-ink md:text-3xl">
+      <span className="eyebrow-editorial on-cream mb-3">Guide d'entretien</span>
+      <h2 className="mb-4 display-serif on-cream text-[1.8rem] font-normal md:text-[2.6rem]">
         Bien entretenir votre produit
       </h2>
       <div className="prose-content max-w-3xl">
@@ -178,29 +187,23 @@ export function ProductFaq({ faq }: { faq?: { question: string; answer: string }
   if (!faq?.length) return null;
   return (
     <section>
-      <div className="eyebrow mb-3">FAQ</div>
-      <h2 className="mb-2 font-sora text-2xl font-semibold tracking-tight text-ink md:text-3xl">
+      <span className="eyebrow-editorial on-cream mb-3">FAQ</span>
+      <h2 className="mb-2 display-serif on-cream text-[1.8rem] font-normal md:text-[2.6rem]">
         {faq.length} questions fréquentes
       </h2>
       <p className="mb-8 max-w-2xl text-pierre">
         Ce que les acheteurs demandent le plus — réponses directes, sans langue de bois.
       </p>
-      <div className="space-y-3">
+      <div className="divide-y divide-ink/10 border-y border-ink/10">
         {faq.map((f, i) => (
-          <details
-            key={i}
-            className="group rounded-2xl border border-border bg-white p-5 open:border-midnight md:p-6"
-          >
-            <summary className="flex cursor-pointer list-none items-start justify-between gap-4">
-              <h3 className="font-sora text-base font-semibold text-ink md:text-lg">{f.question}</h3>
-              <span aria-hidden className="mt-1 flex h-6 w-6 flex-none items-center justify-center rounded-full border border-border text-midnight transition-transform group-open:rotate-45">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                  <line x1="12" y1="5" x2="12" y2="19" />
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                </svg>
+          <details key={i} className="group py-6">
+            <summary className="flex cursor-pointer list-none items-start justify-between gap-6">
+              <h3 className="display-serif on-cream text-[1.15rem] font-normal md:text-[1.35rem]">{f.question}</h3>
+              <span aria-hidden className="mt-1 flex h-7 w-7 flex-none items-center justify-center rounded-full text-or transition-transform group-open:rotate-45">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4"><path d="M12 5v14M5 12h14"/></svg>
               </span>
             </summary>
-            <p className="mt-4 text-sm leading-relaxed text-pierre md:text-base">{f.answer}</p>
+            <p className="mt-4 max-w-[64ch] font-sans text-[15px] leading-relaxed text-taupe">{f.answer}</p>
           </details>
         ))}
       </div>
@@ -216,24 +219,21 @@ export function ProductExtraCta({
 }) {
   if (!cta?.title || !cta?.ctaLabel || !cta?.ctaLink) return null;
   return (
-    <section className="rounded-3xl border border-border bg-gradient-to-br from-midnight to-midnight-dark p-6 text-white md:p-10">
-      <div className="grid gap-6 md:grid-cols-[2fr_1fr] md:items-center">
+    <section className="rounded-[28px] bg-noir p-10 text-ivoire md:p-14">
+      <div className="grid gap-8 md:grid-cols-[2fr_1fr] md:items-center">
         <div>
-          <h2 className="font-sora text-2xl font-semibold tracking-tight md:text-3xl">
+          <h2 className="display-serif text-[1.8rem] font-normal text-ivoire md:text-[2.6rem]">
             {cta.title}
           </h2>
-          {cta.subtitle && <p className="mt-3 text-base text-white/85 md:text-lg">{cta.subtitle}</p>}
+          {cta.subtitle && <p className="mt-4 font-serif text-[17px] italic leading-relaxed text-ivoire/70 md:text-[19px]">{cta.subtitle}</p>}
         </div>
         <div className="flex md:justify-end">
           <Link
             href={cta.ctaLink}
-            className="inline-flex items-center gap-2 rounded-pill bg-ivoire px-6 py-3.5 font-sora text-sm font-semibold text-midnight transition-all hover:bg-aurora hover:-translate-y-px md:px-7 md:text-base"
+            className="inline-flex items-center gap-3 rounded-pill bg-ivoire px-7 py-3.5 font-sans text-[12px] font-medium uppercase tracking-[0.14em] text-noir transition-all hover:bg-or hover:-translate-y-px"
           >
             {cta.ctaLabel}
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="5" y1="12" x2="19" y2="12" />
-              <polyline points="12 5 19 12 12 19" />
-            </svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
           </Link>
         </div>
       </div>
@@ -249,19 +249,19 @@ export function ProductDelivery({ delivery }: { delivery?: { price?: string; del
     perks: delivery?.perks?.length ? delivery.perks : deliveryInfo.perks,
   };
   return (
-    <section className="grid gap-4 rounded-3xl border border-border bg-ivoire p-6 md:grid-cols-[auto_1fr] md:gap-8 md:p-10">
-      <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-midnight text-3xl text-white md:h-20 md:w-20 md:text-4xl">
-        🚚
+    <section className="grid gap-6 rounded-[28px] border border-ink/10 bg-ivoire p-8 md:grid-cols-[auto_1fr] md:gap-10 md:p-12">
+      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-noir text-or md:h-20 md:w-20">
+        <LineIcon name="truck" size={26} strokeWidth={1.3} />
       </div>
       <div>
-        <div className="eyebrow mb-2">Livraison</div>
-        <h2 className="mb-3 font-sora text-xl font-semibold tracking-tight text-ink md:text-2xl">
-          {d.price} · {d.delay}
+        <span className="eyebrow-editorial on-cream mb-2">Livraison</span>
+        <h2 className="display-serif on-cream mt-3 text-[1.5rem] font-normal md:text-[2rem]">
+          {d.price} <span className="text-or">·</span> {d.delay}
         </h2>
-        <ul className="grid gap-2 text-sm text-pierre md:grid-cols-2 md:text-base">
+        <ul className="mt-5 grid gap-3 font-sans text-[14px] leading-relaxed text-taupe md:grid-cols-2 md:text-[15px]">
           {d.perks.map((p, i) => (
-            <li key={i} className="flex items-start gap-2">
-              <span aria-hidden className="mt-0.5 text-vert-menthe">✓</span>
+            <li key={i} className="flex items-start gap-2.5">
+              <span aria-hidden className="mt-0.5 text-or">◆</span>
               <span>{p}</span>
             </li>
           ))}
@@ -275,32 +275,34 @@ export function ProductDelivery({ delivery }: { delivery?: { price?: string; del
 export function ProductWarranty({ warranty }: { warranty: { duration: string; covers: string[]; excludes: string[] } }) {
   return (
     <section>
-      <div className="eyebrow mb-3">Garantie</div>
-      <h2 className="mb-6 font-sora text-2xl font-semibold tracking-tight text-ink md:text-3xl">
+      <span className="eyebrow-editorial on-cream mb-3">Garantie</span>
+      <h2 className="mb-6 display-serif on-cream text-[1.8rem] font-normal md:text-[2.6rem]">
         Garantie {warranty.duration}
       </h2>
-      <div className="grid gap-4 md:grid-cols-2 md:gap-5">
-        <div className="rounded-2xl border-2 border-vert-menthe/40 bg-vert-menthe/5 p-5 md:p-6">
-          <div className="mb-3 flex items-center gap-2 font-sora text-base font-semibold text-ink">
-            <span aria-hidden className="text-lg">✅</span> Ce qui est couvert
+      <div className="grid gap-6 md:grid-cols-2">
+        <div className="rounded-[24px] border border-ink/10 bg-ivoire p-7 md:p-8">
+          <div className="mb-4 flex items-center gap-3 display-serif on-cream text-[1.15rem] font-normal">
+            <LineIcon name="shield" size={22} className="text-or" />
+            Ce qui est couvert
           </div>
-          <ul className="space-y-2 text-sm text-pierre md:text-base">
+          <ul className="space-y-2.5 font-sans text-[14.5px] leading-relaxed text-taupe md:text-[15px]">
             {warranty.covers.map((c, i) => (
-              <li key={i} className="flex items-start gap-2">
-                <span aria-hidden className="mt-0.5 text-vert-menthe">•</span>
+              <li key={i} className="flex items-start gap-2.5">
+                <span aria-hidden className="mt-0.5 text-or">◆</span>
                 <span>{c}</span>
               </li>
             ))}
           </ul>
         </div>
-        <div className="rounded-2xl border-2 border-brume/40 bg-sable/60 p-5 md:p-6">
-          <div className="mb-3 flex items-center gap-2 font-sora text-base font-semibold text-ink">
-            <span aria-hidden className="text-lg">✋</span> Ce qui n'est pas couvert
+        <div className="rounded-[24px] border border-ink/10 bg-creme p-7 md:p-8">
+          <div className="mb-4 flex items-center gap-3 display-serif on-cream text-[1.15rem] font-normal">
+            <LineIcon name="alert" size={22} className="text-taupe" />
+            Ce qui n'est pas couvert
           </div>
-          <ul className="space-y-2 text-sm text-pierre md:text-base">
+          <ul className="space-y-2.5 font-sans text-[14.5px] leading-relaxed text-taupe md:text-[15px]">
             {warranty.excludes.map((c, i) => (
-              <li key={i} className="flex items-start gap-2">
-                <span aria-hidden className="mt-0.5 text-brume">•</span>
+              <li key={i} className="flex items-start gap-2.5">
+                <span aria-hidden className="mt-0.5 text-taupe/50">◇</span>
                 <span>{c}</span>
               </li>
             ))}
@@ -329,8 +331,8 @@ export function ProductComposition({
 
   return (
     <section>
-      <div className="eyebrow mb-3">Anatomie du produit</div>
-      <h2 className="mb-2 font-sora text-2xl font-semibold tracking-tight text-ink md:text-3xl">
+      <span className="eyebrow-editorial on-cream mb-3">Anatomie du produit</span>
+      <h2 className="mb-2 display-serif on-cream text-[1.8rem] font-normal md:text-[2.6rem]">
         Composition couche par couche
       </h2>
       <p className="mb-8 max-w-2xl text-pierre">
@@ -359,13 +361,13 @@ export function ProductComposition({
         </div>
 
         {/* Liste des couches */}
-        <ol className="space-y-3">
+        <ol className="divide-y divide-ink/10 border-y border-ink/10">
           {composition.map((c, i) => (
-            <li key={i} className="flex items-start gap-4 rounded-2xl border border-border bg-white p-5">
-              <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-midnight font-sora text-sm font-bold text-white">
-                {i + 1}
+            <li key={i} className="flex items-start gap-5 py-5">
+              <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border border-noir font-serif text-[15px] font-normal text-noir">
+                {String(i + 1).padStart(2, "0")}
               </span>
-              <span className="pt-1 text-[15px] leading-relaxed text-ink">{c.label}</span>
+              <span className="pt-1 font-serif text-[17px] leading-relaxed text-ink">{c.label}</span>
             </li>
           ))}
         </ol>
@@ -418,19 +420,19 @@ export function ProductSpecs({ product }: { product: any }) {
   if (!specs.length) return null;
   return (
     <section>
-      <div className="eyebrow mb-3">Fiche technique</div>
-      <h2 className="mb-6 font-sora text-2xl font-semibold tracking-tight text-ink md:text-3xl">
+      <span className="eyebrow-editorial on-cream mb-3">Fiche technique</span>
+      <h2 className="mb-6 display-serif on-cream text-[1.8rem] font-normal md:text-[2.6rem]">
         Caractéristiques
       </h2>
-      <div className="overflow-hidden rounded-2xl border border-border">
+      <div className="overflow-hidden rounded-[24px] border border-ink/10 bg-ivoire">
         <table className="w-full text-sm">
           <tbody>
             {specs.map((s, i) => (
-              <tr key={i} className={i % 2 ? "bg-sable" : "bg-ivoire"}>
-                <th className="w-1/3 border-b border-border p-4 text-left font-sora font-semibold text-ink">
+              <tr key={i} className={i % 2 ? "bg-creme/40" : "bg-ivoire"}>
+                <th className="w-1/3 border-b border-ink/8 p-5 text-left font-serif text-[15px] font-normal text-noir">
                   {s.label}
                 </th>
-                <td className="border-b border-border p-4 text-pierre">{s.value}</td>
+                <td className="border-b border-ink/8 p-5 font-sans text-[14px] text-taupe">{s.value}</td>
               </tr>
             ))}
           </tbody>
@@ -553,7 +555,7 @@ export function ProductDescription({ description, title }: { description?: any; 
   if (!description?.length) return null;
   return (
     <section>
-      <h2 className="mb-4 font-sora text-2xl font-semibold tracking-tight text-ink md:text-3xl">
+      <h2 className="mb-4 display-serif on-cream text-[1.8rem] font-normal md:text-[2.6rem]">
         {title || "Pourquoi choisir ce produit ?"}
       </h2>
       <div className="prose-content max-w-3xl">
@@ -568,32 +570,32 @@ export function RelatedProducts({ products, basePath = "/matelas" }: { products:
   if (!products?.length) return null;
   return (
     <section>
-      <h2 className="mb-6 font-sora text-2xl font-semibold tracking-tight text-ink md:text-3xl">
+      <h2 className="mb-6 display-serif on-cream text-[1.8rem] font-normal md:text-[2.6rem]">
         Vous aimerez aussi
       </h2>
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 md:gap-8">
         {products.map((p) => (
           <Link
             key={p._id}
             href={`${basePath}/${p.slug}`}
-            className="group flex flex-col rounded-2xl border border-border bg-ivoire p-4 transition-all hover:-translate-y-1 hover:border-midnight"
+            className="group flex flex-col rounded-[24px] border border-ink/10 bg-ivoire p-5 transition-all duration-500 hover:-translate-y-1 hover:border-noir/40 hover:shadow-[0_24px_50px_-20px_rgba(11,11,15,0.2)]"
           >
-            <div className="relative mb-4 aspect-[5/4] overflow-hidden rounded-xl bg-sable">
+            <div className="relative mb-5 aspect-[5/4] overflow-hidden rounded-[16px] bg-creme">
               {p.image && (
                 <Image
-                  src={urlFor(p.image).width(500).url()}
+                  src={urlFor(p.image).width(600).url()}
                   alt={p.name}
                   fill
                   sizes="(max-width:1024px) 50vw, 25vw"
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  className="object-cover transition-transform duration-[900ms] group-hover:scale-105"
                 />
               )}
             </div>
-            <h3 className="font-sora text-base font-semibold text-ink">{p.name}</h3>
-            <p className="mb-3 line-clamp-2 text-[13px] text-pierre">{p.tagline}</p>
-            <div className="mt-auto flex items-baseline gap-2 border-t border-border pt-3">
-              <span className="text-[11px] text-brume">Dès</span>
-              <span className="font-sora text-lg font-bold text-discount">{p.minPrice} €</span>
+            <h3 className="display-serif on-cream text-[1.1rem] font-normal">{p.name}</h3>
+            <p className="mt-2 line-clamp-2 font-sans text-[13px] leading-relaxed text-taupe">{p.tagline}</p>
+            <div className="mt-4 flex items-baseline gap-2 border-t border-ink/10 pt-3">
+              <span className="font-sans text-[11px] uppercase tracking-[0.14em] text-taupe">Dès</span>
+              <span className="font-serif text-[1.25rem] font-normal text-noir">{p.minPrice}€</span>
             </div>
           </Link>
         ))}

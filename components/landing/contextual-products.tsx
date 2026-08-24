@@ -81,13 +81,14 @@ export async function ContextualProducts({ pageType, slug, alreadyHasProductsGri
 
   return (
     <section>
-      <h2 className="mb-2 font-sora text-3xl font-semibold tracking-tight text-ink">
-        Nos matelas recommandés
+      <span className="eyebrow-editorial on-cream mb-3">Sélection contextuelle</span>
+      <h2 className="display-serif on-cream mt-3 text-[1.9rem] font-normal md:text-[2.6rem]">
+        Nos matelas <em>recommandés</em>
       </h2>
-      <p className="mb-8 max-w-2xl text-pierre">
+      <p className="mt-4 mb-10 max-w-2xl font-sans text-[15px] leading-relaxed text-taupe md:text-[17px]">
         Sélection automatique parmi notre collection — adaptée à cette page.
       </p>
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 md:gap-8">
         {products.map((p) => {
           const price = p.matchingVariant?.price || p.minPrice;
           const compareAtPrice = p.matchingVariant?.compareAtPrice || p.compareAtPrice;
@@ -99,31 +100,31 @@ export async function ContextualProducts({ pageType, slug, alreadyHasProductsGri
             <Link
               key={p._id}
               href={`/matelas/${p.slug}`}
-              className="group flex flex-col rounded-2xl border border-border bg-ivoire p-4 transition-all hover:-translate-y-1 hover:border-midnight"
+              className="group flex flex-col rounded-[24px] border border-ink/10 bg-ivoire p-5 transition-all duration-500 hover:-translate-y-1 hover:border-noir/40 hover:shadow-[0_24px_50px_-20px_rgba(11,11,15,0.2)]"
             >
-              <div className="relative mb-4 aspect-[5/4] overflow-hidden rounded-xl bg-sable">
+              <div className="relative mb-5 aspect-[5/4] overflow-hidden rounded-[16px] bg-creme">
                 {p.image && (
                   <Image
-                    src={urlFor(p.image).width(500).url()}
+                    src={urlFor(p.image).width(600).url()}
                     alt={p.name}
                     fill
                     sizes="(max-width:1024px) 50vw, 25vw"
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    className="object-cover transition-transform duration-[900ms] group-hover:scale-105"
                   />
                 )}
                 {discount !== null && discount > 0 && (
-                  <span className="absolute left-3 top-3 rounded bg-discount px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider text-white">
-                    -{discount}%
+                  <span className="absolute left-3 top-3 rounded-full bg-noir px-3 py-1 font-sans text-[10px] font-medium uppercase tracking-[0.14em] text-or">
+                    −{discount}%
                   </span>
                 )}
               </div>
-              <h3 className="font-sora text-base font-semibold text-ink">{p.name}</h3>
-              <p className="mb-3 line-clamp-2 text-[13px] text-pierre">{p.tagline}</p>
-              <div className="mt-auto flex items-baseline gap-2 border-t border-border pt-3">
-                <span className="text-[11px] text-brume">Dès</span>
-                <span className="font-sora text-lg font-bold text-discount">{price} €</span>
+              <h3 className="display-serif on-cream text-[1.1rem] font-normal">{p.name}</h3>
+              <p className="mt-2 line-clamp-2 font-sans text-[13px] leading-relaxed text-taupe">{p.tagline}</p>
+              <div className="mt-4 flex items-baseline gap-2 border-t border-ink/10 pt-3">
+                <span className="font-sans text-[11px] uppercase tracking-[0.14em] text-taupe">Dès</span>
+                <span className="font-serif text-[1.25rem] font-normal text-noir">{price}€</span>
                 {compareAtPrice && compareAtPrice > price && (
-                  <span className="text-xs text-brume line-through">{compareAtPrice} €</span>
+                  <span className="font-sans text-[13px] text-taupe line-through">{compareAtPrice}€</span>
                 )}
               </div>
             </Link>

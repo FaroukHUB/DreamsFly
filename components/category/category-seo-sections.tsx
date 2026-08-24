@@ -5,6 +5,7 @@ import {
   ProductFaq,
   ProductDelivery,
 } from "@/components/product/product-details";
+import { LineIcon, iconNameForEmoji } from "@/components/line-icon";
 import {
   categoryAdvantages,
   categoryTips,
@@ -74,25 +75,25 @@ export function CategorySeoSections({ productType, categoryLabel, overrides }: P
 
       {/* GUIDE D'ACHAT — critères */}
       {criteria.length > 0 && (
-        <section className="mt-16 rounded-3xl bg-sable p-6 md:mt-20 md:p-10">
-          <div className="mb-6 max-w-2xl md:mb-8">
-            <div className="eyebrow mb-2">Guide d'achat</div>
-            <h2 className="font-sora text-2xl font-semibold tracking-tight text-ink md:text-3xl">
-              Comment choisir votre {categoryLabel} ?
+        <section className="mt-20 rounded-[28px] bg-creme p-8 md:mt-28 md:p-14">
+          <div className="mb-10 max-w-2xl md:mb-14">
+            <span className="eyebrow-editorial on-cream mb-2">Guide d'achat</span>
+            <h2 className="display-serif on-cream mt-3 text-[1.9rem] font-normal md:text-[2.8rem]">
+              Comment choisir votre <em>{categoryLabel}</em> ?
             </h2>
-            <p className="mt-2 text-pierre">
+            <p className="mt-4 font-serif text-[17px] italic leading-relaxed text-taupe md:text-[19px]">
               Les critères clés à considérer avant de vous décider.
             </p>
           </div>
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-5 md:grid-cols-2 md:gap-6">
             {criteria.map((c, i) => (
-              <div key={i} className="flex items-start gap-4 rounded-2xl bg-white p-5 md:p-6">
-                <span aria-hidden className="flex h-11 w-11 flex-none items-center justify-center rounded-xl bg-aurora text-xl md:h-12 md:w-12">
-                  {c.icon}
+              <div key={i} className="flex items-start gap-5 rounded-[20px] bg-ivoire p-7">
+                <span className="flex h-11 w-11 flex-none items-center justify-center rounded-full border border-ink/15 text-noir">
+                  <LineIcon name={iconNameForEmoji(c.icon)} size={20} strokeWidth={1.3} />
                 </span>
                 <div>
-                  <h3 className="font-sora text-base font-semibold text-ink md:text-lg">{c.label}</h3>
-                  <p className="mt-1 text-sm text-pierre md:text-base">{c.text}</p>
+                  <h3 className="display-serif on-cream text-[1.15rem] font-normal md:text-[1.3rem]">{c.label}</h3>
+                  <p className="mt-2 font-sans text-[14.5px] leading-relaxed text-taupe md:text-[15px]">{c.text}</p>
                 </div>
               </div>
             ))}
@@ -102,66 +103,67 @@ export function CategorySeoSections({ productType, categoryLabel, overrides }: P
 
       {/* COMPARATIF */}
       {comparison && (
-        <section className="mt-16 md:mt-20">
-          <div className="mb-6 max-w-2xl md:mb-8">
-            <div className="eyebrow mb-2">Comparatif</div>
-            <h2 className="font-sora text-2xl font-semibold tracking-tight text-ink md:text-3xl">
+        <section className="mt-20 md:mt-28">
+          <div className="mb-10 max-w-2xl md:mb-14">
+            <span className="eyebrow-editorial on-cream mb-2">Comparatif</span>
+            <h2 className="display-serif on-cream mt-3 text-[1.9rem] font-normal md:text-[2.8rem]">
               {productType === "lit"
                 ? "Quelle matière choisir ?"
                 : "Quelle technologie choisir ?"}
             </h2>
           </div>
           <div className="-mx-6 overflow-x-auto md:mx-0">
-            <table className="w-full min-w-[720px] border-separate border-spacing-0 text-sm md:text-base">
-              <thead>
-                <tr>
-                  <th className="sticky left-0 z-10 border-b border-border bg-white px-4 py-4 text-left font-sora font-semibold text-ink md:px-6">
-                    Critère
-                  </th>
-                  {comparison.columns.map((col, i) => {
-                    const isRecommended = i === comparison.recommendedIndex;
-                    return (
-                      <th
-                        key={i}
-                        className={`border-b-2 px-4 py-4 text-left font-sora font-semibold md:px-6 ${
-                          isRecommended
-                            ? "border-midnight bg-midnight text-white"
-                            : "border-border bg-ivoire text-ink"
-                        }`}
-                      >
-                        {col} {isRecommended && " ★"}
-                      </th>
-                    );
-                  })}
-                </tr>
-              </thead>
-              <tbody>
-                {comparison.rows.map((row, ri) => (
-                  <tr key={ri} className={ri % 2 === 0 ? "bg-white" : "bg-ivoire/50"}>
-                    <td className="sticky left-0 z-10 border-b border-border bg-inherit px-4 py-3 font-medium text-ink md:px-6 md:py-4">
-                      {row.criterion}
-                    </td>
-                    {row.values.map((v, ci) => {
-                      const isRecommended = ci === comparison.recommendedIndex;
+            <div className="rounded-[24px] border border-ink/10 bg-ivoire overflow-hidden">
+              <table className="w-full min-w-[720px] border-separate border-spacing-0 text-sm md:text-base">
+                <thead>
+                  <tr className="bg-noir text-ivoire">
+                    <th className="sticky left-0 z-10 border-b border-white/10 bg-noir px-5 py-5 text-left font-sans text-[12px] font-medium uppercase tracking-[0.14em] md:px-6">
+                      Critère
+                    </th>
+                    {comparison.columns.map((col, i) => {
+                      const isRecommended = i === comparison.recommendedIndex;
                       return (
-                        <td
-                          key={ci}
-                          className={`border-b border-border px-4 py-3 text-pierre md:px-6 md:py-4 ${
-                            isRecommended ? "bg-midnight/[0.03]" : ""
+                        <th
+                          key={i}
+                          className={`border-b border-white/10 px-5 py-5 text-left font-sans text-[12px] font-medium uppercase tracking-[0.14em] md:px-6 ${
+                            isRecommended ? "text-or" : "text-ivoire/80"
                           }`}
                         >
-                          {isRecommended ? <strong className="text-ink">{v}</strong> : v}
-                        </td>
+                          {col}{isRecommended && <span className="ml-2 text-or">◆</span>}
+                        </th>
                       );
                     })}
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {comparison.rows.map((row, ri) => (
+                    <tr key={ri} className={ri % 2 === 0 ? "bg-ivoire" : "bg-creme/40"}>
+                      <td className="sticky left-0 z-10 border-b border-ink/8 bg-inherit px-5 py-4 font-serif text-[15px] font-normal text-noir md:px-6 md:py-5">
+                        {row.criterion}
+                      </td>
+                      {row.values.map((v, ci) => {
+                        const isRecommended = ci === comparison.recommendedIndex;
+                        return (
+                          <td
+                            key={ci}
+                            className={`border-b border-ink/8 px-5 py-4 font-sans text-[14px] text-taupe md:px-6 md:py-5 ${
+                              isRecommended ? "bg-or/8" : ""
+                            }`}
+                          >
+                            {isRecommended ? <strong className="font-medium text-noir">{v}</strong> : v}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
           {typeof comparison.recommendedIndex === "number" && (
-            <p className="mt-4 text-xs text-brume">
-              ★ Notre recommandation pour la plupart des profils. Voir les critères ci-dessus pour affiner.
+            <p className="mt-5 flex items-center gap-2 font-sans text-[11px] uppercase tracking-[0.14em] text-taupe">
+              <span className="text-or">◆</span>
+              Notre recommandation pour la plupart des profils. Voir les critères ci-dessus pour affiner.
             </p>
           )}
         </section>
