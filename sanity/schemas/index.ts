@@ -12,12 +12,14 @@ import { showroom } from "./showroom";
 import { order } from "./order";
 import { staticPage } from "./staticPage";
 import { quizPage } from "./quizPage";
+import { showroomsPage } from "./showroomsPage";
 
 export const schemaTypes = [
   // Singletons
   homepage,
   siteSettings,
   quizPage,
+  showroomsPage,
   // Documents principaux
   product,
   landingPage,

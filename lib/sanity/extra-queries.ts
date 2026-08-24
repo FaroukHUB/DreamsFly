@@ -25,6 +25,17 @@ export const allShowroomSlugsQuery = groq`
   *[_type == "showroom" && defined(publishedAt) && publishedAt <= now()]{ "slug": slug.current }
 `;
 
+export const showroomsPageQuery = groq`
+  *[_type == "showroomsPage"][0]{
+    heroEyebrow, heroTitle, heroSubtitle,
+    argumentsTitle,
+    argumentsItems[]{ icon, title, text },
+    faqTitle,
+    faqItems[]{ question, answer },
+    metaTitle, metaDescription
+  }
+`;
+
 // Glossary
 export const glossaryTermBySlugQuery = groq`
   *[_type == "glossary" && slug.current == $slug && defined(publishedAt) && publishedAt <= now()][0]{

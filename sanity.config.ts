@@ -36,6 +36,9 @@ export default defineConfig({
             S.listItem()
               .title("🧭 Page Quiz")
               .child(S.editor().schemaType("quizPage").documentId("quizPage")),
+            S.listItem()
+              .title("🏬 Page Magasins")
+              .child(S.editor().schemaType("showroomsPage").documentId("showroomsPage")),
 
             S.divider(),
 
