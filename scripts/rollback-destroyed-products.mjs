@@ -82,8 +82,12 @@ const AFFECTED_IDS = [
   "product-sydney-180-200",
 ];
 
-const API_VERSION = "2021-06-07";
+const API_VERSION = "2024-01-01";
 const BASE = `https://${projectId}.api.sanity.io/v${API_VERSION}/data/history/${dataset}`;
+
+// Récupère le doc à un moment donné (2 heures avant maintenant = bien AVANT mon patch destructif)
+const HOURS_BACK = Number(process.env.HOURS_BACK || 2);
+const AT_TIME = new Date(Date.now() - HOURS_BACK * 60 * 60 * 1000).toISOString();
 
 async function apiRequest(url) {
   const res = await fetch(url, {
@@ -95,70 +99,38 @@ async function apiRequest(url) {
   return res;
 }
 
-/** Récupère la liste des transactions sur un doc, du plus récent au plus ancien. */
-async function getTransactions(id) {
-  const url = `${BASE}/transactions?documentIds=${encodeURIComponent(id)}&excludeContent=true`;
-  const res = await apiRequest(url);
-  const text = await res.text();
-  const lines = text.trim().split("\n").filter((l) => l);
-  const txs = lines.map((l) => JSON.parse(l));
-  // sort du plus récent au plus ancien
-  txs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-  return txs;
-}
-
-/** Récupère le document tel qu'il était à une révision spécifique. */
-async function getDocumentAtRevision(id, revision) {
-  const url = `${BASE}/documents/${encodeURIComponent(id)}?revision=${revision}`;
+/** Récupère le document tel qu'il était à une date/heure. */
+async function getDocumentAtTime(id, isoTime) {
+  const url = `${BASE}/documents/${encodeURIComponent(id)}?time=${encodeURIComponent(isoTime)}`;
   const res = await apiRequest(url);
   const data = await res.json();
-  // La réponse est { documents: [ { ... } ] }
-  const doc = data.documents?.[0] || data;
+  // La réponse est soit { documents: [{ ... }] } soit directement { ... }
+  const doc = data.documents?.[0] || (data._id ? data : null);
   return doc;
 }
 
 async function rollbackOne(id) {
-  const txs = await getTransactions(id);
-  if (txs.length < 2) {
-    return { id, status: "SKIP", reason: `Une seule transaction ou moins (${txs.length})` };
-  }
-  // txs[0] = ma mutation destructrice (la plus récente)
-  // txs[1] = la version PRÉCÉDENTE, à restaurer
-  const destructiveTx = txs[0];
-  const priorTx = txs[1];
-  const doc = await getDocumentAtRevision(id, priorTx.id);
+  const doc = await getDocumentAtTime(id, AT_TIME);
   if (!doc || !doc._id) {
-    return { id, status: "SKIP", reason: `Doc introuvable à la révision ${priorTx.id.slice(0, 10)}` };
+    return { id, status: "SKIP", reason: `Doc introuvable à ${AT_TIME}` };
   }
-  // Compte le nombre de champs récupérés pour vérifier qu'on restaure bien un doc complet
+  // Compte les champs — vérif que la version restaurée est complète
   const fieldCount = Object.keys(doc).filter((k) => !k.startsWith("_")).length;
+  const hasImages = !!doc.images?.length;
+  const hasVariants = !!doc.variants?.length && doc.variants[0]?.price != null;
+
   if (DRY) {
-    return {
-      id,
-      status: "DRY",
-      priorTx: priorTx.id.slice(0, 10),
-      destructiveTx: destructiveTx.id.slice(0, 10),
-      fieldsToRestore: fieldCount,
-      timestamp: priorTx.timestamp,
-      hasImages: !!doc.images?.length,
-      hasVariants: !!doc.variants?.length,
-    };
+    return { id, status: "DRY", fieldsToRestore: fieldCount, hasImages, hasVariants };
   }
-  // Restaure — createOrReplace SAFE car doc COMPLET
   await client.createOrReplace(doc);
-  return {
-    id,
-    status: "OK",
-    priorTx: priorTx.id.slice(0, 10),
-    fieldsRestored: fieldCount,
-    hasImages: !!doc.images?.length,
-    hasVariants: !!doc.variants?.length,
-  };
+  return { id, status: "OK", fieldsRestored: fieldCount, hasImages, hasVariants };
 }
 
 async function main() {
   console.log(`\n⏪ ROLLBACK — mode ${DRY ? "DRY (aucun changement)" : "PUBLISH (restauration appliquée)"}\n`);
   console.log(`   Projet: ${projectId} · Dataset: ${dataset}`);
+  console.log(`   Récupère chaque doc tel qu'il était à ${AT_TIME}`);
+  console.log(`   (soit ${HOURS_BACK}h en arrière — bien avant le patch destructif)`);
   console.log(`   ${AFFECTED_IDS.length} produits à restaurer\n`);
 
   const results = [];
