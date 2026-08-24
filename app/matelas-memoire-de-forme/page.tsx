@@ -122,6 +122,7 @@ export default async function MemoryFoamLanding() {
         title={H1}
         lead="La mémoire de forme est devenue LE standard du confort orthopédique en 40 ans. Absorption des points de pression, alignement de la colonne, absence de mouvements ressentis — ses bénéfices sont réels quand la mousse est de qualité. Ce guide vous aide à distinguer les vrais modèles Performance des imitations bon marché."
         emphasize={2}
+        imageUrl="https://images.pexels.com/photos/1454806/pexels-photo-1454806.jpeg?auto=compress&cs=tinysrgb&w=1400"
       />
 
       <main className="mx-auto max-w-site px-6 py-16 md:px-10 md:py-24">

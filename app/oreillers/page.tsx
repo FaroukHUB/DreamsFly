@@ -142,6 +142,7 @@ export default async function OreillersPillar({ searchParams }: { searchParams: 
         eyebrow="Collection oreillers"
         title={h1}
         lead={intro}
+        imageUrl="https://images.pexels.com/photos/1470168/pexels-photo-1470168.jpeg?auto=compress&cs=tinysrgb&w=1400"
       />
       <main className="mx-auto max-w-site px-6 py-14 md:px-10 md:py-20">
         <section id="modeles" className="scroll-mt-20">

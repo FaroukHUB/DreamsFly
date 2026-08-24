@@ -156,6 +156,7 @@ export default async function LitCoffreGuide() {
         title={H1}
         lead="Un lit coffre, ce n'est pas juste un lit avec un tiroir dessous. C'est 300 à 500 litres de rangement caché qui transforme une chambre de 12 m² en pièce fonctionnelle. Ce guide vous dit ce que les fiches produit ne disent pas — mécanisme, entretien, pièges à éviter, choix de tissu."
         emphasize={2}
+        imageUrl="https://images.pexels.com/photos/271816/pexels-photo-271816.jpeg?auto=compress&cs=tinysrgb&w=1400"
       />
 
       <main className="mx-auto max-w-site px-6 py-14 md:px-10 md:py-20">

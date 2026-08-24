@@ -111,6 +111,7 @@ export default async function MalDeDosLanding() {
         title={H1}
         lead="8 Français sur 10 souffrent du dos au cours de leur vie (INSERM 2023). Dans 65 % des cas, un mauvais matelas est en cause directe ou aggravante. Ce guide, validé par un ostéopathe D.O., vous aide à choisir un matelas qui soulage vraiment — pas juste un modèle marketé « orthopédique »."
         emphasize={2}
+        imageUrl="https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?auto=compress&cs=tinysrgb&w=1400"
         meta={(
           <>
             <div className="mb-1 font-serif text-[16px] italic text-noir">Revu médicalement</div>

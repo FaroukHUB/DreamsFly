@@ -41,6 +41,7 @@ export default async function ContactPage() {
         eyebrow="Service client"
         title="Une question ? On est là."
         lead="Nos conseillers experts répondent à toutes vos questions sur le sommeil et la literie. Choisissez le canal qui vous convient — réponse rapide garantie."
+        imageUrl="https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=1400"
       />
 
       <main className="mx-auto max-w-site px-6 py-14 md:px-10 md:py-20">

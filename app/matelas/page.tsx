@@ -196,6 +196,8 @@ export default async function MatelasPillar({ searchParams }: { searchParams: Se
         eyebrow="Collection complète"
         title={h1}
         lead={intro}
+        imageUrl={pillar?.ogImage ? undefined : "https://images.pexels.com/photos/6480707/pexels-photo-6480707.jpeg?auto=compress&cs=tinysrgb&w=1400"}
+        image={pillar?.ogImage}
       />
 
       <main className="mx-auto max-w-site px-6 py-14 md:px-10 md:py-20">

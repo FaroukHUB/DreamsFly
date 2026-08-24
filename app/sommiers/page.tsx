@@ -167,6 +167,7 @@ export default async function SommiersPillar({ searchParams }: { searchParams: S
         eyebrow="Collection sommiers"
         title={h1}
         lead={intro}
+        imageUrl="https://images.pexels.com/photos/271624/pexels-photo-271624.jpeg?auto=compress&cs=tinysrgb&w=1400"
       />
       <main className="mx-auto max-w-site px-6 py-14 md:px-10 md:py-20">
         <section id="modeles" className="scroll-mt-20">
