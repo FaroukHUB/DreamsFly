@@ -4,6 +4,7 @@ import Image from "next/image";
 import { sanityClient } from "@/lib/sanity/client";
 import { allProductsForPillarQuery } from "@/lib/sanity/product-queries";
 import { siteSettingsQuery } from "@/lib/sanity/queries";
+import { fetchPageHeros, pickHeroImageUrl } from "@/lib/sanity/page-heros";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { EditorialPageHeader } from "@/components/editorial-page-header";
@@ -84,9 +85,10 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function MalDeDosLanding() {
-  const [products, siteSettings] = await Promise.all([
+  const [products, siteSettings, heros] = await Promise.all([
     sanityClient?.fetch<any[]>(allProductsForPillarQuery).catch(() => []) ?? [],
     sanityClient?.fetch<any>(siteSettingsQuery).catch(() => null) ?? null,
+    fetchPageHeros(),
   ]);
 
   // Filtre : matelas mi-ferme à ferme (recommandation mal de dos)
@@ -111,7 +113,7 @@ export default async function MalDeDosLanding() {
         title={H1}
         lead="8 Français sur 10 souffrent du dos au cours de leur vie (INSERM 2023). Dans 65 % des cas, un mauvais matelas est en cause directe ou aggravante. Ce guide, validé par un ostéopathe D.O., vous aide à choisir un matelas qui soulage vraiment — pas juste un modèle marketé « orthopédique »."
         emphasize={2}
-        imageUrl="https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?auto=compress&cs=tinysrgb&w=1400"
+        imageUrl={pickHeroImageUrl(heros.malDeDos, "https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?auto=compress&cs=tinysrgb&w=1400")}
         meta={(
           <>
             <div className="mb-1 font-serif text-[16px] italic text-noir">Revu médicalement</div>

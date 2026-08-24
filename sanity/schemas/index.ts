@@ -13,6 +13,7 @@ import { order } from "./order";
 import { staticPage } from "./staticPage";
 import { quizPage } from "./quizPage";
 import { showroomsPage } from "./showroomsPage";
+import { pageHeros } from "./pageHeros";
 
 export const schemaTypes = [
   // Singletons
@@ -20,6 +21,7 @@ export const schemaTypes = [
   siteSettings,
   quizPage,
   showroomsPage,
+  pageHeros,
   // Documents principaux
   product,
   landingPage,

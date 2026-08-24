@@ -6,6 +6,7 @@ import { allLitsQuery } from "@/lib/sanity/product-queries";
 import { siteSettingsQuery } from "@/lib/sanity/queries";
 import { Header } from "@/components/header";
 import { EditorialPageHeader } from "@/components/editorial-page-header";
+import { fetchPageHeros, pickHeroImageUrl } from "@/lib/sanity/page-heros";
 import { Footer } from "@/components/footer";
 import { buildMetadata } from "@/lib/seo/metadata";
 import {
@@ -118,9 +119,10 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function LitCoffreGuide() {
-  const [litsRaw, siteSettings] = await Promise.all([
+  const [litsRaw, siteSettings, heros] = await Promise.all([
     sanityClient?.fetch<any[]>(allLitsQuery).catch(() => []) ?? [],
     sanityClient?.fetch<any>(siteSettingsQuery).catch(() => null) ?? null,
+    fetchPageHeros(),
   ]);
 
   // Filtre : lits coffre seulement (tagline = "Lit coffre" ou titre contenant "coffre")
@@ -156,7 +158,7 @@ export default async function LitCoffreGuide() {
         title={H1}
         lead="Un lit coffre, ce n'est pas juste un lit avec un tiroir dessous. C'est 300 à 500 litres de rangement caché qui transforme une chambre de 12 m² en pièce fonctionnelle. Ce guide vous dit ce que les fiches produit ne disent pas — mécanisme, entretien, pièges à éviter, choix de tissu."
         emphasize={2}
-        imageUrl="https://images.pexels.com/photos/271816/pexels-photo-271816.jpeg?auto=compress&cs=tinysrgb&w=1400"
+        imageUrl={pickHeroImageUrl(heros.litsCoffre, "https://images.pexels.com/photos/271816/pexels-photo-271816.jpeg?auto=compress&cs=tinysrgb&w=1400")}
       />
 
       <main className="mx-auto max-w-site px-6 py-14 md:px-10 md:py-20">

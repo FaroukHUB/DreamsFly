@@ -8,6 +8,7 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { Sections } from "@/components/landing/blocks";
 import { EditorialPageHeader } from "@/components/editorial-page-header";
+import { fetchPageHeros, pickHeroImageUrl } from "@/lib/sanity/page-heros";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { JsonLd, breadcrumbSchema, organizationSchema, faqSchema } from "@/lib/seo/jsonld";
 import { urlFor } from "@/lib/sanity/image";
@@ -89,10 +90,11 @@ export async function generateMetadata({ searchParams }: { searchParams: SearchP
 export default async function MatelasPillar({ searchParams }: { searchParams: SearchParams }) {
   const sp = await searchParams;
 
-  const [pillar, allProducts, siteSettings] = await Promise.all([
+  const [pillar, allProducts, siteSettings, heros] = await Promise.all([
     sanityClient?.fetch<any>(pillarPageQuery).catch(() => null) ?? null,
     sanityClient?.fetch<any[]>(allProductsForPillarQuery).catch(() => []) ?? [],
     sanityClient?.fetch<any>(siteSettingsQuery).catch(() => null) ?? null,
+    fetchPageHeros(),
   ]);
 
   // Parse filtres URL
@@ -196,7 +198,7 @@ export default async function MatelasPillar({ searchParams }: { searchParams: Se
         eyebrow="Collection complète"
         title={h1}
         lead={intro}
-        imageUrl={pillar?.ogImage ? undefined : "https://images.pexels.com/photos/6480707/pexels-photo-6480707.jpeg?auto=compress&cs=tinysrgb&w=1400"}
+        imageUrl={pillar?.ogImage ? undefined : pickHeroImageUrl(heros.matelas, "https://images.pexels.com/photos/6480707/pexels-photo-6480707.jpeg?auto=compress&cs=tinysrgb&w=1400")}
         image={pillar?.ogImage}
       />
 

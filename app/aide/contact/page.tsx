@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { sanityClient } from "@/lib/sanity/client";
 import { siteSettingsQuery } from "@/lib/sanity/queries";
+import { fetchPageHeros, pickHeroImageUrl } from "@/lib/sanity/page-heros";
 import { Header } from "@/components/header";
 import { EditorialPageHeader } from "@/components/editorial-page-header";
 import { LineIcon, iconNameForEmoji } from "@/components/line-icon";
@@ -18,9 +19,10 @@ export const metadata: Metadata = buildMetadata({
 });
 
 export default async function ContactPage() {
-  const siteSettings = sanityClient
-    ? await sanityClient.fetch<any>(siteSettingsQuery).catch(() => null)
-    : null;
+  const [siteSettings, heros] = await Promise.all([
+    sanityClient ? sanityClient.fetch<any>(siteSettingsQuery).catch(() => null) : null,
+    fetchPageHeros(),
+  ]);
 
   const phone = siteSettings?.contact?.phone || "07 85 88 92 60";
   const email = siteSettings?.contact?.email || "contact@dreamsfly.fr";
@@ -41,7 +43,7 @@ export default async function ContactPage() {
         eyebrow="Service client"
         title="Une question ? On est là."
         lead="Nos conseillers experts répondent à toutes vos questions sur le sommeil et la literie. Choisissez le canal qui vous convient — réponse rapide garantie."
-        imageUrl="https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=1400"
+        imageUrl={pickHeroImageUrl(heros.aideContact, "https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=1400")}
       />
 
       <main className="mx-auto max-w-site px-6 py-14 md:px-10 md:py-20">

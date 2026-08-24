@@ -4,6 +4,7 @@ import Image from "next/image";
 import { sanityClient } from "@/lib/sanity/client";
 import { allProductsForPillarQuery } from "@/lib/sanity/product-queries";
 import { siteSettingsQuery } from "@/lib/sanity/queries";
+import { fetchPageHeros, pickHeroImageUrl } from "@/lib/sanity/page-heros";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { EditorialPageHeader } from "@/components/editorial-page-header";
@@ -95,9 +96,10 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function MemoryFoamLanding() {
-  const [products, siteSettings] = await Promise.all([
+  const [products, siteSettings, heros] = await Promise.all([
     sanityClient?.fetch<any[]>(allProductsForPillarQuery).catch(() => []) ?? [],
     sanityClient?.fetch<any>(siteSettingsQuery).catch(() => null) ?? null,
+    fetchPageHeros(),
   ]);
 
   // Filtre : matelas type mémoire de forme uniquement
@@ -122,7 +124,7 @@ export default async function MemoryFoamLanding() {
         title={H1}
         lead="La mémoire de forme est devenue LE standard du confort orthopédique en 40 ans. Absorption des points de pression, alignement de la colonne, absence de mouvements ressentis — ses bénéfices sont réels quand la mousse est de qualité. Ce guide vous aide à distinguer les vrais modèles Performance des imitations bon marché."
         emphasize={2}
-        imageUrl="https://images.pexels.com/photos/1454806/pexels-photo-1454806.jpeg?auto=compress&cs=tinysrgb&w=1400"
+        imageUrl={pickHeroImageUrl(heros.memoireDeForme, "https://images.pexels.com/photos/1454806/pexels-photo-1454806.jpeg?auto=compress&cs=tinysrgb&w=1400")}
       />
 
       <main className="mx-auto max-w-site px-6 py-16 md:px-10 md:py-24">

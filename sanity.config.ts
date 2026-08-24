@@ -39,6 +39,9 @@ export default defineConfig({
             S.listItem()
               .title("🏬 Page Magasins")
               .child(S.editor().schemaType("showroomsPage").documentId("showroomsPage")),
+            S.listItem()
+              .title("🖼️ Images des Héros")
+              .child(S.editor().schemaType("pageHeros").documentId("pageHeros")),
 
             S.divider(),
 
