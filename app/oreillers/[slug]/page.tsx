@@ -5,6 +5,7 @@ import { sanityClient } from "@/lib/sanity/client";
 import { oreillerBySlugQuery, allOreillerSlugsQuery } from "@/lib/sanity/product-queries";
 import { siteSettingsQuery } from "@/lib/sanity/queries";
 import { Header } from "@/components/header";
+import { UspStrip } from "@/components/usp-strip";
 import { Footer } from "@/components/footer";
 import { ProductBuyBox } from "@/components/product/buy-box";
 import { StickyMobileCTA } from "@/components/product/sticky-mobile-cta";
@@ -78,6 +79,7 @@ export default async function OreillerPage({ params }: { params: Promise<Params>
   return (
     <>
       <Header settings={siteSettings} />
+      <UspStrip tone="noir" />
 
       <main className="mx-auto max-w-site px-6 py-10 md:px-10 md:py-14">
         <nav aria-label="Fil d'Ariane" className="mb-8 flex flex-wrap items-center gap-2 font-sans text-[11px] uppercase tracking-[0.14em] text-taupe">

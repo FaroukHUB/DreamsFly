@@ -4,6 +4,7 @@ import { latestGuidesForHomeQuery } from "@/lib/sanity/guide-queries";
 import { Hero } from "@/components/hero";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
+import { UspStrip } from "@/components/usp-strip";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import { BestSellers } from "@/components/best-sellers";
 import { MosaicCollections } from "@/components/home/mosaic-collections";
@@ -77,7 +78,8 @@ export default async function HomePage() {
         {/* 1. HERO — préservé */}
         <Hero hero={homepage?.hero} heroSecondary={homepage?.heroSecondary} slides={homepage?.heroSlides} />
 
-        {/* Note : le bandeau USP défilant est monté globalement dans <Header/> — dispo sur toutes les pages */}
+        {/* 2. Bandeau USP défilant noir + or — sous le hero */}
+        <UspStrip tone="noir" items={homepage?.uspStrip} />
 
         {/* 3. Best-sellers matelas */}
         <BestSellers manualProducts={homepage?.bestSellers} />

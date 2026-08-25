@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { urlFor } from "@/lib/sanity/image";
+import { UspStrip } from "./usp-strip";
 
 /**
  * En-tête éditorial partagé — direction A (luxe).
@@ -52,6 +53,7 @@ export function EditorialPageHeader({
   // ─── MODE IMAGE : hero pleine largeur avec texte overlay ───
   if (hasImage) {
     return (
+      <>
       <section className="relative overflow-hidden bg-noir text-ivoire">
         <Image
           src={resolvedImageUrl}
@@ -123,11 +125,14 @@ export function EditorialPageHeader({
           </div>
         </div>
       </section>
+      <UspStrip tone="noir" />
+      </>
     );
   }
 
   // ─── MODE SANS IMAGE : hero éditorial fond crème / noir ───
   return (
+    <>
     <section
       className={`${isNoir ? "bg-noir text-ivoire" : "bg-page text-ink"} border-b ${
         isNoir ? "border-white/10" : "border-ink/10"
@@ -191,6 +196,8 @@ export function EditorialPageHeader({
         </div>
       </div>
     </section>
+    <UspStrip tone="noir" />
+    </>
   );
 }
 
