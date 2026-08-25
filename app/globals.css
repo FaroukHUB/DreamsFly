@@ -129,6 +129,40 @@
 }
 
 /* ────────────────────────────────────────────
+   .df-html-block — HTML libre injecté depuis Sanity
+   ──────────────────────────────────────────── */
+.df-html-block {
+  /* Padding responsive intérieur automatique */
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+@media (min-width: 768px) {
+  .df-html-block { padding-left: 2.5rem; padding-right: 2.5rem; }
+}
+/* Utilitaire pour centrer un container interne à la largeur du site */
+.df-html-block > .df-wrap {
+  max-width: 1360px;
+  margin-left: auto;
+  margin-right: auto;
+}
+/* Utilitaire pour un container plus étroit (article) */
+.df-html-block > .df-wrap-narrow {
+  max-width: 768px;
+  margin-left: auto;
+  margin-right: auto;
+}
+/* Tableaux — scroll horizontal auto sur mobile */
+.df-html-block table {
+  width: 100%;
+  border-collapse: collapse;
+  display: block;
+  overflow-x: auto;
+}
+@media (min-width: 768px) {
+  .df-html-block table { display: table; overflow: visible; }
+}
+
+/* ────────────────────────────────────────────
    REVEAL au scroll — utilitaire global
    Ajoute la classe `reveal` sur un bloc et
    `reveal-visible` viendra par IntersectionObserver

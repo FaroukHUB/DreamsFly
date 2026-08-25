@@ -41,7 +41,8 @@ const components: PortableTextComponents = {
     htmlBlock: ({ value }: any) =>
       value?.html ? (
         <div
-          className="my-8 df-html-block"
+          className="df-html-block relative my-12 w-screen"
+          style={{ marginLeft: "calc(50% - 50vw)", marginRight: "calc(50% - 50vw)" }}
           dangerouslySetInnerHTML={{ __html: value.html }}
         />
       ) : null,

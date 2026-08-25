@@ -117,8 +117,12 @@ const portableComponents: PortableTextComponents = {
     ),
     htmlBlock: ({ value }: any) =>
       value?.html ? (
+        // Sort du max-w-3xl parent pour occuper toute la largeur du viewport,
+        // laisse au HTML custom la place de faire ses grilles / tables larges.
+        // Le HTML peut ré-appliquer un max-width interne s'il le souhaite.
         <div
-          className="my-8 df-html-block"
+          className="df-html-block relative my-12 w-screen"
+          style={{ marginLeft: "calc(50% - 50vw)", marginRight: "calc(50% - 50vw)" }}
           dangerouslySetInnerHTML={{ __html: value.html }}
         />
       ) : null,
