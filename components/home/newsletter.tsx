@@ -28,12 +28,19 @@ export function Newsletter({
     setStatus("loading");
     setError(null);
     try {
-      // TODO: brancher Resend audience ou Mailchimp dans /api/newsletter
-      await new Promise((r) => setTimeout(r, 600));
+      const res = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, website: "" }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data?.error || "Inscription impossible");
+      }
       setStatus("success");
-    } catch {
+    } catch (err) {
       setStatus("error");
-      setError("Une erreur est survenue, réessayez dans un instant.");
+      setError((err as Error)?.message || "Une erreur est survenue, réessayez dans un instant.");
     }
   }
 

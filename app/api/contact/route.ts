@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { Resend } from "resend";
 import { enforceRateLimit } from "@/lib/rate-limit";
 
 /**
@@ -114,22 +113,28 @@ export async function POST(req: NextRequest) {
 type ContactData = z.infer<typeof ContactSchema>;
 
 /**
- * Envoie le message via Resend.
- * - `to`   : CONTACT_EMAIL_TO (défaut contact@dreamsfly.fr)
- * - `from` : CONTACT_EMAIL_FROM — doit être une adresse d'un domaine
- *            vérifié dans Resend (ex. contact@dreamsfly.fr)
- * - `replyTo` : l'email du visiteur, pour répondre en un clic
+ * Envoie le message via l'API transactionnelle Brevo (ex-Sendinblue).
  *
- * Si RESEND_API_KEY n'est pas défini, on log et on considère l'envoi
- * réussi côté UX (mode dégradé de développement).
+ * Appel REST direct en fetch natif — pas de SDK, donc aucun risque de
+ * module qui ne se charge pas sur le runtime serverless.
+ *
+ * Variables d'environnement :
+ *  - BREVO_API_KEY      : clé API v3 (Brevo → SMTP & API → Clés API)
+ *  - CONTACT_EMAIL_TO   : destinataire (défaut contact@dreamsfly.fr)
+ *  - CONTACT_EMAIL_FROM : expéditeur, doit être un expéditeur vérifié
+ *                         chez Brevo (défaut contact@dreamsfly.fr)
+ *
+ * Sans BREVO_API_KEY : le message est loggé et l'UX reste fonctionnelle
+ * (mode dégradé de développement).
  */
 async function sendContactEmail(data: ContactData): Promise<{ ok: boolean; error?: string }> {
-  const apiKey = process.env.RESEND_API_KEY;
+  const apiKey = process.env.BREVO_API_KEY;
   const to = process.env.CONTACT_EMAIL_TO || "contact@dreamsfly.fr";
-  const from = process.env.CONTACT_EMAIL_FROM || "DreamsFly <contact@dreamsfly.fr>";
+  const fromEmail = process.env.CONTACT_EMAIL_FROM || "contact@dreamsfly.fr";
+  const fromName = process.env.CONTACT_EMAIL_FROM_NAME || "DreamsFly — Site web";
 
   if (!apiKey) {
-    console.warn("[contact] RESEND_API_KEY absent — message loggé sans envoi:", {
+    console.warn("[contact] BREVO_API_KEY absent — message loggé sans envoi:", {
       name: data.name,
       email: data.email,
       subject: data.subject,
@@ -137,61 +142,77 @@ async function sendContactEmail(data: ContactData): Promise<{ ok: boolean; error
     return { ok: true };
   }
 
+  const subject = data.subject
+    ? `[Contact site] ${data.subject} — ${data.name}`
+    : `[Contact site] Message de ${data.name}`;
+
+  const rows: [string, string][] = [
+    ["Nom", data.name],
+    ["Email", data.email],
+    ...(data.phone ? ([["Téléphone", data.phone]] as [string, string][]) : []),
+    ...(data.subject ? ([["Sujet", data.subject]] as [string, string][]) : []),
+  ];
+
+  const htmlContent = `
+    <div style="font-family:system-ui,-apple-system,sans-serif;max-width:640px;color:#0F172A">
+      <p style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8B7355;margin:0 0 4px">
+        Nouveau message · formulaire de contact
+      </p>
+      <h2 style="font-family:Georgia,serif;font-weight:400;font-size:22px;margin:0 0 20px">
+        ${escapeHtml(data.name)}
+      </h2>
+      <table style="border-collapse:collapse;width:100%;font-size:14px">
+        ${rows
+          .map(
+            ([k, v]) => `
+          <tr>
+            <td style="padding:8px 12px 8px 0;color:#8B7355;white-space:nowrap;vertical-align:top">${k}</td>
+            <td style="padding:8px 0">${escapeHtml(v)}</td>
+          </tr>`,
+          )
+          .join("")}
+      </table>
+      <div style="margin-top:20px;padding-top:16px;border-top:1px solid #E2E8F0">
+        <p style="color:#8B7355;font-size:11px;letter-spacing:.14em;text-transform:uppercase;margin:0 0 8px">Message</p>
+        <p style="white-space:pre-wrap;line-height:1.6;margin:0">${escapeHtml(data.message)}</p>
+      </div>
+    </div>
+  `;
+
+  const textContent = [
+    ...rows.map(([k, v]) => `${k} : ${v}`),
+    "",
+    "Message :",
+    data.message,
+  ].join("\n");
+
   try {
-    const resend = new Resend(apiKey);
-    const subject = data.subject
-      ? `[Contact site] ${data.subject} — ${data.name}`
-      : `[Contact site] Message de ${data.name}`;
-
-    const rows: [string, string][] = [
-      ["Nom", data.name],
-      ["Email", data.email],
-      ...(data.phone ? ([["Téléphone", data.phone]] as [string, string][]) : []),
-      ...(data.subject ? ([["Sujet", data.subject]] as [string, string][]) : []),
-    ];
-
-    const { error } = await resend.emails.send({
-      from,
-      to,
-      replyTo: data.email,
-      subject,
-      text: [
-        ...rows.map(([k, v]) => `${k} : ${v}`),
-        "",
-        "Message :",
-        data.message,
-      ].join("\n"),
-      html: `
-        <div style="font-family:system-ui,-apple-system,sans-serif;max-width:640px;color:#0F172A">
-          <p style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8B7355;margin:0 0 4px">
-            Nouveau message · formulaire de contact
-          </p>
-          <h2 style="font-family:Georgia,serif;font-weight:400;font-size:22px;margin:0 0 20px">
-            ${escapeHtml(data.name)}
-          </h2>
-          <table style="border-collapse:collapse;width:100%;font-size:14px">
-            ${rows
-              .map(
-                ([k, v]) => `
-              <tr>
-                <td style="padding:8px 12px 8px 0;color:#8B7355;white-space:nowrap;vertical-align:top">${k}</td>
-                <td style="padding:8px 0">${escapeHtml(v)}</td>
-              </tr>`,
-              )
-              .join("")}
-          </table>
-          <div style="margin-top:20px;padding-top:16px;border-top:1px solid #E2E8F0">
-            <p style="color:#8B7355;font-size:11px;letter-spacing:.14em;text-transform:uppercase;margin:0 0 8px">Message</p>
-            <p style="white-space:pre-wrap;line-height:1.6;margin:0">${escapeHtml(data.message)}</p>
-          </div>
-        </div>
-      `,
+    const res = await fetch("https://api.brevo.com/v3/smtp/email", {
+      method: "POST",
+      headers: {
+        "api-key": apiKey,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        sender: { email: fromEmail, name: fromName },
+        to: [{ email: to }],
+        // Répondre à l'email ouvre directement une réponse au visiteur
+        replyTo: { email: data.email, name: data.name },
+        subject,
+        htmlContent,
+        textContent,
+        tags: ["contact-site"],
+      }),
     });
 
-    if (error) return { ok: false, error: error.message };
+    if (!res.ok) {
+      const detail = await res.text().catch(() => "");
+      return { ok: false, error: `Brevo ${res.status} — ${detail.slice(0, 300)}` };
+    }
     return { ok: true };
   } catch (err) {
-    return { ok: false, error: (err as Error)?.message || "erreur inconnue" };
+    return { ok: false, error: (err as Error)?.message || "erreur réseau" };
   }
 }
 
