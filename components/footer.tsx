@@ -155,6 +155,7 @@ export function Footer({ settings }: { settings?: any }) {
             <li><Link href="/cgv" className="hover:text-or">CGV</Link></li>
             <li><Link href="/confidentialite" className="hover:text-or">Confidentialité</Link></li>
             <li><Link href="/cookies" className="hover:text-or">Cookies</Link></li>
+            <li><Link href="/plan-du-site" className="hover:text-or">Plan du site</Link></li>
           </ul>
           <div className="flex flex-wrap gap-2">
             {payments.map((p) => (
