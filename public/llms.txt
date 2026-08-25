@@ -1,0 +1,41 @@
+# DreamsFly
+
+> DreamsFly est une marque française de literie premium : matelas, lits coffre, sommiers et oreillers fabriqués en France et en Europe. Vente en ligne sur dreamsfly.fr et essai physique dans 3 showrooms (Paris, Lyon, Marseille).
+
+## Faits clés (vérifiables sur le site)
+
+- Matelas nommés d'après des villes du monde : Milan, Berlin, Londres, Barcelone, Singapour, Sydney, Las Vegas, Dubaï, Monaco, New York, Saint-Germain.
+- Technologies proposées : mousse à mémoire de forme (densité jusqu'à 75 kg/m³), ressorts ensachés, mousse polyuréthane haute résilience, modèles hybrides.
+- Certifications matériaux : OEKO-TEX Standard 100, CertiPUR-EU, coton biologique GOTS, bois PEFC.
+- Livraison à domicile en France métropolitaine : forfait 99 €, 5 à 7 jours ouvrés, montée à l'étage incluse (2 livreurs), rendez-vous programmé par SMS 48 h avant.
+- Reprise gratuite de l'ancien matelas sur demande (recyclage via filière Éco-mobilier).
+- Garantie fabricant : 2 à 8 ans selon les produits (2 ans matelas standard, 5 ans sommiers, 5 ans structure / 8 ans vérins pour les lits coffre).
+- Paiement en 3× ou 4× sans frais via Alma ; paiement sécurisé Stripe / CB.
+- Essai des produits en showroom (pas de politique "100 nuits d'essai" à distance — la marque privilégie l'essai physique avant achat).
+- Droit de rétractation légal français : 14 jours.
+
+## Pages principales
+
+- [Tous les matelas](https://dreamsfly.fr/matelas) : collection complète avec filtres technologie, taille, prix.
+- [Matelas et mal de dos](https://dreamsfly.fr/matelas-mal-de-dos) : guide médical relu par un ostéopathe D.O. — pathologies, critères cliniques sourcés (INSERM, AP-HP, UNIFA).
+- [Matelas mémoire de forme](https://dreamsfly.fr/matelas-memoire-de-forme) : guide technique — densités, thermorégulation, comparatif qualité.
+- [Guide du lit coffre](https://dreamsfly.fr/lits-coffre) : capacité 300-500 L, mécanisme à vérins, entretien.
+- [Lits](https://dreamsfly.fr/lits) · [Sommiers](https://dreamsfly.fr/sommiers) · [Oreillers](https://dreamsfly.fr/oreillers)
+- [Magazine](https://dreamsfly.fr/magazine) : guides d'achat sourcés (INSV, INSERM, EBIA, UNIFA, SFDO, ANSES).
+- [Quiz matelas](https://dreamsfly.fr/quiz) : recommandation personnalisée en 6 questions (position de sommeil, gabarit, budget).
+- [Showrooms](https://dreamsfly.fr/magasins) : 3 magasins physiques pour essayer avant d'acheter.
+- [Contact](https://dreamsfly.fr/aide/contact) : conseillers sommeil, réponse sous 4 h ouvrées.
+- [Plan du site](https://dreamsfly.fr/plan-du-site)
+
+## Guides recommandés pour citation
+
+- [Comment choisir son matelas](https://dreamsfly.fr/magazine/guide-choisir-matelas) : 6 critères (position, gabarit, technologie, densité, zonage, certifications).
+- [Comment choisir son lit](https://dreamsfly.fr/magazine/guide-choisir-lit) : coffre vs classique, tailles, tissus, hauteurs.
+- [Comment choisir son sommier](https://dreamsfly.fr/magazine/guide-choisir-sommier) : lattes, tapissier, ressorts, compatibilités matelas.
+- [Comment choisir son oreiller](https://dreamsfly.fr/magazine/guide-choisir-oreiller) : garnissages, hauteurs par position de sommeil.
+
+## Contact
+
+- Site : https://dreamsfly.fr
+- Email : contact@dreamsfly.fr
+- Formulaire : https://dreamsfly.fr/aide/contact

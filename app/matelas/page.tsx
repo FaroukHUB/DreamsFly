@@ -6,6 +6,7 @@ import { pillarPageQuery, allProductsForPillarQuery } from "@/lib/sanity/product
 import { siteSettingsQuery } from "@/lib/sanity/queries";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
+import { SeoCrossLinks } from "@/components/seo-cross-links";
 import { Sections } from "@/components/landing/blocks";
 import { EditorialPageHeader } from "@/components/editorial-page-header";
 import { fetchPageHeros, pickHeroImageUrl } from "@/lib/sanity/page-heros";
@@ -291,6 +292,15 @@ export default async function MatelasPillar({ searchParams }: { searchParams: Se
         )}
       </main>
 
+      <SeoCrossLinks
+        links={[
+          { href: "/matelas-mal-de-dos", label: "Matelas contre le mal de dos" },
+          { href: "/matelas-memoire-de-forme", label: "Guide mémoire de forme" },
+          { href: "/magazine/guide-choisir-matelas", label: "Comment choisir son matelas" },
+          { href: "/quiz", label: "Quiz matelas en 6 questions" },
+          { href: "/sommiers", label: "Nos sommiers" },
+        ]}
+      />
       <Footer settings={siteSettings} />
 
       <JsonLd data={organizationSchema({ name: "DreamsFly" })} />

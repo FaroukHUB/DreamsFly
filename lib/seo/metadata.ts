@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://dreams-fly.vercel.app";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://dreamsfly.fr";
 const SITE_NAME = "DreamsFly";
 const DEFAULT_DESCRIPTION =
   "Matelas premium conçus pour votre meilleur sommeil. Mousse mémoire de forme, ressorts ensachés, hybride. Livraison à domicile, paiement en plusieurs fois.";

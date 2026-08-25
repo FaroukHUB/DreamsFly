@@ -212,7 +212,7 @@ function HeroFallback() {
   return (
     <section className="mx-auto mt-0 max-w-site px-0 md:mt-6 md:px-8">
       <div className="relative min-h-[560px] overflow-hidden bg-noir md:min-h-[560px] md:rounded-3xl">
-        <video src="/videos/hero-matelas.mp4" autoPlay muted loop playsInline preload="metadata"
+        <video src="/videos/hero-matelas.mp4" poster="/videos/hero-matelas-poster.jpg" autoPlay muted loop playsInline preload="metadata"
           className="absolute inset-0 h-full w-full object-cover opacity-95" aria-hidden="true" />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-transparent md:bg-gradient-to-tr md:from-black/70 md:via-black/20 md:to-transparent" />
         <div className="relative z-10 flex h-full min-h-[560px] flex-col justify-end p-6 text-white md:p-14 lg:p-16">

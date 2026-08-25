@@ -6,6 +6,7 @@ import { pillarOreillersQuery, allOreillersQuery } from "@/lib/sanity/product-qu
 import { siteSettingsQuery } from "@/lib/sanity/queries";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
+import { SeoCrossLinks } from "@/components/seo-cross-links";
 import { Sections } from "@/components/landing/blocks";
 import { EditorialPageHeader } from "@/components/editorial-page-header";
 import { fetchPageHeros, pickHeroImageUrl } from "@/lib/sanity/page-heros";
@@ -233,6 +234,13 @@ export default async function OreillersPillar({ searchParams }: { searchParams: 
         )}
       </main>
 
+      <SeoCrossLinks
+        links={[
+          { href: "/magazine/guide-choisir-oreiller", label: "Comment choisir son oreiller" },
+          { href: "/matelas", label: "Nos matelas" },
+          { href: "/quiz", label: "Quiz matelas" },
+        ]}
+      />
       <Footer settings={siteSettings} />
 
       <JsonLd data={organizationSchema({ name: "DreamsFly" })} />

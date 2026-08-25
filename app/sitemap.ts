@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { sanityClient } from "@/lib/sanity/client";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://dreams-fly.vercel.app";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://dreamsfly.fr";
 
 /**
  * Sitemap dynamique — généré à partir des documents Sanity publiés

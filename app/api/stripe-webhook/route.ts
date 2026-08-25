@@ -6,7 +6,7 @@
  *
  * Configuration côté Stripe :
  *   Dashboard → Developers → Webhooks → Add endpoint
- *   URL : https://dreams-fly.vercel.app/api/stripe-webhook
+ *   URL : https://dreamsfly.fr/api/stripe-webhook
  *   Events : checkout.session.completed
  *   Copier le signing secret dans STRIPE_WEBHOOK_SECRET (Vercel env vars)
  */

@@ -5,7 +5,7 @@
 
 type Thing = Record<string, unknown>;
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://dreams-fly.vercel.app";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://dreamsfly.fr";
 
 /** Composant React qui injecte un JSON-LD type-safe. */
 export function JsonLd({ data }: { data: Thing | Thing[] | null }) {
@@ -52,11 +52,9 @@ export function websiteSchema() {
     name: "DreamsFly",
     inLanguage: "fr-FR",
     publisher: { "@id": `${SITE_URL}/#organization` },
-    potentialAction: {
-      "@type": "SearchAction",
-      target: { "@type": "EntryPoint", urlTemplate: `${SITE_URL}/recherche?q={search_term_string}` },
-      "query-input": "required name=search_term_string",
-    },
+    // NOTE : pas de SearchAction — la recherche du site est une modale (⌘K),
+    // il n'existe pas de page /recherche?q=. Déclarer une URL 404 à Google
+    // ferait plus de mal que de bien. À réactiver si une page dédiée est créée.
   };
 }
 
@@ -123,9 +121,32 @@ export function productSchema(opts: {
       url: opts.url.startsWith("http") ? opts.url : `${SITE_URL}${opts.url}`,
       priceCurrency: opts.priceCurrency || "EUR",
       price: opts.price,
+      // Requis par Google Merchant pour l'éligibilité rich results —
+      // renouvelé automatiquement : fin de l'année en cours
+      priceValidUntil: `${new Date().getFullYear()}-12-31`,
       availability: `https://schema.org/${opts.availability || "InStock"}`,
       ...(opts.compareAtPrice && { highPrice: opts.compareAtPrice, lowPrice: opts.price }),
       itemCondition: "https://schema.org/NewCondition",
+      // Livraison forfaitaire 99 € France métropolitaine (politique réelle du site)
+      shippingDetails: {
+        "@type": "OfferShippingDetails",
+        shippingRate: { "@type": "MonetaryAmount", value: 99, currency: "EUR" },
+        shippingDestination: { "@type": "DefinedRegion", addressCountry: "FR" },
+        deliveryTime: {
+          "@type": "ShippingDeliveryTime",
+          handlingTime: { "@type": "QuantitativeValue", minValue: 1, maxValue: 2, unitCode: "DAY" },
+          transitTime: { "@type": "QuantitativeValue", minValue: 5, maxValue: 7, unitCode: "DAY" },
+        },
+      },
+      // Droit de rétractation légal français : 14 jours
+      hasMerchantReturnPolicy: {
+        "@type": "MerchantReturnPolicy",
+        applicableCountry: "FR",
+        returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
+        merchantReturnDays: 14,
+        returnMethod: "https://schema.org/ReturnByMail",
+        returnFees: "https://schema.org/FreeReturn",
+      },
     },
     ...(opts.ratingValue && opts.ratingCount
       ? {

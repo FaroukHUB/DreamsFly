@@ -74,7 +74,7 @@ export default async function ShowroomPage({ params }: { params: Promise<Params>
       ?.slice()
       .sort((a: any, b: any) => DAYS_ORDER.indexOf(a.day) - DAYS_ORDER.indexOf(b.day)) || [];
 
-  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://dreams-fly.vercel.app";
+  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://dreamsfly.fr";
 
   return (
     <>

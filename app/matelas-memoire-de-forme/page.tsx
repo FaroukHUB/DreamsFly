@@ -7,6 +7,7 @@ import { siteSettingsQuery } from "@/lib/sanity/queries";
 import { fetchPageHeros, pickHeroImageUrl } from "@/lib/sanity/page-heros";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
+import { SeoCrossLinks } from "@/components/seo-cross-links";
 import { EditorialPageHeader } from "@/components/editorial-page-header";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import { buildMetadata } from "@/lib/seo/metadata";
@@ -329,6 +330,15 @@ export default async function MemoryFoamLanding() {
         </section>
       </main>
 
+      <SeoCrossLinks
+        links={[
+          { href: "/matelas", label: "Tous nos matelas" },
+          { href: "/matelas-mal-de-dos", label: "Matelas contre le mal de dos" },
+          { href: "/magazine/guide-choisir-matelas", label: "Comment choisir son matelas" },
+          { href: "/quiz", label: "Quiz matelas en 6 questions" },
+          { href: "/magasins", label: "Essayer en showroom" },
+        ]}
+      />
       <Footer settings={siteSettings} />
 
       <JsonLd data={organizationSchema({ name: "DreamsFly" })} />

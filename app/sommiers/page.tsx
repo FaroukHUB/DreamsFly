@@ -6,6 +6,7 @@ import { pillarSommiersQuery, allSommiersQuery } from "@/lib/sanity/product-quer
 import { siteSettingsQuery } from "@/lib/sanity/queries";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
+import { SeoCrossLinks } from "@/components/seo-cross-links";
 import { Sections } from "@/components/landing/blocks";
 import { EditorialPageHeader } from "@/components/editorial-page-header";
 import { fetchPageHeros, pickHeroImageUrl } from "@/lib/sanity/page-heros";
@@ -258,6 +259,14 @@ export default async function SommiersPillar({ searchParams }: { searchParams: S
         )}
       </main>
 
+      <SeoCrossLinks
+        links={[
+          { href: "/magazine/guide-choisir-sommier", label: "Comment choisir son sommier" },
+          { href: "/matelas", label: "Nos matelas" },
+          { href: "/lits", label: "Nos lits" },
+          { href: "/lits-coffre", label: "Guide du lit coffre" },
+        ]}
+      />
       <Footer settings={siteSettings} />
 
       <JsonLd data={organizationSchema({ name: "DreamsFly" })} />

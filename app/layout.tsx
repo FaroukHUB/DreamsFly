@@ -46,6 +46,11 @@ export const metadata: Metadata = {
   },
   alternates: { canonical: siteUrl },
   robots: { index: true, follow: true },
+  // Vérification Google Search Console — définir GOOGLE_SITE_VERIFICATION sur Vercel
+  // (Search Console → Paramètres → Validation de la propriété → balise HTML → copier le content)
+  ...(process.env.GOOGLE_SITE_VERIFICATION
+    ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } }
+    : {}),
 };
 
 export const viewport: Viewport = {
