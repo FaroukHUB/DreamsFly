@@ -117,6 +117,61 @@ function hasIssue(s) {
   });
 }
 
+/**
+ * Entrées de FAQ promettant un essai à domicile.
+ *
+ * Un remplacement mot à mot ne suffit PAS ici : retirer « 30 nuits d'essai »
+ * d'une réponse laisse debout le reste de la promesse (« reprise gratuite et
+ * remboursement intégral, sans conditions »), qui est tout aussi fausse. On
+ * remplace donc la question ET la réponse en entier par la version validée —
+ * identique à celle de lib/product-defaults.ts.
+ */
+const TRIAL_RE = new RegExp(String.raw`(\d+\s*nuits?\s+d${AP}?\s*essai|essai\s+(?:de\s+)?\d+\s*nuits?)`, "i");
+
+const CANONICAL_TRIAL_FAQ = {
+  question: "Puis-je essayer le matelas avant d'acheter ?",
+  answer:
+    "Oui, en showroom : nos boutiques présentent les modèles et un conseiller vous oriente selon votre morphologie et votre position de sommeil. Pour une commande en ligne, vous disposez du droit de rétractation légal de 14 jours (article L221-18 du Code de la consommation), le produit devant être retourné complet et dans son emballage d'origine.",
+};
+
+/**
+ * Repère les objets { question, answer } dont la réponse promet un essai à
+ * domicile, quel que soit le type de document (productFaq, FAQ homepage,
+ * FAQ quiz, categoryFaqOverride…). Renvoie les ops de patch ET le chemin
+ * parent, pour que le nettoyage générique ne repasse pas dessus ensuite.
+ */
+function findFaqIssues(node, path = "") {
+  const issues = [];
+  const parents = [];
+  if (node == null || typeof node !== "object") return { issues, parents };
+
+  if (Array.isArray(node)) {
+    node.forEach((v, i) => {
+      const r = findFaqIssues(v, `${path}[${i}]`);
+      issues.push(...r.issues);
+      parents.push(...r.parents);
+    });
+    return { issues, parents };
+  }
+
+  const q = node.question;
+  const a = node.answer;
+  if (typeof q === "string" && typeof a === "string" && TRIAL_RE.test(a) && !isDeliberate(a)) {
+    issues.push({ path: `${path}.question`, value: q, cleaned: CANONICAL_TRIAL_FAQ.question });
+    issues.push({ path: `${path}.answer`, value: a, cleaned: CANONICAL_TRIAL_FAQ.answer });
+    parents.push(path);
+    return { issues, parents };
+  }
+
+  for (const k of Object.keys(node)) {
+    if (k.startsWith("_")) continue;
+    const r = findFaqIssues(node[k], path ? `${path}.${k}` : k);
+    issues.push(...r.issues);
+    parents.push(...r.parents);
+  }
+  return { issues, parents };
+}
+
 /** Parcourt récursivement une valeur pour trouver toutes les strings problématiques. */
 function findIssues(node, path = "") {
   const issues = [];
@@ -142,7 +197,15 @@ async function scan(query, label) {
   const docs = await client.fetch(query);
   const flagged = [];
   for (const doc of docs) {
-    const issues = findIssues(doc);
+    // 1. Les entrées de FAQ sont traitées en priorité, en bloc.
+    const faq = findFaqIssues(doc);
+    // 2. Nettoyage générique sur tout le reste — on exclut les chemins déjà
+    //    pris en charge ci-dessus, sinon le remplacement mot à mot écraserait
+    //    la réponse canonique par une version partiellement fausse.
+    const generic = findIssues(doc).filter(
+      (i) => !faq.parents.some((p) => i.path === p || i.path.startsWith(`${p}.`)),
+    );
+    const issues = [...faq.issues, ...generic];
     if (issues.length > 0) flagged.push({ doc, issues });
   }
   console.log(`\n📄 ${label} — ${flagged.length}/${docs.length} document(s) contiennent une mention à nettoyer\n`);
