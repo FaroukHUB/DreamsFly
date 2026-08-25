@@ -169,7 +169,8 @@ function MobileMenu({ open, onClose, menu }: { open: boolean; onClose: () => voi
 }
 
 const DEFAULT_MENU: MenuItem[] = [
-  { label: "Promos", link: "/promos", highlight: true },
+  // "/promos" retiré : la page n'existe pas (redirect 307 vers / dans
+  // next.config). Réactiver quand une vraie page promotions existera.
   { label: "Matelas", link: "/matelas" },
   { label: "Sommiers", link: "/sommiers" },
   { label: "Oreillers", link: "/oreillers" },

@@ -207,6 +207,17 @@ function SocialIcon({ name }: { name: string }) {
   }
 }
 
+/**
+ * Colonnes du footer — chaque lien pointe vers une page qui existe
+ * réellement. Ne rien ajouter ici sans que la page soit publiée :
+ * un lien mort dans le footer est présent sur 100 % du site et pénalise
+ * le crawl (Google suit les liens internes en priorité).
+ *
+ * Retirés en août 2026 (pages inexistantes) : /linge-de-lit, /packs,
+ * /marque/nos-experts, /marque/partenaires, /marque/presse,
+ * /services/paiement, /services/fidelite, /services/parrainage,
+ * /services/cartes-cadeaux, /services/pro.
+ */
 const DEFAULT_COLUMNS: Column[] = [
   {
     title: "Catalogue",
@@ -215,18 +226,18 @@ const DEFAULT_COLUMNS: Column[] = [
       { label: "Lits", link: "/lits" },
       { label: "Sommiers", link: "/sommiers" },
       { label: "Oreillers", link: "/oreillers" },
-      { label: "Linge de lit", link: "/linge-de-lit" },
-      { label: "Packs", link: "/packs" },
+      { label: "Lits coffre", link: "/lits-coffre" },
     ],
   },
   {
     title: "Guides & Blog",
     links: [
-      { label: "Nos guides", link: "/magazine" },
+      { label: "Magazine", link: "/magazine" },
       { label: "Comparatifs", link: "/comparatifs" },
       { label: "Glossaire", link: "/glossaire" },
-      { label: "Blog sommeil", link: "/magazine" },
       { label: "Quiz matelas", link: "/quiz" },
+      { label: "Matelas & mal de dos", link: "/matelas-mal-de-dos" },
+      { label: "Mémoire de forme", link: "/matelas-memoire-de-forme" },
     ],
   },
   {
@@ -243,21 +254,9 @@ const DEFAULT_COLUMNS: Column[] = [
     title: "Marque",
     links: [
       { label: "Qui sommes-nous", link: "/marque/qui-sommes-nous" },
-      { label: "Nos experts", link: "/marque/nos-experts" },
-      { label: "Engagements", link: "/marque/engagements" },
-      { label: "Marques partenaires", link: "/marque/partenaires" },
+      { label: "Nos engagements", link: "/marque/engagements" },
       { label: "Showrooms", link: "/magasins" },
-      { label: "Presse", link: "/marque/presse" },
-    ],
-  },
-  {
-    title: "Info",
-    links: [
-      { label: "Paiement en 4×", link: "/services/paiement" },
-      { label: "Programme fidélité", link: "/services/fidelite" },
-      { label: "Parrainage", link: "/services/parrainage" },
-      { label: "Cartes cadeaux", link: "/services/cartes-cadeaux" },
-      { label: "Professionnels", link: "/services/pro" },
+      { label: "Plan du site", link: "/plan-du-site" },
     ],
   },
 ];
