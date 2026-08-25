@@ -42,7 +42,7 @@ const FAQ = [
   {
     question: "Combien de temps pour que la douleur diminue avec un bon matelas ?",
     answer:
-      "3 à 8 semaines. Les 2 premières semaines, votre corps s'adapte à la nouvelle répartition de pression — les douleurs peuvent PARADOXALEMENT s'intensifier (muscles qui se détendent après des années de compensation). Ne changez pas de matelas trop vite. Après 3 semaines, si aucune amélioration n'apparaît, contactez-nous pour évaluer si un autre modèle serait plus adapté. Nos 30 nuits d'essai couvrent largement cette période.",
+      "3 à 8 semaines. Les 2 premières semaines, votre corps s'adapte à la nouvelle répartition de pression — les douleurs peuvent PARADOXALEMENT s'intensifier (muscles qui se détendent après des années de compensation). Ne changez pas de matelas trop vite. Après 3 semaines, si aucune amélioration n'apparaît, contactez-nous pour évaluer si un autre modèle serait plus adapté.",
   },
   {
     question: "Un vieux matelas peut-il vraiment causer des douleurs ?",
@@ -75,9 +75,9 @@ const FAQ = [
       "Notre gamme mal de dos est composée de modèles à densité premium (65-75 kg/m³ pour la mousse, ressorts ensachés européens), garantis 5 ans minimum. Durée de vie réelle : 10 à 12 ans avec entretien correct. Un renouvellement tous les 10 ans est recommandé pour ne pas voir le matelas perdre progressivement son bénéfice thérapeutique.",
   },
   {
-    question: "Puis-je essayer et renvoyer si mes douleurs ne s'améliorent pas ?",
+    question: "Puis-je essayer un matelas avant de l'acheter ?",
     answer:
-      "30 nuits d'essai à domicile sur tous nos matelas. Si après 21 jours d'adaptation vous ne ressentez aucune amélioration, reprise gratuite et remboursement intégral — sans conditions et sans discussion. Nos conseillers peuvent aussi vous rediriger vers un autre modèle plus adapté si vous préférez essayer une seconde option.",
+      "Oui, en showroom. C'est même la méthode que nous recommandons pour une problématique de dos : allongez-vous 10 à 15 minutes sur plusieurs fermetés, dans votre position de sommeil habituelle, et laissez un conseiller observer l'alignement de votre colonne. Pour une commande en ligne, vous disposez du droit de rétractation légal de 14 jours (article L221-18 du Code de la consommation), le produit devant être retourné complet et dans son emballage d'origine.",
   },
 ];
 

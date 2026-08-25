@@ -11,11 +11,20 @@
  * Par défaut : mode DRY (liste seulement). Ajouter --publish pour appliquer.
  *
  * Politiques appliquées :
- *  · "Livraison offerte / gratuite / incluse" → "Livraison à domicile (99 €)"
- *  · "Frais de port offerts / gratuits"      → "Frais de livraison 99 €"
+ *  · "Livraison offerte / gratuite / incluse (dès X €)" → "Livraison à domicile (99 €)"
+ *  · "Frais de port offerts / gratuits"       → "Frais de livraison 99 €"
  *  · "15 ans de garantie" / "Garantie 15 ans" → "Garantie fabricant"
- *  · "100 nuits d'essai" / "Essai 100 nuits"  → "Essai en showroom"
- *  · "essai 100 nuits" (minuscule)            → "essai en showroom"
+ *  · "N nuits d'essai" / "Essai N nuits"      → "Essai en showroom"
+ *    (N quelconque : 30, 100, 120… DreamsFly ne propose PAS d'essai à
+ *     domicile — l'essai se fait en boutique, cf. public/llms.txt)
+ *
+ * Cas particulier : product.deliveryOverride.price est un champ affiché tel
+ * quel en titre de la section Livraison. On y écrit la formulation canonique
+ * (identique à `deliveryInfo.price` dans lib/product-defaults.ts) plutôt que
+ * le résultat d'un remplacement regex, pour garder tout le site cohérent.
+ *
+ * ⚠️  À relancer après CHAQUE rollback Sanity : une restauration par la
+ * History API ramène l'état d'avant nettoyage, donc les mentions reviennent.
  *
  * Usage :
  *   SANITY_PROJECT_ID=qqxvd0fj \
@@ -43,37 +52,77 @@ const client = createClient({
   useCdn: false,
 });
 
-// Regex catch-all pour les formulations à supprimer
-const OFFERED_RE = /livraison\s+(offerte|gratuite|incluse)(?:\s+d[eè]s\s+\d+\s*€?)?/gi;
-const FRAIS_RE = /frais\s+de\s+port\s+(offerts?|gratuits?|nuls?)/gi;
-const WARRANTY15_RE = /(garantie\s+(?:de\s+)?15\s*ans|15\s*ans\s+de\s+garantie)/gi;
-const NUITS100_RE = /(essai\s+100\s*nuits|100\s*nuits\s+d['e]?\s*essai|nuit\s+d['e]?\s*essai\s+100\s*nuits)/gi;
+// Formulation canonique des frais de port — doit rester identique à
+// `deliveryInfo.price` dans lib/product-defaults.ts.
+const CANONICAL_DELIVERY_PRICE = "Frais de port forfaitaires — affichés au panier";
 
-/** Nettoie une string en remplaçant les formulations à bannir. */
-function cleanString(s) {
+// Regex catch-all pour les formulations à supprimer.
+// Apostrophe droite ET typographique (’) : Sanity stocke souvent la seconde.
+const AP = "['’]";
+const OFFERED_RE = new RegExp(String.raw`livraison\s+(offerte|gratuite|incluse|à\s+0\s*€)(?:\s*(?:,|·|-|—)?\s*d[eè]s\s+\d+\s*(?:€|euros?)?)?`, "gi");
+const FRAIS_RE = new RegExp(String.raw`frais\s+de\s+port\s+(offerts?|gratuits?|nuls?|à\s+0\s*€)(?:\s*d[eè]s\s+\d+\s*(?:€|euros?)?)?`, "gi");
+const WARRANTY15_RE = /(garantie\s+(?:de\s+)?15\s*ans|15\s*ans\s+de\s+garantie)/gi;
+// N nuits d'essai, quel que soit N — aucun essai à domicile chez DreamsFly.
+const NUITS_RE = new RegExp(String.raw`(essai\s+(?:de\s+)?\d+\s*nuits?|\d+\s*nuits?\s+d${AP}?\s*essai)`, "gi");
+
+/**
+ * Phrases où la mention est VOLONTAIRE : ce sont des contre-messages qui
+ * expliquent que DreamsFly ne propose PAS d'essai à domicile, ou qui
+ * critiquent la pratique chez les concurrents. Les nettoyer inverserait
+ * le sens ("se laisser piéger par le « Essai en showroom »"…).
+ */
+const KEEP_RE = [
+  /pas\s+d${"['’]"}?essai/i,
+  /n${"['’]"}est\s+pas\s+propos/i,
+  /se\s+laisser\s+pi[ée]g/i,
+  /«[^»]*nuits[^»]*»/i,
+];
+
+function isDeliberate(s) {
+  return KEEP_RE.some((re) => re.test(s));
+}
+
+const RULES = [
+  [OFFERED_RE, "Livraison à domicile (99 €)", "livraison à domicile (99 €)"],
+  [FRAIS_RE, "Frais de livraison 99 €", "frais de livraison 99 €"],
+  [WARRANTY15_RE, "Garantie fabricant", "garantie fabricant"],
+  [NUITS_RE, "Essai en showroom", "essai en showroom"],
+];
+
+/**
+ * Nettoie une string en remplaçant les formulations à bannir.
+ * `path` sert au cas particulier deliveryOverride.price (champ affiché en
+ * titre : on y écrit la formulation canonique complète).
+ */
+function cleanString(s, path = "") {
   if (!s || typeof s !== "string") return s;
+  if (/deliveryOverride\.price$/.test(path)) return CANONICAL_DELIVERY_PRICE;
   let out = s;
-  out = out.replace(OFFERED_RE, "Livraison à domicile (99 €)");
-  out = out.replace(FRAIS_RE, "Frais de livraison 99 €");
-  out = out.replace(WARRANTY15_RE, (m) => (m[0] === m[0].toUpperCase() ? "Garantie fabricant" : "garantie fabricant"));
-  out = out.replace(NUITS100_RE, (m) => (m[0] === m[0].toUpperCase() ? "Essai en showroom" : "essai en showroom"));
+  for (const [re, upper, lower] of RULES) {
+    re.lastIndex = 0;
+    out = out.replace(re, (m) => (m[0] === m[0].toUpperCase() ? upper : lower));
+  }
+  // Rattrapage : "30 nuits d'essai à domicile" devenait "Essai en showroom
+  // à domicile" — contradictoire. On supprime le complément devenu faux.
+  out = out.replace(/(essai en showroom)\s+(à domicile|chez vous)/gi, "$1");
   return out;
 }
 
 function hasIssue(s) {
   if (typeof s !== "string") return false;
-  OFFERED_RE.lastIndex = FRAIS_RE.lastIndex = WARRANTY15_RE.lastIndex = NUITS100_RE.lastIndex = 0;
-  return OFFERED_RE.test(s) || FRAIS_RE.test(s) || WARRANTY15_RE.test(s) || NUITS100_RE.test(s);
+  if (isDeliberate(s)) return false;
+  return RULES.some(([re]) => {
+    re.lastIndex = 0;
+    return re.test(s);
+  });
 }
-// reset lastIndex après la déclaration
-OFFERED_RE.lastIndex = FRAIS_RE.lastIndex = WARRANTY15_RE.lastIndex = NUITS100_RE.lastIndex = 0;
 
 /** Parcourt récursivement une valeur pour trouver toutes les strings problématiques. */
 function findIssues(node, path = "") {
   const issues = [];
   if (node == null) return issues;
   if (typeof node === "string") {
-    if (hasIssue(node)) issues.push({ path, value: node, cleaned: cleanString(node) });
+    if (hasIssue(node)) issues.push({ path, value: node, cleaned: cleanString(node, path) });
     return issues;
   }
   if (Array.isArray(node)) {
@@ -165,8 +214,11 @@ async function main() {
   console.log(`   Projet: ${projectId} · Dataset: ${dataset}\n`);
 
   const productIssues = await scan(
-    `*[_type == "product"]{ _id, _type, _rev, name, slug, deliveryOverride, warrantyOverride, tagline, productFaq, highlights }`,
-    "Produits (deliveryOverride, warrantyOverride, tagline, FAQ, highlights)",
+    // `{...}` : on inspecte TOUS les champs texte du produit (advantages,
+    // tips, audiences, careSteps, extraCta, description…) et pas seulement
+    // une poignée. Sans risque : le patch reste partiel (.patch().set()).
+    `*[_type == "product"]{ ... }`,
+    "Produits (tous champs texte : livraison, garantie, FAQ, avantages, conseils…)",
   );
 
   const landingIssues = await scan(

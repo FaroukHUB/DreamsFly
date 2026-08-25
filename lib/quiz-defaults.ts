@@ -204,7 +204,7 @@ export const defaultQuizContent = {
       { question: "Combien de temps prend le quiz ?", answer: "60 à 90 secondes en moyenne. Les 6 questions sont pensées pour être répondues rapidement, sans se casser la tête." },
       { question: "Le résultat est-il vraiment personnalisé ?", answer: "Oui. L'algorithme note chaque matelas sur 100 points contre vos 6 réponses (fermeté, position, gabarit, priorités, préférence, budget). Le mieux noté vous est proposé, avec 2 alternatives." },
       { question: "Puis-je refaire le quiz ?", answer: "Autant de fois que vous voulez. Vous pouvez aussi modifier une réponse en cours de route grâce au bouton Retour." },
-      { question: "Que se passe-t-il si je n'aime pas la recommandation ?", answer: "Deux options : (1) essayer une des 2 alternatives proposées, (2) commander avec les 30 nuits d'essai — si le matelas ne vous convient pas, reprise gratuite et remboursement intégral." },
+      { question: "Que se passe-t-il si je n'aime pas la recommandation ?", answer: "Deux options : (1) essayer une des 2 alternatives proposées, (2) venir tester les modèles en showroom avec un conseiller avant de vous décider." },
       { question: "Pourquoi demander mon budget ?", answer: "Pour éviter de vous frustrer avec un matelas hors de votre portée. L'algorithme reste dans votre fourchette et propose le meilleur produit à ce niveau de prix." },
       { question: "Un matelas moelleux ou ferme, lequel est meilleur pour le dos ?", answer: "Aucun n'est intrinsèquement meilleur — dépend de votre position et poids. Recherches récentes (Journal of Chiropractic Medicine) : un matelas mi-ferme réduit les douleurs lombaires chroniques dans 74 % des cas. Le très mou et le très ferme sont les 2 extrêmes à éviter." },
       { question: "Comment savoir si j'ai un mauvais matelas ?", answer: "3 signes : (1) vous vous réveillez avec des douleurs qui disparaissent en journée, (2) vous voyez une empreinte visible en vous levant, (3) vous dormez mieux à l'hôtel ou chez des amis. Deux sur trois = temps de changer." },
@@ -212,7 +212,7 @@ export const defaultQuizContent = {
       { question: "Quelle taille pour un couple ?", answer: "160×200 est le meilleur compromis (chacun 80 cm, matelas de qualité, chambre 12 m² minimum). 180×200 si l'un de vous bouge beaucoup ou si vous avez la chambre. 140×190 est court pour deux adultes de + 1,75 m." },
       { question: "Faut-il changer de matelas tous les 10 ans ?", answer: "C'est la moyenne. Certains matelas premium tiennent 15 ans, d'autres modèles bas de gamme s'affaissent à 5 ans. Test : si votre matelas a plus de 10 ans ET que vous avez des douleurs matinales, c'est le moment." },
       { question: "Le quiz gère-t-il aussi les lits et oreillers ?", answer: "Oui — la 1re question vous demande le produit (matelas, lit ou oreiller). Le parcours s'adapte ensuite aux critères pertinents pour ce type de produit." },
-      { question: "Puis-je acheter directement après le quiz ?", answer: "Oui — bouton Acheter directement sur la page résultat. Frais de port forfaitaires affichés au panier, paiement en 4× sans frais avec Alma, 30 nuits d'essai." },
+      { question: "Puis-je acheter directement après le quiz ?", answer: "Oui — bouton Acheter directement sur la page résultat. Frais de port forfaitaires affichés au panier, paiement en 4× sans frais avec Alma, droit de rétractation légal de 14 jours." },
     ],
   },
 };

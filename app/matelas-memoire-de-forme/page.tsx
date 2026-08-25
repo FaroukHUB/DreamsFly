@@ -57,7 +57,7 @@ const FAQ = [
   {
     question: "Combien de temps pour s'habituer à un matelas mémoire de forme ?",
     answer:
-      "5 à 15 nuits en moyenne. Votre corps a pris des habitudes sur votre ancien matelas — la nouvelle façon dont votre poids se répartit sur la mousse demande une adaptation musculaire. Nos 30 nuits d'essai couvrent largement cette période. Si après 3 semaines vous n'êtes pas convaincu·e, reprise gratuite.",
+      "5 à 15 nuits en moyenne. Votre corps a pris des habitudes sur votre ancien matelas — la nouvelle façon dont votre poids se répartit sur la mousse demande une adaptation musculaire. Ne jugez donc pas votre matelas après deux nuits : laissez passer trois semaines avant de vous faire un avis. Si vous hésitez entre deux fermetés, venez les comparer en showroom avant de commander.",
   },
   {
     question: "Comment entretenir un matelas mémoire de forme ?",
@@ -253,7 +253,7 @@ export default async function MemoryFoamLanding() {
                 Nos matelas mémoire de forme Performance
               </h2>
               <p className="mt-3 text-pierre">
-                {memoryProducts.length} modèles sélectionnés — densité ≥ 65 kg/m³, garantie 5 ans minimum, 30 nuits d'essai.
+                {memoryProducts.length} modèles sélectionnés — densité ≥ 65 kg/m³, garantie 5 ans, essai possible en showroom.
               </p>
             </div>
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">

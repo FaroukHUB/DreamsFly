@@ -114,7 +114,7 @@ const COMMITMENTS = {
   subtitle: "Six promesses concrètes qui guident chaque décision — de la sélection produit au SAV.",
   items: [
     { _key: k(), icon: "✨", title: "Qualité", text: "Matériaux certifiés, ateliers audités, tests longévité 10 ans." },
-    { _key: k(), icon: "🌙", title: "Confort", text: "30 nuits d'essai — vous ne gardez que ce qui vous convient." },
+    { _key: k(), icon: "🌙", title: "Confort", text: "Essai en showroom — vous vous allongez avant de vous décider." },
     { _key: k(), icon: "♾️", title: "Durabilité", text: "Garanties de 2 à 8 ans selon les produits, pièces détachées dispo." },
     { _key: k(), icon: "🚚", title: "Livraison", text: "Rendez-vous programmé, à l'étage, sans surprise de dernière minute." },
     { _key: k(), icon: "👥", title: "Accompagnement", text: "Conseillers sommeil formés — un vrai humain, pas un chatbot." },
@@ -144,7 +144,7 @@ const HOMEPAGE_FAQ = {
     { _key: k(), category: "garantie", question: "Comment activer la garantie ?", answer: "Envoyez-nous une photo + description du problème par email à contact@dreamsfly.fr. Nous vous répondons sous 4 h ouvrées avec la marche à suivre — le plus souvent un simple retour + échange." },
     { _key: k(), category: "entretien", question: "Faut-il retourner un matelas ?", answer: "Oui — tous les 3 mois la 1re année, puis tous les 6 mois. Alternez tête-pied et face A / face B. Cette rotation prolonge la durée de vie de 30 à 40 %." },
     { _key: k(), category: "entretien", question: "Comment nettoyer une tache sur mon matelas ?", answer: "Tamponnez immédiatement avec un chiffon microfibre humide (jamais détrempé). Un peu de savon de Marseille pour les taches organiques. Séchez au sèche-cheveux à distance. Évitez absolument l'eau de Javel." },
-    { _key: k(), category: "sav", question: "Puis-je essayer un matelas et le renvoyer ?", answer: "Oui — 30 nuits d'essai à domicile. Après 21 jours d'adaptation minimum, si le matelas ne vous convient pas, nous organisons la reprise gratuite et vous êtes intégralement remboursé, sans conditions et sans discussion." },
+    { _key: k(), category: "sav", question: "Puis-je essayer un matelas avant de l'acheter ?", answer: "Oui, en showroom : nos boutiques présentent les modèles et un conseiller vous oriente selon votre morphologie et votre position de sommeil. Pour une commande en ligne, vous disposez du droit de rétractation légal de 14 jours (article L221-18 du Code de la consommation)." },
     { _key: k(), category: "sav", question: "Comment vous contacter en cas de problème ?", answer: "Par email à contact@dreamsfly.fr (réponse < 4 h en semaine), par téléphone au numéro affiché en pied de page, ou directement dans l'un de nos 3 showrooms." },
     { _key: k(), category: "sav", question: "Puis-je annuler ma commande avant livraison ?", answer: "Oui, sans frais, tant que la commande n'a pas été expédiée. Après expédition, retour gratuit sous 14 jours conformément au droit de rétractation. La reprise à domicile est gratuite." },
     { _key: k(), category: "autre", question: "Avez-vous des showrooms physiques ?", answer: "Oui, 3 showrooms en France où vous pouvez tester nos matelas et lits avant achat. Voir la page Magasins pour les adresses et horaires." },
