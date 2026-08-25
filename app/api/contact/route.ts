@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { Resend } from "resend";
 import { enforceRateLimit } from "@/lib/rate-limit";
 
 /**
@@ -91,14 +92,115 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // TODO : envoyer email via Resend + créer doc Sanity
-  console.log("[contact]", {
-    name: data.name,
-    email: data.email,
-    phone: data.phone,
-    subject: data.subject,
-    message: data.message.slice(0, 200),
-  });
+  const sent = await sendContactEmail(data);
+  if (!sent.ok) {
+    // Le message est loggé pour ne rien perdre même si l'email échoue
+    console.error("[contact] échec envoi email:", sent.error, {
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
+      subject: data.subject,
+      message: data.message,
+    });
+    return NextResponse.json(
+      { error: "L'envoi a échoué. Écrivez-nous directement à contact@dreamsfly.fr." },
+      { status: 502 },
+    );
+  }
 
   return NextResponse.json({ ok: true });
+}
+
+type ContactData = z.infer<typeof ContactSchema>;
+
+/**
+ * Envoie le message via Resend.
+ * - `to`   : CONTACT_EMAIL_TO (défaut contact@dreamsfly.fr)
+ * - `from` : CONTACT_EMAIL_FROM — doit être une adresse d'un domaine
+ *            vérifié dans Resend (ex. contact@dreamsfly.fr)
+ * - `replyTo` : l'email du visiteur, pour répondre en un clic
+ *
+ * Si RESEND_API_KEY n'est pas défini, on log et on considère l'envoi
+ * réussi côté UX (mode dégradé de développement).
+ */
+async function sendContactEmail(data: ContactData): Promise<{ ok: boolean; error?: string }> {
+  const apiKey = process.env.RESEND_API_KEY;
+  const to = process.env.CONTACT_EMAIL_TO || "contact@dreamsfly.fr";
+  const from = process.env.CONTACT_EMAIL_FROM || "DreamsFly <contact@dreamsfly.fr>";
+
+  if (!apiKey) {
+    console.warn("[contact] RESEND_API_KEY absent — message loggé sans envoi:", {
+      name: data.name,
+      email: data.email,
+      subject: data.subject,
+    });
+    return { ok: true };
+  }
+
+  try {
+    const resend = new Resend(apiKey);
+    const subject = data.subject
+      ? `[Contact site] ${data.subject} — ${data.name}`
+      : `[Contact site] Message de ${data.name}`;
+
+    const rows: [string, string][] = [
+      ["Nom", data.name],
+      ["Email", data.email],
+      ...(data.phone ? ([["Téléphone", data.phone]] as [string, string][]) : []),
+      ...(data.subject ? ([["Sujet", data.subject]] as [string, string][]) : []),
+    ];
+
+    const { error } = await resend.emails.send({
+      from,
+      to,
+      replyTo: data.email,
+      subject,
+      text: [
+        ...rows.map(([k, v]) => `${k} : ${v}`),
+        "",
+        "Message :",
+        data.message,
+      ].join("\n"),
+      html: `
+        <div style="font-family:system-ui,-apple-system,sans-serif;max-width:640px;color:#0F172A">
+          <p style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8B7355;margin:0 0 4px">
+            Nouveau message · formulaire de contact
+          </p>
+          <h2 style="font-family:Georgia,serif;font-weight:400;font-size:22px;margin:0 0 20px">
+            ${escapeHtml(data.name)}
+          </h2>
+          <table style="border-collapse:collapse;width:100%;font-size:14px">
+            ${rows
+              .map(
+                ([k, v]) => `
+              <tr>
+                <td style="padding:8px 12px 8px 0;color:#8B7355;white-space:nowrap;vertical-align:top">${k}</td>
+                <td style="padding:8px 0">${escapeHtml(v)}</td>
+              </tr>`,
+              )
+              .join("")}
+          </table>
+          <div style="margin-top:20px;padding-top:16px;border-top:1px solid #E2E8F0">
+            <p style="color:#8B7355;font-size:11px;letter-spacing:.14em;text-transform:uppercase;margin:0 0 8px">Message</p>
+            <p style="white-space:pre-wrap;line-height:1.6;margin:0">${escapeHtml(data.message)}</p>
+          </div>
+        </div>
+      `,
+    });
+
+    if (error) return { ok: false, error: error.message };
+    return { ok: true };
+  } catch (err) {
+    return { ok: false, error: (err as Error)?.message || "erreur inconnue" };
+  }
+}
+
+/** Échappe le HTML pour éviter toute injection dans l'email. */
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }

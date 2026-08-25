@@ -225,7 +225,7 @@ export function ProductBuyBox({
                   aria-label={item.type === "video" ? `Lire la vidéo ${i + 1}` : `Voir image ${i + 1}`}
                 >
                   {thumb ? (
-                    <Image src={thumb} alt="" fill sizes="80px" className="object-cover" />
+                    <Image src={thumb} alt={`${name} — visuel ${i + 1}`} fill sizes="80px" className="object-cover" />
                   ) : (
                     <div className="absolute inset-0 bg-midnight" />
                   )}
