@@ -138,7 +138,7 @@ const portableComponents: PortableTextComponents = {
           {value.image && (
             <Image
               src={urlFor(value.image).width(800).url()}
-              alt=""
+              alt={value.name || "Illustration de l'étape"}
               width={800}
               height={450}
               className="mt-3 rounded-xl"

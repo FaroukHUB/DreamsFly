@@ -366,7 +366,7 @@ function ResultsList({
                         <div className={`relative h-12 w-12 flex-none overflow-hidden rounded-md ${isSelected ? "bg-white/10" : "bg-creme"}`}>
                           <Image
                             src={urlFor(r.image).width(80).quality(80).url()}
-                            alt=""
+                            alt={r.title || ""}
                             fill
                             sizes="48px"
                             className="object-cover"
