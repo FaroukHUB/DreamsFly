@@ -128,6 +128,24 @@ function hasIssue(s) {
  */
 const TRIAL_RE = new RegExp(String.raw`(\d+\s*nuits?\s+d${AP}?\s*essai|essai\s+(?:de\s+)?\d+\s*nuits?)`, "i");
 
+/** La question porte-t-elle elle-même sur l'essai / le retour ? */
+const QUESTION_ABOUT_TRIAL_RE = /essay|essai|renvoy|retourn|rendre|tester|rembours/i;
+
+/**
+ * Types de documents JAMAIS patchés automatiquement.
+ *
+ * Ce sont des singletons au contenu rédigé sur mesure : un remplacement
+ * mécanique y produit des phrases absurdes (« Nuit d'essai en showroom »)
+ * ou détruit du sens (deux questions de FAQ distinctes réécrites à
+ * l'identique). Ils sont signalés en fin de rapport pour correction
+ * manuelle dans le Studio.
+ *
+ * Cas particulier des avis clients (testimonials) : réécrire les mots
+ * d'un client revient à falsifier un avis. On ne le fait jamais — on
+ * signale, et c'est à l'humain de supprimer ou de remplacer l'avis.
+ */
+const REPORT_ONLY_TYPES = new Set(["homepage", "quizPage", "showroomsPage", "siteSettings"]);
+
 const CANONICAL_TRIAL_FAQ = {
   question: "Puis-je essayer le matelas avant d'acheter ?",
   answer:
@@ -157,9 +175,18 @@ function findFaqIssues(node, path = "") {
   const q = node.question;
   const a = node.answer;
   if (typeof q === "string" && typeof a === "string" && TRIAL_RE.test(a) && !isDeliberate(a)) {
-    issues.push({ path: `${path}.question`, value: q, cleaned: CANONICAL_TRIAL_FAQ.question });
-    issues.push({ path: `${path}.answer`, value: a, cleaned: CANONICAL_TRIAL_FAQ.answer });
-    parents.push(path);
+    // On ne remplace le couple question/réponse QUE si la question porte
+    // elle-même sur l'essai ou le retour. Sinon l'essai n'est qu'évoqué au
+    // passage dans la réponse : réécrire la question la détruirait (deux
+    // questions distinctes deviendraient identiques) — cf. la FAQ du quiz,
+    // où « Puis-je acheter directement après le quiz ? » n'a rien à voir.
+    if (QUESTION_ABOUT_TRIAL_RE.test(q)) {
+      issues.push({ path: `${path}.question`, value: q, cleaned: CANONICAL_TRIAL_FAQ.question });
+      issues.push({ path: `${path}.answer`, value: a, cleaned: CANONICAL_TRIAL_FAQ.answer });
+      parents.push(path);
+    }
+    // Question hors-sujet : on ne touche à rien ici. Le document sera
+    // signalé en « à corriger à la main » (voir REPORT_ONLY_TYPES).
     return { issues, parents };
   }
 
@@ -371,7 +398,7 @@ async function main() {
 
   const warrantyIssues = await scanWarranty();
 
-  const all = [
+  const found = [
     ...warrantyIssues,
     ...productIssues,
     ...landingIssues,
@@ -383,14 +410,36 @@ async function main() {
     ...settingsIssues,
   ];
 
+  // Les singletons au contenu sur mesure ne sont jamais patchés : on les
+  // sort de la liste appliquée et on les affiche à part.
+  const auto = found.filter((f) => !REPORT_ONLY_TYPES.has(f.doc._type));
+  const manual = found.filter((f) => REPORT_ONLY_TYPES.has(f.doc._type));
+
+  if (manual.length > 0) {
+    console.log(`\n═══════════════════════════════════════════════`);
+    console.log(`✋ À CORRIGER À LA MAIN dans le Studio — ${manual.length} document(s)`);
+    console.log(`   Contenu rédigé sur mesure : un remplacement automatique`);
+    console.log(`   y ferait plus de dégâts que de bien. Le script n'y touche pas.`);
+    console.log(`═══════════════════════════════════════════════`);
+    for (const { doc, issues } of manual) {
+      console.log(`\n  📄 ${doc._type}`);
+      for (const issue of issues) {
+        console.log(`     · ${issue.path}`);
+        console.log(`       ${issue.value.slice(0, 120)}${issue.value.length > 120 ? "…" : ""}`);
+      }
+    }
+    console.log("");
+  }
+
   console.log(`\n═══════════════════════════════════════════════`);
-  console.log(`Total : ${all.length} document(s) à nettoyer.`);
+  console.log(`Total : ${auto.length} document(s) patchés automatiquement`);
+  console.log(`      + ${manual.length} document(s) à reprendre à la main.`);
   console.log(`═══════════════════════════════════════════════\n`);
 
   if (DRY) {
     console.log(`💡 Mode DRY — aucun changement appliqué.\n   Relance avec --publish pour patcher.\n`);
   } else {
-    await applyPatches(all);
+    await applyPatches(auto);
   }
 }
 
