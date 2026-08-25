@@ -101,8 +101,12 @@ export async function POST(req: NextRequest) {
       subject: data.subject,
       message: data.message,
     });
+    // La référence (code HTTP renvoyé par Brevo) aide au diagnostic sans
+    // rien exposer de sensible : 401 = clé invalide, 400 = expéditeur ou
+    // payload refusé, 403 = domaine non autorisé.
+    const ref = sent.status ? ` (réf. ${sent.status})` : "";
     return NextResponse.json(
-      { error: "L'envoi a échoué. Écrivez-nous directement à contact@dreamsfly.fr." },
+      { error: `L'envoi a échoué${ref}. Écrivez-nous directement à contact@dreamsfly.fr.` },
       { status: 502 },
     );
   }
@@ -127,11 +131,15 @@ type ContactData = z.infer<typeof ContactSchema>;
  * Sans BREVO_API_KEY : le message est loggé et l'UX reste fonctionnelle
  * (mode dégradé de développement).
  */
-async function sendContactEmail(data: ContactData): Promise<{ ok: boolean; error?: string }> {
-  const apiKey = process.env.BREVO_API_KEY;
-  const to = process.env.CONTACT_EMAIL_TO || "contact@dreamsfly.fr";
-  const fromEmail = process.env.CONTACT_EMAIL_FROM || "contact@dreamsfly.fr";
-  const fromName = process.env.CONTACT_EMAIL_FROM_NAME || "DreamsFly — Site web";
+async function sendContactEmail(
+  data: ContactData,
+): Promise<{ ok: boolean; error?: string; status?: number }> {
+  const apiKey = process.env.BREVO_API_KEY?.trim();
+  const to = parseAddress(process.env.CONTACT_EMAIL_TO, "contact@dreamsfly.fr").email;
+  const fromParsed = parseAddress(process.env.CONTACT_EMAIL_FROM, "contact@dreamsfly.fr");
+  const fromEmail = fromParsed.email;
+  const fromName =
+    process.env.CONTACT_EMAIL_FROM_NAME?.trim() || fromParsed.name || "DreamsFly — Site web";
 
   if (!apiKey) {
     console.warn("[contact] BREVO_API_KEY absent — message loggé sans envoi:", {
@@ -208,12 +216,34 @@ async function sendContactEmail(data: ContactData): Promise<{ ok: boolean; error
 
     if (!res.ok) {
       const detail = await res.text().catch(() => "");
-      return { ok: false, error: `Brevo ${res.status} — ${detail.slice(0, 300)}` };
+      return {
+        ok: false,
+        status: res.status,
+        error: `Brevo ${res.status} — ${detail.slice(0, 300)}`,
+      };
     }
     return { ok: true };
   } catch (err) {
     return { ok: false, error: (err as Error)?.message || "erreur réseau" };
   }
+}
+
+/**
+ * Accepte les deux écritures d'adresse et renvoie toujours l'email seul :
+ *   "contact@dreamsfly.fr"             → { email }
+ *   "DreamsFly <contact@dreamsfly.fr>" → { email, name }
+ * Brevo exige l'email nu dans sender.email — un format "Nom <email>" y
+ * serait rejeté en 400.
+ */
+function parseAddress(raw: string | undefined, fallback: string): { email: string; name?: string } {
+  const value = raw?.trim();
+  if (!value) return { email: fallback };
+  const angle = value.match(/^\s*(.*?)\s*<\s*([^<>@\s]+@[^<>@\s]+)\s*>\s*$/);
+  if (angle) {
+    const name = angle[1].replace(/^["']|["']$/g, "").trim();
+    return { email: angle[2], name: name || undefined };
+  }
+  return { email: value };
 }
 
 /** Échappe le HTML pour éviter toute injection dans l'email. */
