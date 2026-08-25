@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
+import { enforceRateLimit } from "@/lib/rate-limit";
 import { sanityClient } from "@/lib/sanity/client";
 import { groq } from "next-sanity";
 
@@ -197,6 +198,10 @@ async function* streamClaude(system: string, messages: ClientMessage[], apiKey: 
 }
 
 export async function POST(req: NextRequest) {
+  // 10 messages / minute / IP — protège le quota LLM contre le spam
+  const limited = enforceRateLimit(req, "chat", 10, 60_000);
+  if (limited) return limited;
+
   const googleKey = process.env.GOOGLE_API_KEY;
   const anthropicKey = process.env.ANTHROPIC_API_KEY;
 

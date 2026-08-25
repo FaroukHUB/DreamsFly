@@ -1,16 +1,35 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+
+const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
 export function ContactForm() {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
+  const turnstileRef = useRef<HTMLDivElement>(null);
+
+  // Charge le widget Cloudflare Turnstile uniquement si la clé publique est configurée
+  useEffect(() => {
+    if (!TURNSTILE_SITE_KEY || !turnstileRef.current) return;
+    if (document.querySelector("script[src*='challenges.cloudflare.com/turnstile']")) return;
+    const script = document.createElement("script");
+    script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
+  }, []);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setStatus("loading");
     setError(null);
     const data = new FormData(e.currentTarget);
-    const payload = Object.fromEntries(data.entries());
+    const payload: Record<string, unknown> = Object.fromEntries(data.entries());
+    // Le widget Turnstile injecte son jeton sous ce nom de champ
+    if (payload["cf-turnstile-response"]) {
+      payload.turnstileToken = payload["cf-turnstile-response"];
+      delete payload["cf-turnstile-response"];
+    }
     try {
       const res = await fetch("/api/contact", {
         method: "POST",
@@ -59,6 +78,19 @@ export function ContactForm() {
         />
       </div>
       <TextareaField name="message" label="Votre message" required rows={5} />
+
+      {/* Honeypot anti-bot — invisible pour les humains, les bots le remplissent */}
+      <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
+        <label>
+          Ne pas remplir ce champ
+          <input name="website" type="text" tabIndex={-1} autoComplete="off" />
+        </label>
+      </div>
+
+      {/* Widget Cloudflare Turnstile — rendu seulement si la clé publique est définie */}
+      {TURNSTILE_SITE_KEY && (
+        <div ref={turnstileRef} className="cf-turnstile" data-sitekey={TURNSTILE_SITE_KEY} data-theme="light" />
+      )}
 
       {error && <p className="text-sm text-error">{error}</p>}
 

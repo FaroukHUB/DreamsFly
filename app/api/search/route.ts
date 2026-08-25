@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sanityClient } from "@/lib/sanity/client";
 import { groq } from "next-sanity";
+import { enforceRateLimit } from "@/lib/rate-limit";
 
 /**
  * Recherche universelle DreamsFly.
@@ -57,6 +58,10 @@ const SEARCH_QUERY = groq`{
 }`;
 
 export async function GET(req: NextRequest) {
+  // 30 recherches / minute / IP — le debounce client fait ~4-5 req/s max en tapant
+  const limited = enforceRateLimit(req, "search", 30, 60_000);
+  if (limited) return limited;
+
   const q = (req.nextUrl.searchParams.get("q") || "").trim();
   if (q.length < 2) {
     return NextResponse.json({ products: [], guides: [], glossary: [], comparisons: [], landings: [] });

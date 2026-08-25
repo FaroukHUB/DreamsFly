@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
+import { sanitizeHtml } from "@/lib/sanitize-html";
 import { sanityClient } from "@/lib/sanity/client";
 import { guideBySlugQuery, allGuideSlugsQuery } from "@/lib/sanity/guide-queries";
 import { siteSettingsQuery } from "@/lib/sanity/queries";
@@ -119,11 +120,11 @@ const portableComponents: PortableTextComponents = {
       value?.html ? (
         // Sort du max-w-3xl parent pour occuper toute la largeur du viewport,
         // laisse au HTML custom la place de faire ses grilles / tables larges.
-        // Le HTML peut ré-appliquer un max-width interne s'il le souhaite.
+        // HTML sanitizé (DOMPurify) : styles et iframes allowlistés OK, scripts jamais.
         <div
           className="df-html-block relative my-12 w-screen"
           style={{ marginLeft: "calc(50% - 50vw)", marginRight: "calc(50% - 50vw)" }}
-          dangerouslySetInnerHTML={{ __html: value.html }}
+          dangerouslySetInnerHTML={{ __html: sanitizeHtml(value.html) }}
         />
       ) : null,
     howToStep: ({ value }: any) => (

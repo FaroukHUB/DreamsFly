@@ -4,6 +4,7 @@ import "./globals.css";
 import { CartDrawer } from "@/components/cart/cart-drawer";
 import { SearchDialog } from "@/components/search-dialog";
 import { ChatWidget } from "@/components/chat-widget";
+import { CookieConsent } from "@/components/cookie-consent";
 
 const sora = Sora({
   subsets: ["latin"],
@@ -61,6 +62,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <CartDrawer />
         <SearchDialog />
         <ChatWidget />
+        <CookieConsent />
       </body>
     </html>
   );
