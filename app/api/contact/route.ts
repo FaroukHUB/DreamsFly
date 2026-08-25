@@ -106,7 +106,14 @@ export async function POST(req: NextRequest) {
     // payload refusé, 403 = domaine non autorisé.
     const ref = sent.status ? ` (réf. ${sent.status})` : "";
     return NextResponse.json(
-      { error: `L'envoi a échoué${ref}. Écrivez-nous directement à contact@dreamsfly.fr.` },
+      {
+        error: `L'envoi a échoué${ref}. Écrivez-nous directement à contact@dreamsfly.fr.`,
+        // Champ de diagnostic : non affiché à l'utilisateur (le formulaire
+        // ne lit que `error`), consultable dans DevTools → Network.
+        // Contient uniquement la réponse du fournisseur d'email, jamais
+        // la clé API ni de donnée personnelle.
+        debug: sent.error,
+      },
       { status: 502 },
     );
   }
