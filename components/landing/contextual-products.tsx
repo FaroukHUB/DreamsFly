@@ -100,32 +100,37 @@ export async function ContextualProducts({ pageType, slug, alreadyHasProductsGri
             <Link
               key={p._id}
               href={`/matelas/${p.slug}`}
-              className="group flex flex-col rounded-[24px] border border-ink/10 bg-ivoire p-5 transition-all duration-500 hover:-translate-y-1 hover:border-noir/40 hover:shadow-[0_24px_50px_-20px_rgba(11,11,15,0.2)]"
+              className="group flex flex-col overflow-hidden rounded-[20px] bg-ivoire transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_24px_50px_-20px_rgba(11,11,15,0.2)]"
             >
-              <div className="relative mb-5 aspect-[5/4] overflow-hidden rounded-[16px] bg-creme">
+              <div className="relative aspect-[4/3] overflow-hidden bg-creme">
                 {p.image && (
                   <Image
-                    src={urlFor(p.image).width(600).url()}
+                    src={urlFor(p.image).width(700).url()}
                     alt={p.name}
                     fill
                     sizes="(max-width:1024px) 50vw, 25vw"
                     className="object-cover transition-transform duration-[900ms] group-hover:scale-105"
                   />
                 )}
+                <span className="absolute left-4 top-4 rounded-md bg-noir px-3 py-1.5 font-sans text-[10px] font-semibold uppercase tracking-[0.14em] text-ivoire">
+                  Essayez-le en magasin
+                </span>
                 {discount !== null && discount > 0 && (
-                  <span className="absolute left-3 top-3 rounded-full bg-noir px-3 py-1 font-sans text-[10px] font-medium uppercase tracking-[0.14em] text-or">
+                  <span className="absolute right-4 top-4 rounded-md bg-discount px-3 py-1.5 font-sans text-[10px] font-semibold uppercase tracking-[0.12em] text-ivoire">
                     −{discount}%
                   </span>
                 )}
               </div>
-              <h3 className="display-serif on-cream text-[1.1rem] font-normal">{p.name}</h3>
-              <p className="mt-2 line-clamp-2 font-sans text-[13px] leading-relaxed text-taupe">{p.tagline}</p>
-              <div className="mt-4 flex items-baseline gap-2 border-t border-ink/10 pt-3">
-                <span className="font-sans text-[11px] uppercase tracking-[0.14em] text-taupe">Dès</span>
-                <span className="font-serif text-[1.25rem] font-normal text-noir">{price}€</span>
-                {compareAtPrice && compareAtPrice > price && (
-                  <span className="font-sans text-[13px] text-taupe line-through">{compareAtPrice}€</span>
-                )}
+              <div className="flex flex-col p-5">
+                <div className="font-sans text-[11px] font-medium uppercase tracking-[0.16em] text-taupe">{p.name}</div>
+                <h3 className="mt-2 line-clamp-2 font-serif text-[15px] font-normal leading-snug text-noir md:text-[16px]">{p.tagline}</h3>
+                <div className="mt-3 flex items-baseline gap-2">
+                  <span className="font-sans text-[11px] uppercase tracking-[0.14em] text-taupe">Dès</span>
+                  <span className={`font-serif text-[1.2rem] font-semibold ${compareAtPrice && compareAtPrice > price ? "text-discount" : "text-noir"}`}>{price}€</span>
+                  {compareAtPrice && compareAtPrice > price && (
+                    <span className="font-sans text-[13px] text-taupe line-through">{compareAtPrice}€</span>
+                  )}
+                </div>
               </div>
             </Link>
           );

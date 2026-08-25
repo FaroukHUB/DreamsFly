@@ -217,32 +217,37 @@ export default async function LitsPillar({ searchParams }: { searchParams: Searc
                       <Link
                         key={p._id}
                         href={`/lits/${p.slug}`}
-                        className="group flex flex-col rounded-[24px] border border-ink/10 bg-ivoire p-5 transition-all duration-500 hover:-translate-y-1 hover:border-noir/40 hover:shadow-[0_24px_50px_-20px_rgba(11,11,15,0.2)]"
+                        className="group flex flex-col overflow-hidden rounded-[20px] bg-ivoire transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_24px_50px_-20px_rgba(11,11,15,0.2)]"
                       >
-                        <div className="relative mb-6 aspect-[5/4] overflow-hidden rounded-[16px] bg-creme">
+                        <div className="relative aspect-[4/3] overflow-hidden bg-creme">
                           {p.image && (
                             <Image
-                              src={urlFor(p.image).width(700).url()}
+                              src={urlFor(p.image).width(800).url()}
                               alt={p.name}
                               fill
                               sizes="(max-width:1024px) 50vw, 33vw"
                               className="object-cover transition-transform duration-[900ms] group-hover:scale-105"
                             />
                           )}
-                          {m && MATERIAL_LABELS[m] && (
-                            <span className="absolute left-3 top-3 rounded-full border border-noir bg-ivoire/95 px-3 py-1 font-sans text-[10px] font-medium uppercase tracking-[0.16em] text-noir backdrop-blur-sm">
-                              {MATERIAL_LABELS[m]}
+                          <span className="absolute left-4 top-4 rounded-md bg-noir px-3 py-1.5 font-sans text-[10px] font-semibold uppercase tracking-[0.14em] text-ivoire">
+                            Essayez-le en magasin
+                          </span>
+                          {p.compareAtPrice && p.compareAtPrice > p.minPrice && (
+                            <span className="absolute right-4 top-4 rounded-md bg-discount px-3 py-1.5 font-sans text-[10px] font-semibold uppercase tracking-[0.12em] text-ivoire">
+                              −{Math.round(((p.compareAtPrice - p.minPrice) / p.compareAtPrice) * 100)}%
                             </span>
                           )}
                         </div>
-                        <h3 className="display-serif on-cream text-[1.2rem] font-normal leading-tight md:text-[1.4rem]">{p.name}</h3>
-                        <p className="mt-2 line-clamp-2 font-sans text-[13px] leading-relaxed text-taupe md:text-[14px]">{p.tagline}</p>
-                        <div className="mt-5 flex items-baseline gap-2 border-t border-ink/10 pt-4">
-                          <span className="font-sans text-[11px] uppercase tracking-[0.14em] text-taupe">Dès</span>
-                          <span className="font-serif text-[1.4rem] font-normal text-noir">{p.minPrice}€</span>
-                          {p.compareAtPrice && p.compareAtPrice > p.minPrice && (
-                            <span className="font-sans text-[13px] text-taupe line-through">{p.compareAtPrice}€</span>
-                          )}
+                        <div className="flex flex-col p-5 md:p-6">
+                          <div className="font-sans text-[11px] font-medium uppercase tracking-[0.16em] text-taupe">{p.name}</div>
+                          <h3 className="mt-2 line-clamp-2 font-serif text-[16px] font-normal leading-snug text-noir md:text-[17px]">{p.tagline || p.title}</h3>
+                          <div className="mt-4 flex items-baseline gap-2.5">
+                            <span className="font-sans text-[11px] uppercase tracking-[0.14em] text-taupe">Dès</span>
+                            <span className={`font-serif text-[1.35rem] font-semibold ${p.compareAtPrice && p.compareAtPrice > p.minPrice ? "text-discount" : "text-noir"}`}>{p.minPrice}€</span>
+                            {p.compareAtPrice && p.compareAtPrice > p.minPrice && (
+                              <span className="font-sans text-[13px] text-taupe line-through">{p.compareAtPrice}€</span>
+                            )}
+                          </div>
                         </div>
                       </Link>
                     );
