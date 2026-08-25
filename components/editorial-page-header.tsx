@@ -4,17 +4,21 @@ import { urlFor } from "@/lib/sanity/image";
 
 /**
  * En-tête éditorial partagé — direction A (luxe).
- * Utilisé sur toutes les pages secondaires : catégorie, landing, magasin,
- * magazine, glossaire, comparatifs, aide, etc.
  *
- * Modes :
- *  - `tone="cream"` (défaut) : fond crème/beige, texte noir
- *  - `tone="noir"`          : fond noir, texte ivoire, or intensifié
+ * 2 modes selon la présence d'une image :
  *
- * Image :
- *  - `image` : Sanity image object → hero avec image en split (texte gauche + image droite)
- *  - `imageUrl` : URL directe (fallback simple)
- *  - Si aucune image, layout centré sur texte comme avant
+ * SANS image (fond crème/noir) — layout centré texte :
+ *   - Fil d'ariane discret
+ *   - Eyebrow trait+or
+ *   - H1 Fraunces XXL avec dernier mot en italique or
+ *   - Lead texte
+ *
+ * AVEC image — HERO PLEINE LARGEUR :
+ *   - Image full-cover en background
+ *   - Overlay dégradé sombre pour lisibilité (from-black/85)
+ *   - Texte blanc superposé en bas-gauche
+ *   - Fil d'ariane en haut
+ *   - min-h 480px mobile / 620px desktop
  */
 type Crumb = { name: string; url: string };
 
@@ -25,14 +29,9 @@ type Props = {
   breadcrumbs?: Crumb[];
   meta?: React.ReactNode;
   tone?: "cream" | "noir";
-  /** Nombre du dernier mot à passer en italique — 1 par défaut. Passer 0 pour désactiver. */
   emphasize?: number;
-  /** Image Sanity — génère un hero split image droite */
   image?: any;
-  /** URL directe (alternative à `image`) */
   imageUrl?: string;
-  /** Aspect ratio de l'image — défaut 4/5 */
-  imageAspect?: string;
 };
 
 export function EditorialPageHeader({
@@ -45,12 +44,89 @@ export function EditorialPageHeader({
   emphasize = 1,
   image,
   imageUrl,
-  imageAspect = "4/5",
 }: Props) {
   const isNoir = tone === "noir";
-  const resolvedImageUrl = imageUrl || (image ? urlFor(image).width(1400).quality(88).url() : null);
+  const resolvedImageUrl = imageUrl || (image ? urlFor(image).width(1920).quality(88).url() : null);
   const hasImage = !!resolvedImageUrl;
 
+  // ─── MODE IMAGE : hero pleine largeur avec texte overlay ───
+  if (hasImage) {
+    return (
+      <section className="relative overflow-hidden bg-noir text-ivoire">
+        <Image
+          src={resolvedImageUrl}
+          alt={image?.alt || title}
+          fill
+          sizes="100vw"
+          className="object-cover"
+          priority
+        />
+        {/* Overlay sombre pour lisibilité de la typo */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(180deg, rgba(11,11,15,0.55) 0%, rgba(11,11,15,0.35) 40%, rgba(11,11,15,0.85) 100%)",
+          }}
+          aria-hidden="true"
+        />
+        {/* Halo ambré signature bas-droite */}
+        <div
+          className="pointer-events-none absolute -bottom-40 -right-40 h-96 w-96 rounded-full"
+          style={{ background: "radial-gradient(circle, rgba(200,168,118,0.35), transparent 65%)" }}
+          aria-hidden="true"
+        />
+
+        <div className="relative mx-auto flex min-h-[480px] max-w-site flex-col justify-between px-6 pb-14 pt-10 md:min-h-[620px] md:px-10 md:pb-24 md:pt-12">
+          {breadcrumbs && breadcrumbs.length > 0 && (
+            <nav
+              className="flex flex-wrap items-center gap-2 font-sans text-[11px] uppercase tracking-[0.14em] text-ivoire/60"
+              aria-label="Fil d'ariane"
+            >
+              {breadcrumbs.map((c, i) => {
+                const isLast = i === breadcrumbs.length - 1;
+                return (
+                  <span key={i} className="flex items-center gap-2">
+                    {isLast ? (
+                      <span className="text-ivoire">{c.name}</span>
+                    ) : (
+                      <Link href={c.url} className="transition-colors hover:text-or">
+                        {c.name}
+                      </Link>
+                    )}
+                    {!isLast && <span className="opacity-40">/</span>}
+                  </span>
+                );
+              })}
+            </nav>
+          )}
+
+          <div className="mt-auto max-w-4xl">
+            {eyebrow && (
+              <span className="eyebrow-editorial mb-5 text-or">
+                {eyebrow}
+              </span>
+            )}
+            <h1 className="display-serif mt-5 text-[2.4rem] font-normal text-ivoire md:text-[4.6rem] lg:text-[5.6rem]">
+              {emphasize > 0 ? emphasizeLast(title, emphasize) : title}
+            </h1>
+            {lead && (
+              <p className="mt-6 max-w-[54ch] font-serif text-[17px] italic leading-relaxed text-ivoire/85 md:mt-8 md:text-[20px]">
+                {lead}
+              </p>
+            )}
+            {meta && (
+              <div className="mt-6 font-sans text-[13px] leading-relaxed text-ivoire/70">
+                {meta}
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // ─── MODE SANS IMAGE : hero éditorial fond crème / noir ───
   return (
     <section
       className={`${isNoir ? "bg-noir text-ivoire" : "bg-page text-ink"} border-b ${
@@ -83,15 +159,7 @@ export function EditorialPageHeader({
           </nav>
         )}
 
-        <div
-          className={`grid gap-10 ${
-            hasImage
-              ? "md:grid-cols-[1.1fr_1fr] md:items-center md:gap-16"
-              : meta
-                ? "md:grid-cols-[1.6fr_1fr] md:items-end md:gap-16"
-                : ""
-          }`}
-        >
+        <div className={`grid gap-10 ${meta ? "md:grid-cols-[1.6fr_1fr] md:items-end md:gap-16" : ""}`}>
           <div>
             {eyebrow && (
               <span className={`eyebrow-editorial ${isNoir ? "" : "on-cream"} mb-5`}>{eyebrow}</span>
@@ -110,45 +178,10 @@ export function EditorialPageHeader({
                 {lead}
               </p>
             )}
-            {meta && !hasImage && (
-              <div
-                className={`mt-6 font-sans text-[13px] leading-relaxed ${
-                  isNoir ? "text-ivoire/70" : "text-taupe"
-                }`}
-              >
-                {meta}
-              </div>
-            )}
           </div>
-
-          {hasImage && (
+          {meta && (
             <div
-              className="relative overflow-hidden rounded-[28px] shadow-[0_30px_60px_-20px_rgba(11,11,15,0.25)]"
-              style={{ aspectRatio: imageAspect }}
-            >
-              <Image
-                src={resolvedImageUrl}
-                alt={image?.alt || title}
-                fill
-                sizes="(max-width: 768px) 100vw, 45vw"
-                className="object-cover"
-                priority
-              />
-              {/* Subtile teinte ambrée pour l'unité graphique */}
-              <div
-                aria-hidden
-                className="absolute inset-0 mix-blend-overlay opacity-15"
-                style={{
-                  background:
-                    "linear-gradient(135deg, rgba(200, 168, 118, 0.4), transparent 60%)",
-                }}
-              />
-            </div>
-          )}
-
-          {meta && hasImage && (
-            <div
-              className={`col-span-full font-sans text-[13px] leading-relaxed ${
+              className={`font-sans text-[13px] leading-relaxed md:text-right ${
                 isNoir ? "text-ivoire/70" : "text-taupe"
               }`}
             >
@@ -161,7 +194,6 @@ export function EditorialPageHeader({
   );
 }
 
-/** Enveloppe les `n` derniers mots dans <em> pour la mise en italique or. */
 function emphasizeLast(title: string, n: number): React.ReactNode {
   const words = title.trim().split(/\s+/);
   if (words.length <= n) return title;

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Logo } from "./logo";
 import { useCart } from "@/lib/cart/store";
 import { useEffect, useState } from "react";
+import { UspStrip } from "./usp-strip";
 
 type MenuItem = { label?: string; link?: string; highlight?: boolean };
 
@@ -96,6 +97,11 @@ export function Header({ settings }: { settings?: any }) {
           </div>
         </div>
       </header>
+
+      {/* Bandeau USP défilant noir + or — sous le header sur toutes les pages */}
+      {settings?.uspStripEnabled !== false && (
+        <UspStrip tone="noir" items={settings?.uspStrip} />
+      )}
 
       {/* Menu mobile drawer */}
       <MobileMenu open={mobileOpen} onClose={() => setMobileOpen(false)} menu={menu} />

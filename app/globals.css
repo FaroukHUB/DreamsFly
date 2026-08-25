@@ -118,9 +118,11 @@
     background: linear-gradient(-90deg, currentColor 0%, transparent 100%);
   }
   .press-marquee-track {
-    @apply flex w-max animate-marquee gap-20 whitespace-nowrap;
+    @apply flex w-max animate-marquee gap-16 whitespace-nowrap;
   }
-  .press-marquee-track > * {
+  /* Style par défaut appliqué UNIQUEMENT si l'enfant est un <span> texte simple
+     — sans structure interne. Les items complexes (icône+titre+sub) échappent. */
+  .press-marquee-track > span:not(:has(strong)):not(:has(svg)) {
     @apply font-serif font-medium tracking-wide opacity-60;
     font-size: 22px;
   }
