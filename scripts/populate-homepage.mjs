@@ -93,7 +93,6 @@ const WHY_US = {
     { _key: k(), icon: "🛡️", title: "Qualité", text: "Certifications OEKO-TEX, garanties longues, matériaux traçables." },
     { _key: k(), icon: "🤝", title: "Accompagnement", text: "Conseillers sommeil formés, disponibles par téléphone ou en showroom." },
     { _key: k(), icon: "💬", title: "Service client", text: "Réponse en moins de 4 h, du lundi au samedi. Français, humain, sans script." },
-    { _key: k(), icon: "🚚", title: "Livraison", text: "Partout en France métropolitaine, montée à l'étage incluse, reprise gratuite de l'ancien matelas." },
   ],
 };
 
