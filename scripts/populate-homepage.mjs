@@ -115,7 +115,7 @@ const COMMITMENTS = {
   items: [
     { _key: k(), icon: "✨", title: "Qualité", text: "Matériaux certifiés, ateliers audités, tests longévité 10 ans." },
     { _key: k(), icon: "🌙", title: "Confort", text: "Essai en showroom — vous vous allongez avant de vous décider." },
-    { _key: k(), icon: "♾️", title: "Durabilité", text: "Garanties de 2 à 8 ans selon les produits, pièces détachées dispo." },
+    { _key: k(), icon: "♾️", title: "Durabilité", text: "Garantie 2 ans sur la literie, jusqu'à 8 ans sur les vérins des lits coffre." },
     { _key: k(), icon: "🚚", title: "Livraison", text: "Rendez-vous programmé, à l'étage, sans surprise de dernière minute." },
     { _key: k(), icon: "👥", title: "Accompagnement", text: "Conseillers sommeil formés — un vrai humain, pas un chatbot." },
     { _key: k(), icon: "❤️", title: "Service client", text: "Réponse < 4 h en semaine. Objectif : résolution au 1er contact." },

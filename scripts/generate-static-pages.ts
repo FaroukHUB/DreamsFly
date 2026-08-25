@@ -382,7 +382,7 @@ const garantie = {
   metaTitle: "Garantie 2 ans — Que couvre-t-elle ? | DreamsFly",
   metaDescription: "Garantie matelas DreamsFly : 2 ans contre les défauts de fabrication. Conditions, ce qui est couvert, ce qui ne l'est pas, comment faire valoir la garantie.",
   body: [
-    p("Tous les matelas DreamsFly bénéficient d'une garantie commerciale de 2 ans à compter de la date de livraison, couvrant tout défaut de fabrication. Cette garantie s'ajoute aux garanties légales obligatoires (conformité, vices cachés)."),
+    p("Les matelas, sommiers et oreillers DreamsFly bénéficient d'une garantie commerciale de 2 ans à compter de la date de livraison, couvrant tout défaut de fabrication. Les lits coffre suivent le barème du fabricant : 5 ans sur la structure, 8 ans sur les vérins hydrauliques, 2 ans sur le tissu. Ces garanties s'ajoutent aux garanties légales obligatoires (conformité, vices cachés)."),
 
     h2("Ce qui est couvert"),
     p("• Affaissement anormal supérieur à 3 cm dans des conditions d'usage normales"),

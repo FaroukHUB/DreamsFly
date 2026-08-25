@@ -72,7 +72,7 @@ const FAQ = [
   {
     question: "Combien de temps dure un matelas conçu pour le dos ?",
     answer:
-      "Notre gamme mal de dos est composée de modèles à densité premium (65-75 kg/m³ pour la mousse, ressorts ensachés européens), garantis 5 ans minimum. Durée de vie réelle : 10 à 12 ans avec entretien correct. Un renouvellement tous les 10 ans est recommandé pour ne pas voir le matelas perdre progressivement son bénéfice thérapeutique.",
+      "Notre gamme mal de dos est composée de modèles à densité premium (65-75 kg/m³ pour la mousse, ressorts ensachés européens), garantis 2 ans. Durée de vie réelle : 10 à 12 ans avec entretien correct. Un renouvellement tous les 10 ans est recommandé pour ne pas voir le matelas perdre progressivement son bénéfice thérapeutique.",
   },
   {
     question: "Puis-je essayer un matelas avant de l'acheter ?",

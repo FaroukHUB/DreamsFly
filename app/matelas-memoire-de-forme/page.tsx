@@ -253,7 +253,7 @@ export default async function MemoryFoamLanding() {
                 Nos matelas mémoire de forme Performance
               </h2>
               <p className="mt-3 text-pierre">
-                {memoryProducts.length} modèles sélectionnés — densité ≥ 65 kg/m³, garantie 5 ans, essai possible en showroom.
+                {memoryProducts.length} modèles sélectionnés — densité ≥ 65 kg/m³, garantie 2 ans, essai possible en showroom.
               </p>
             </div>
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">

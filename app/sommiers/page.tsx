@@ -73,7 +73,7 @@ export async function generateMetadata({ searchParams }: { searchParams: SearchP
     title: (pillar?.metaTitle || pillar?.h1 || "Sommiers premium — DreamsFly") + filterLabel,
     description:
       pillar?.metaDescription ||
-      "Découvrez notre collection de sommiers : à lattes, tapissiers, avec pieds inclus. Compatibilité tous matelas, garantie 5 ans, livraison à domicile.",
+      "Découvrez notre collection de sommiers : à lattes, tapissiers, avec pieds inclus. Compatibilité tous matelas, garantie 2 ans, livraison à domicile.",
     path: "/sommiers",
   });
 }

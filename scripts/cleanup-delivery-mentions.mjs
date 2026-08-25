@@ -209,8 +209,58 @@ function setDeep(obj, path, value) {
   }
 }
 
+/**
+ * Passe dédiée aux garanties produit.
+ *
+ * Garantie DreamsFly : 2 ans sur matelas, sommiers et oreillers. Seul le
+ * lit coffre garde le barème fabricant (5 ans structure · 8 ans vérins ·
+ * 2 ans tissu) — les produits de type "lit" sont donc exclus.
+ *
+ * Deux champs à corriger, tous deux écrits par d'anciens imports :
+ *  · warrantyOverride.duration — c'est LUI qui s'affiche en titre de la
+ *    section Garantie de la fiche produit (« Garantie 5 ans »).
+ *  · features.garantieAns — repris de la métadonnée du catalogue
+ *    fournisseur, qui porte « 5 ans ».
+ *
+ * Le champ garantieAns n'est plus lu par le site (product-details.tsx et
+ * product-defaults.ts affichent une valeur fixe), mais on l'aligne quand
+ * même pour que le Studio ne montre pas une donnée contradictoire.
+ */
+const WARRANTY_BY_TYPE = { matelas: "2 ans", sommier: "2 ans", oreiller: "2 ans" };
+
+async function scanWarranty() {
+  const docs = await client.fetch(
+    `*[_type == "product" && productType in ["matelas", "sommier", "oreiller"]]{
+       _id, _type, slug, productType, warrantyOverride, features
+     }`,
+  );
+  const flagged = [];
+  for (const doc of docs) {
+    const expected = WARRANTY_BY_TYPE[doc.productType];
+    const issues = [];
+    const current = doc.warrantyOverride?.duration;
+    if (current && current !== expected) {
+      issues.push({ path: "warrantyOverride.duration", value: current, cleaned: expected });
+    }
+    if (doc.features?.garantieAns != null && doc.features.garantieAns !== 2) {
+      issues.push({ path: "features.garantieAns", value: String(doc.features.garantieAns), cleaned: 2 });
+    }
+    if (issues.length > 0) flagged.push({ doc, issues });
+  }
+  console.log(
+    `\n📄 Garanties produit (matelas / sommiers / oreillers → 2 ans ; lits coffre exclus) — ${flagged.length}/${docs.length} document(s) à corriger\n`,
+  );
+  for (const { doc, issues } of flagged) {
+    console.log(`  · ${doc.productType} · ${doc._id}${doc.slug?.current ? ` (/${doc.slug.current})` : ""}`);
+    for (const issue of issues) {
+      console.log(`      ${issue.path} : ${issue.value} → ${issue.cleaned}`);
+    }
+  }
+  return flagged;
+}
+
 async function main() {
-  console.log(`\n🧹 Nettoyage mentions livraison offerte / gratuite — mode ${DRY ? "DRY (liste seulement)" : "PUBLISH (patch appliqué)"}\n`);
+  console.log(`\n🧹 Nettoyage livraison / garantie / essai — mode ${DRY ? "DRY (liste seulement)" : "PUBLISH (patch appliqué)"}\n`);
   console.log(`   Projet: ${projectId} · Dataset: ${dataset}\n`);
 
   const productIssues = await scan(
@@ -256,7 +306,10 @@ async function main() {
     "Paramètres du site (topbar, footer, bandeau éditorial)",
   );
 
+  const warrantyIssues = await scanWarranty();
+
   const all = [
+    ...warrantyIssues,
     ...productIssues,
     ...landingIssues,
     ...staticIssues,

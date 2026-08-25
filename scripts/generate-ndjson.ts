@@ -95,7 +95,8 @@ for (const [handle, p] of products) {
       hypoallergenique: (m["Hypo Allerginique (product.metafields.caracteristiques.hypo_allerginique)"] || "").toLowerCase() === "oui",
       oekoTex: (m["Certification (product.metafields.caracteristiques.certification)"] || "").includes("OEKO"),
       fabriqueEurope: (m["Fabrication (product.metafields.caracteristiques.fabrication)"] || "").toLowerCase().includes("europe"),
-      garantieAns: parseInt(m["Garantie (product.metafields.caracteristiques.garantie)"] || "5") || 5,
+      // Garantie DreamsFly = 2 ans (cf. import-trust-catalog.ts).
+      garantieAns: 2,
       independanceCouchage: m["Independance De Couchage (product.metafields.dimensions.independance_de_couchage)"] || undefined,
     },
     composition: compositions,

@@ -457,7 +457,10 @@ function getSpecsForType(product: any): { label: string; value: string | number 
       { label: "Certification", value: product.features?.oekoTex ? "OEKO-TEX Standard 100" : undefined },
       { label: "Indépendance de couchage", value: product.features?.independanceCouchage },
       { label: "Fabrication", value: product.features?.fabriqueEurope ? "Europe" : undefined },
-      { label: "Garantie", value: product.features?.garantieAns ? `${product.features.garantieAns} ans` : undefined },
+      // Garantie : valeur fixe DreamsFly, PAS `features.garantieAns` — la
+      // métadonnée du catalogue fournisseur porte « 5 ans », ce qui ne
+      // correspond pas à la garantie réellement accordée.
+      { label: "Garantie", value: "2 ans" },
     );
   } else if (pType === "lit") {
     raw.push(

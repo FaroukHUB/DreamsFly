@@ -53,7 +53,7 @@ const CATEGORY_DATA = {
       { icon: "🤝", title: "Indépendance de couchage", text: "L'autre bouge, vous dormez. Silence absolu." },
       { icon: "🌬️", title: "Régulation thermique", text: "Mousses aérées et housses respirantes — nuit fraîche." },
       { icon: "🛡️", title: "Certifiés OEKO-TEX", text: "Absence de substances nocives, sûr pour toute la famille." },
-      { icon: "♾️", title: "Garantie 2 à 5 ans", text: "Défauts couverts + reprise gratuite en cas d'affaissement." },
+      { icon: "♾️", title: "Garantie 2 ans", text: "Défauts de fabrication couverts, en plus des garanties légales." },
     ],
     buyingCriteriaOverride: [
       { icon: "😴", label: "Votre position de sommeil", text: "Dos → mi-ferme. Côté → moelleux à mi-ferme. Ventre → ferme." },
@@ -81,7 +81,7 @@ const CATEGORY_DATA = {
       { question: "Quel sommier utiliser avec un matelas neuf ?", answer: "Toujours neuf, adapté. Un vieux sommier avec lattes cassées ruine un matelas neuf en quelques mois — et annule la garantie. Lattes espacées pour la ventilation, tapissier pour un soutien dense." },
       { question: "Combien de temps pour être livré ?", answer: "5 à 7 jours ouvrés en France métropolitaine, frais de port forfaitaires affichés au panier. Rendez-vous par SMS 48 h avant, montée à l'étage incluse, reprise gratuite de l'ancien matelas sur demande." },
       { question: "Puis-je essayer le matelas avant d'acheter ?", answer: "Oui, en showroom : nos boutiques présentent les modèles et un conseiller vous oriente selon votre morphologie et votre position de sommeil. Pour une commande en ligne, vous disposez du droit de rétractation légal de 14 jours (article L221-18 du Code de la consommation), le produit devant être retourné complet et dans son emballage d'origine." },
-      { question: "Quelle est la garantie ?", answer: "2 ans minimum sur tous nos matelas (défaut de fabrication, affaissement > 3 cm). Certains modèles premium : 5 ans. Ne couvre pas l'usure normale ni les taches." },
+      { question: "Quelle est la garantie ?", answer: "2 ans sur tous nos matelas (défaut de fabrication, affaissement > 3 cm). Ne couvre pas l'usure normale ni les taches. S'ajoutent les garanties légales de conformité et des vices cachés." },
       { question: "Les matelas sont-ils hypoallergéniques ?", answer: "Traitement anti-acariens en usine, housses certifiées OEKO-TEX Standard 100. Pour les allergies sévères, ajoutez une alèse imperméable." },
       { question: "Comment entretenir mon matelas ?", answer: "Aérez chaque matin, aspirez tous les mois, retournez tous les 3 mois. Une housse de protection lavable à 60°C prolonge sa vie de plusieurs années." },
       { question: "Quel poids maximum le matelas supporte-t-il ?", answer: "Nos matelas standard supportent 130 kg par personne. Au-delà, privilégiez nos modèles ferme ou très ferme (mousse HR + ressorts) au maintien renforcé." },

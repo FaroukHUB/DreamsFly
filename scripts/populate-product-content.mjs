@@ -63,7 +63,7 @@ function defaultHighlights(pt, product) {
       { icon: "🌳", label: "Bois massif européen" },
       { icon: "🦵", label: "Pieds fournis" },
       { icon: "🛏️", label: "Compatible tous matelas 15-30 cm" },
-      { icon: "🛡️", label: "Garantie 5 ans" },
+      { icon: "🛡️", label: "Garantie 2 ans" },
       { icon: "📦", label: "Livraison à domicile (99 €)" },
     ],
     oreiller: [
@@ -105,7 +105,7 @@ function defaultAdvantages(pt) {
       { icon: "🌳", title: "Bois massif", text: "Structure robuste en pin ou hêtre européen." },
       { icon: "🌬️", title: "Ventilation", text: "Lattes espacées : aération naturelle du matelas." },
       { icon: "🛠️", title: "Montage rapide", text: "15 min sans outil, pieds à visser à la main." },
-      { icon: "🛡️", title: "Garantie 5 ans", text: "Sur la structure et les lattes." },
+      { icon: "🛡️", title: "Garantie 2 ans", text: "Sur la structure et les lattes." },
     ],
     oreiller: [
       { icon: "🌙", title: "Soutien cervical", text: "Maintien optimal de la nuque et de la tête." },
@@ -234,7 +234,7 @@ function defaultFaq(pt, product) {
     { question: "Comment entretenir mon matelas ?", answer: "Aérez chaque matin, aspirez tous les mois, retournez tous les 3 mois. Une housse de protection lavable à 60°C prolonge sa vie de plusieurs années." },
     { question: "Comment se déroule la livraison ?", answer: "Livraison sous 5-7 jours ouvrés en France métropolitaine, frais de port forfaitaires affichés au panier. Rendez-vous par SMS 48h avant, montée à l'étage incluse, reprise gratuite sur demande." },
     { question: "Puis-je essayer le matelas avant d'acheter ?", answer: "Oui, en showroom : nos boutiques présentent les modèles et un conseiller vous oriente selon votre morphologie et votre position de sommeil. Pour une commande en ligne, vous disposez du droit de rétractation légal de 14 jours (article L221-18 du Code de la consommation), le produit devant être retourné complet et dans son emballage d'origine." },
-    { question: "Quelle est la garantie ?", answer: "Garantie fabricant 2 ans minimum. La garantie ne couvre pas l'usure normale ni les taches. Voir la fiche technique pour la garantie exacte de ce modèle." },
+    { question: "Quelle est la garantie ?", answer: "Garantie DreamsFly 2 ans, couvrant les défauts de fabrication. Elle ne couvre pas l'usure normale ni les taches, et s'ajoute aux garanties légales de conformité et des vices cachés." },
     { question: `Le matelas ${name} est-il hypoallergénique ?`, answer: "Nos matelas sont traités anti-acariens en usine et les housses sont certifiées OEKO-TEX Standard 100." },
     { question: "Quel poids maximum le matelas supporte-t-il ?", answer: "Nos matelas standard supportent 130 kg par personne. Au-delà, privilégiez nos modèles ferme ou très ferme." },
   ];
@@ -255,7 +255,7 @@ function defaultFaq(pt, product) {
   if (pt === "sommier") return [
     { question: `${name} est-il compatible avec tous les matelas ?`, answer: "Oui, avec les matelas de 15 à 30 cm d'épaisseur." },
     { question: "Le sommier est-il facile à monter ?", answer: "Montage en 15 minutes à une personne, sans outil." },
-    { question: "Quelle est la garantie ?", answer: "5 ans sur la structure et les lattes." },
+    { question: "Quelle est la garantie ?", answer: "2 ans sur la structure et les lattes." },
     { question: "Les pieds sont-ils inclus ?", answer: "Oui — 4 pieds cylindriques en bois massif (15 cm par défaut)." },
     { question: "Comment choisir la hauteur des pieds ?", answer: "Standard (15 cm) → 55-60 cm. Hauts (25 cm) → 65-70 cm, plus facile pour seniors et PMR." },
     { question: "Le sommier est-il livré monté ?", answer: "Livré à plat pour faciliter la montée à l'étage. Assemblage en 15 min à domicile." },
@@ -311,7 +311,7 @@ function defaultWarranty(pt, product) {
     excludes: ["Usure normale du tissu", "Détérioration par animaux", "Dépassement du poids maximum"],
   };
   if (pt === "sommier") return {
-    duration: "5 ans",
+    duration: "2 ans",
     covers: ["Casse de lattes en usage normal", "Rupture de la structure"],
     excludes: ["Usure normale", "Utilisation dépassant le poids maximum"],
   };

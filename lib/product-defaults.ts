@@ -40,7 +40,7 @@ export function defaultHighlights(productType: ProductType, product?: any): High
       { icon: "🌳", label: "Bois massif européen" },
       { icon: "🦵", label: "Pieds fournis" },
       { icon: "🛏️", label: "Compatible tous matelas 15-30 cm" },
-      { icon: "🛡️", label: "Garantie 5 ans" },
+      { icon: "🛡️", label: "Garantie 2 ans" },
       { icon: "📦", label: "Livraison à domicile (99 €)" },
     ],
     oreiller: [
@@ -85,7 +85,7 @@ export function defaultAdvantages(productType: ProductType): Advantage[] {
       { icon: "🌳", title: "Bois massif", text: "Structure robuste en pin ou hêtre européen." },
       { icon: "🌬️", title: "Ventilation", text: "Lattes espacées : aération naturelle du matelas." },
       { icon: "🛠️", title: "Montage rapide", text: "15 min sans outil, pieds à visser à la main." },
-      { icon: "🛡️", title: "Garantie 5 ans", text: "Sur la structure et les lattes." },
+      { icon: "🛡️", title: "Garantie 2 ans", text: "Sur la structure et les lattes." },
     ],
     oreiller: [
       { icon: "🌙", title: "Soutien cervical", text: "Maintien optimal de la nuque et de la tête." },
@@ -334,7 +334,7 @@ export function defaultFaq(productType: ProductType, product?: any): FaqEntry[] 
       return [
         { question: `${name} est-il compatible avec tous les matelas ?`, answer: "Oui, avec les matelas de 15 à 30 cm d'épaisseur (mémoire de forme, ressorts ensachés, latex, mousse HR). Pour une literie moelleuse, nos lattes amplifient le confort." },
         { question: "Le sommier est-il facile à monter ?", answer: "Montage en 15 minutes à une personne, sans outil (pieds à visser à la main). Notice claire fournie." },
-        { question: "Quelle est la garantie ?", answer: "5 ans sur la structure et les lattes. Couvre défauts de fabrication et casse en usage normal." },
+        { question: "Quelle est la garantie ?", answer: "2 ans sur la structure et les lattes. Couvre défauts de fabrication et casse en usage normal." },
         { question: "Les pieds sont-ils inclus ?", answer: "Oui — 4 pieds cylindriques en bois massif (hauteur 15 cm par défaut). Options 25 cm ou 5 cm disponibles." },
         { question: "Comment choisir la hauteur des pieds ?", answer: "Standard (15 cm) → couchage à 55-60 cm. Hauts (25 cm) → couchage à 65-70 cm, plus facile pour seniors et PMR. Bas (5 cm) → look bas type japonisant." },
         { question: "Le sommier est-il livré monté ?", answer: "Livré à plat pour faciliter la montée à l'étage. Assemblage en 15 min à domicile — 4 pieds à visser." },
@@ -404,12 +404,16 @@ export const deliveryInfo = {
   ],
 };
 
-export function defaultWarranty(productType: ProductType, product?: any) {
-  const years = product?.features?.garantieAns;
+export function defaultWarranty(productType: ProductType, _product?: any) {
+  // Garantie DreamsFly : 2 ans sur matelas, sommiers et oreillers.
+  // Seul le lit coffre a un barème détaillé (mécanisme fabricant).
+  // NB : on n'utilise volontairement PAS `features.garantieAns` — la
+  // métadonnée du catalogue fournisseur porte « 5 ans », ce qui ne
+  // correspond pas à la garantie réellement accordée par DreamsFly.
   switch (productType) {
     case "matelas":
       return {
-        duration: years ? `${years} ans` : "2 ans",
+        duration: "2 ans",
         covers: [
           "Défaut de fabrication (couture, mousse, coutil)",
           "Affaissement anormal supérieur à 3 cm",
@@ -437,7 +441,7 @@ export function defaultWarranty(productType: ProductType, product?: any) {
       };
     case "sommier":
       return {
-        duration: "5 ans",
+        duration: "2 ans",
         covers: ["Casse de lattes en usage normal", "Rupture de la structure"],
         excludes: ["Usure normale", "Utilisation dépassant le poids maximum"],
       };
