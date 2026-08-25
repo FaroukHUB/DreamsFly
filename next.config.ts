@@ -50,6 +50,9 @@ const SECURITY_HEADERS = [
 ];
 
 const nextConfig: NextConfig = {
+  // jsdom (dépendance d'isomorphic-dompurify) ne supporte pas le bundling
+  // serveur de Next — on le laisse chargé par Node directement au runtime.
+  serverExternalPackages: ["isomorphic-dompurify", "jsdom"],
   images: {
     // Bypass /_next/image (quota Vercel Hobby = 1000 transfos/mois).
     // Sanity CDN gère déjà WebP + resize via ?w=&q=&auto=format — gratuit et illimité.
