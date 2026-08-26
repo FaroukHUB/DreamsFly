@@ -28,6 +28,13 @@ if (!projectId) throw new Error("SANITY_PROJECT_ID manquant");
 if (!token) throw new Error("SANITY_WRITE_TOKEN manquant (rôle Editor minimum)");
 
 const PUBLISH = process.argv.includes("--publish");
+/**
+ * --dump écrit le HTML actuel et sa version transformée dans deux fichiers,
+ * pour relecture à l'œil. Les détections par motif ne prouvent qu'une
+ * présence, jamais une absence : seule la lecture du contenu permet
+ * d'affirmer qu'une revendication n'y est pas.
+ */
+const DUMP = process.argv.includes("--dump");
 
 const client = createClient({ projectId, dataset, apiVersion: "2024-01-01", token, useCdn: false });
 
@@ -244,7 +251,7 @@ console.log(`   Projet ${projectId} · dataset ${dataset} · mode ${PUBLISH ? "P
 
 const doc = await client.fetch(
   `*[_type == "guide" && slug.current == $slug][0]{
-     _id, _rev, title, metaTitle, metaDescription, publishedAt, updatedAt,
+     _id, _rev, title, metaTitle, metaDescription, excerpt, publishedAt, updatedAt,
      "authorName": author->name, "authorPlaceholder": author->isPlaceholder,
      "reviewerName": reviewer->name,
      coverImage,
@@ -308,10 +315,21 @@ for (const block of doc.htmlBlocks || []) {
   // repris en `dateModified` dans le BlogPosting.
   const dateResult = removeVagueDate(updated);
   if (dateResult.removals.length) {
-    updated = dateResult.html;
     for (const r of dateResult.removals) {
-      notes.push(`mention de date supprimée (${r.kind}) : ${r.snippet.trim()}`);
+      // Contexte AVANT/APRÈS : retirer une mention au fil du texte peut
+      // laisser un séparateur orphelin (« Guide · · 12 min »). Il faut le
+      // voir avant d'écrire, pas après.
+      const at = updated.indexOf(r.snippet);
+      if (at >= 0) {
+        notes.push(`mention de date supprimée (${r.kind})`);
+        notes.push(`   AVANT : ${context(updated, at, r.snippet.length, 70)}`);
+      }
     }
+    updated = dateResult.html;
+    const after = updated.search(/mise\s+à\s+jour/i);
+    notes.push(
+      `   APRÈS : ${after >= 0 ? context(updated, after, 20, 70) : "(plus aucune mention « mise à jour » dans le bloc)"}`,
+    );
   }
 
   // Liens hérités
@@ -340,13 +358,27 @@ console.log("4. À ARBITRER — le script ne touche PAS à ces passages");
 line("═");
 
 let manual = 0;
-for (const block of doc.htmlBlocks || []) {
-  const html = block.html || "";
+
+// Le scan porte sur TOUS les champs texte, pas seulement le HTML : la
+// première version ne regardait que les blocs et ratait « validés par les
+// ostéopathes » présent dans la metaDescription.
+const SCANNED_FIELDS = [
+  ["title", doc.title],
+  ["metaTitle", doc.metaTitle],
+  ["metaDescription", doc.metaDescription],
+  ["excerpt", doc.excerpt],
+  ...(doc.htmlBlocks || []).map((b) => [`body[${b._key}].html`, b.html]),
+];
+
+for (const [field, text] of SCANNED_FIELDS) {
+  if (typeof text !== "string") continue;
   for (const re of EXPERTISE_CLAIMS) {
-    for (const m of html.matchAll(re)) {
+    for (const m of text.matchAll(re)) {
       manual++;
-      console.log(`\n  ⚠️  bloc ${block._key} — « ${m[0]} »`);
-      console.log(`     ${context(html, m.index, m[0].length)}`);
+      const replaced = field === "metaTitle" || field === "metaDescription";
+      console.log(`\n  ⚠️  ${field} — « ${m[0].trim()} »`);
+      console.log(`     ${context(text, m.index, m[0].length)}`);
+      if (replaced) console.log(`     ↳ champ intégralement remplacé plus haut : disparaît de fait.`);
     }
   }
 }
@@ -376,8 +408,15 @@ console.log("\n  ⚠️  Nuances à respecter à l'écrit si ces études sont ci
 for (const c of SOURCE_CAVEATS) console.log(`     · ${c}`);
 
 console.log("\n  Sources actuellement enregistrées :");
-for (const s of doc.sources || []) {
-  console.log(`     · ${s.title ?? "(sans titre)"} — ${s.url ? s.url : "AUCUNE URL (non cliquable)"}`);
+if (!doc.sources?.length) {
+  console.log("     (aucune) — le tableau `sources` est vide.");
+  console.log("     Il ne s'agit donc pas de rendre des références cliquables,");
+  console.log("     mais d'en créer. À ne faire que pour les affirmations que");
+  console.log("     l'article avance réellement.");
+} else {
+  for (const s of doc.sources) {
+    console.log(`     · ${s.title ?? "(sans titre)"} — ${s.url || "AUCUNE URL (non cliquable)"}`);
+  }
 }
 
 // ─── 6. Image ────────────────────────────────────────────────
@@ -404,6 +443,17 @@ line("═");
 const total = Object.keys(patch).length + Object.keys(htmlPatch).length;
 console.log(`RÉCAPITULATIF : ${total} champ(s) modifiable(s) automatiquement, ${manual} à arbitrer.`);
 line("═");
+
+if (DUMP) {
+  const { writeFileSync } = await import("node:fs");
+  for (const block of doc.htmlBlocks || []) {
+    writeFileSync(`dump-${block._key}-avant.html`, block.html || "", "utf8");
+    const patched = htmlPatch[`body[_key=="${block._key}"].html`];
+    if (patched) writeFileSync(`dump-${block._key}-apres.html`, patched, "utf8");
+  }
+  console.log(`\n📄 Contenu écrit dans dump-*-avant.html / dump-*-apres.html`);
+  console.log(`   Ces fichiers ne partent nulle part : à relire, puis à supprimer.\n`);
+}
 
 if (!PUBLISH) {
   console.log("\n💡 Mode DRY — rien n'a été écrit.\n   Relance avec --publish après validation.\n");
