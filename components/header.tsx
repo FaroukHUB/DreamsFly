@@ -80,13 +80,8 @@ export function Header({ settings }: { settings?: any }) {
               <span className="hidden lg:inline">Rechercher</span>
               <kbd className="hidden rounded border border-ink/15 bg-page px-1.5 py-0.5 text-[10px] font-medium lg:inline">⌘K</kbd>
             </button>
-            <button
-              aria-label="Rechercher"
-              onClick={() => window.dispatchEvent(new Event("df:open-search"))}
-              className="p-2.5 text-ink transition-colors hover:text-or md:hidden"
-            >
-              <SearchIcon />
-            </button>
+            {/* Pas de bouton recherche sous md : l'en-tête mobile se limite au
+                menu, au logo et au panier. */}
             <button aria-label="Compte" className="hidden p-2.5 text-ink transition-colors hover:text-or md:block">
               <UserIcon />
             </button>

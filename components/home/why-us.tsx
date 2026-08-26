@@ -24,8 +24,12 @@ export function WhyUs({ data }: { data?: Data }) {
 
   return (
     <section className="section-noir section-editorial relative">
-      {/* Halo doux en fond */}
-      <div className="pointer-events-none absolute inset-0 opacity-90" aria-hidden="true">
+      {/* Halo doux en fond.
+          `overflow-hidden` sur ce calque : le cercle est décalé de -160 px
+          hors du cadre (-bottom-40 -right-40) et, sans découpe, il élargit
+          le document de 160 px. Sur mobile, cela rendait toute la page
+          déplaçable latéralement, avec une bande blanche à droite. */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden opacity-90" aria-hidden="true">
         <div className="absolute inset-x-0 top-0 h-72 bg-gradient-to-b from-noir-doux/60 to-transparent" />
         <div className="absolute -bottom-40 -right-40 h-96 w-96 rounded-full bg-or/10 blur-[120px]" />
       </div>

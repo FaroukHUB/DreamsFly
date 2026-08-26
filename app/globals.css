@@ -5,6 +5,21 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    /* Filet de sécurité contre le défilement horizontal.
+       Les sections éditoriales posent des halos décoratifs volontairement
+       débordants (-right-40, w-[900px] recentrés) ; il suffit qu'un seul
+       échappe à son cadre pour que la page entière devienne déplaçable
+       latéralement, avec une bande blanche sur le côté.
+
+       `clip` et non `hidden` : `hidden` ferait de <html> un conteneur de
+       défilement, ce qui neutraliserait le `position: sticky` de l'en-tête
+       et le `scroll-behavior: smooth` ci-dessus. `clip` découpe sans créer
+       de conteneur.
+
+       Ce n'est PAS un substitut à la correction des débordements réels —
+       ils restent à traiter à la source, sans quoi du contenu utile peut
+       se retrouver coupé sans que rien ne le signale. */
+    overflow-x: clip;
   }
   body {
     @apply bg-page text-ink antialiased;
