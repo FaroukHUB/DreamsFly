@@ -150,6 +150,20 @@ for (const [label, ok] of checks) {
 }
 
 if (failed > 0) {
+  // Diagnostic : lister les liens hérités qui subsistent. Un contrôle qui
+  // échoue sans dire QUOI oblige à deviner, et deviner sur du contenu est
+  // précisément ce qu'on cherche à éviter.
+  const remaining = [...repaired.matchAll(/href=(["'])([^"']*(?:\/blog\/|\/collections\/)[^"']*)\1/gi)];
+  if (remaining.length) {
+    console.log("\n── LIENS HÉRITÉS NON RÉÉCRITS ──────────────────────────");
+    for (const m of remaining) {
+      console.log(`  · ${m[2]}`);
+      const known = Object.keys(LEGACY_LINKS).some((k) => m[2].startsWith(k));
+      console.log(`    ${known ? "⚠️  forme inattendue d'une URL connue" : "❓ URL inconnue — destination à décider"}`);
+    }
+    console.log("\n  Ces URL ne figurent pas dans la table de correspondance.");
+    console.log("  Il faut décider vers quoi elles doivent pointer avant de réparer.");
+  }
   console.error(`\n❌ ${failed} contrôle(s) en échec — rien n'a été écrit.\n`);
   process.exit(1);
 }
