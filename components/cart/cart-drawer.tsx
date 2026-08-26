@@ -6,7 +6,7 @@ import { useCart } from "@/lib/cart/store";
 
 /**
  * Tiroir panier — slide depuis la droite quand isOpen = true.
- * Liste les articles, permet d'ajuster la quantité, ouvre Stripe Checkout.
+ * Liste les articles, permet d'ajuster la quantité, mène à /commande.
  */
 export function CartDrawer() {
   const { lines, isOpen, close, setQuantity, remove, subtotal, shipping, total } = useCart();
@@ -176,45 +176,25 @@ export function CartDrawer() {
   );
 }
 
+/**
+ * Le paiement se fait désormais sur /commande, dans le site — plus de
+ * redirection vers une page Stripe hébergée. Le bouton n'est donc qu'un
+ * lien : c'est la page de commande qui crée le PaymentIntent, avec des
+ * prix relus côté serveur.
+ */
 function CheckoutButton() {
-  const lines = useCart((s) => s.lines);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  async function onCheckout() {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch("/api/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ lines }),
-      });
-      const data = await res.json();
-      if (data.url) {
-        window.location.href = data.url;
-        return;
-      }
-      throw new Error(data.error || "Erreur checkout");
-    } catch (err: any) {
-      setError(err.message || "Une erreur est survenue");
-      setLoading(false);
-    }
-  }
+  const close = useCart((s) => s.close);
 
   return (
-    <>
-      <button
-        onClick={onCheckout}
-        disabled={loading}
-        className="flex w-full items-center justify-center gap-2 rounded-pill bg-midnight px-6 py-4 font-sora text-base font-semibold text-white transition-all hover:bg-midnight-dark hover:-translate-y-px disabled:opacity-60"
-      >
-        {loading ? "Redirection…" : "Passer commande →"}
-      </button>
-      {error && <p className="mt-2 text-center text-sm text-error">{error}</p>}
-    </>
+    <Link
+      href="/commande"
+      onClick={close}
+      className="flex w-full items-center justify-center gap-2 rounded-pill bg-noir px-6 py-4 font-sans text-[13px] font-medium uppercase tracking-[0.14em] text-ivoire transition-all hover:bg-ink hover:-translate-y-px"
+    >
+      Passer commande
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+        <path d="M5 12h14M13 6l6 6-6 6" />
+      </svg>
+    </Link>
   );
 }
-
-// import minimal au sommet local pour useState (re-declaration safe)
-import { useState } from "react";

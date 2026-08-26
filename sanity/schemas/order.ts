@@ -19,6 +19,12 @@ export const order = defineType({
       title: "Montant total (€)",
       type: "number",
     }),
+    defineField({
+      name: "shippingAmount",
+      title: "Frais de port (€)",
+      type: "number",
+      description: "Inclus dans le montant total.",
+    }),
     defineField({ name: "currency", title: "Devise", type: "string" }),
     defineField({
       name: "status",
@@ -26,6 +32,10 @@ export const order = defineType({
       type: "string",
       options: {
         list: [
+          // « En attente » : le tunnel de paiement a été ouvert mais la carte
+          // n'a pas encore été débitée. Le webhook bascule en « Payée ».
+          // Une commande qui reste en attente est un panier abandonné.
+          { title: "En attente de paiement", value: "pending" },
           { title: "Payée", value: "paid" },
           { title: "En préparation", value: "preparing" },
           { title: "Expédiée", value: "shipped" },
@@ -62,6 +72,13 @@ export const order = defineType({
           ],
         },
       ],
+    }),
+    defineField({
+      name: "createdAt",
+      title: "Tunnel ouvert le",
+      type: "datetime",
+      readOnly: true,
+      description: "Moment où le client a atteint la page de paiement.",
     }),
     defineField({ name: "paidAt", title: "Date paiement", type: "datetime", readOnly: true }),
     defineField({ name: "shippedAt", title: "Date expédition", type: "datetime" }),

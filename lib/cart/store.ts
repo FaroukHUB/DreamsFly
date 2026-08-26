@@ -17,8 +17,11 @@ export type CartLine = {
   quantity: number;
 };
 
-/** Frais de port forfaitaires fixes appliqués à toute commande France métropolitaine. */
-export const SHIPPING_FEE_EUR = 99;
+// La constante vit dans lib/cart/constants.ts pour être lisible aussi par
+// le code serveur (ce fichier-ci est "use client"). Réexportée ici pour
+// que les imports existants continuent de fonctionner.
+export { SHIPPING_FEE_EUR } from "@/lib/cart/constants";
+import { SHIPPING_FEE_EUR } from "@/lib/cart/constants";
 
 type CartState = {
   lines: CartLine[];
