@@ -11,10 +11,14 @@ import { useCart } from "@/lib/cart/store";
  * ne l'est jamais. Et si le paiement échoue, le client revient sur
  * /commande avec son panier intact.
  */
-export function ClearCartOnSuccess() {
+export function ClearCartOnSuccess({ confirmed }: { confirmed: boolean }) {
   const clear = useCart((s) => s.clear);
 
   useEffect(() => {
+    // Sans confirmation de Stripe, on ne touche à rien : quelqu'un qui
+    // ouvre /merci par curiosité ou par un lien en favori ne doit pas
+    // perdre son panier.
+    if (!confirmed) return;
     clear();
     try {
       // Le paiement est terminé : la prochaine commande doit repartir sur
@@ -24,7 +28,7 @@ export function ClearCartOnSuccess() {
       // Stockage indisponible — sans conséquence, la route recrée une
       // intention si l'ancienne n'est plus modifiable.
     }
-  }, [clear]);
+  }, [clear, confirmed]);
 
   return null;
 }

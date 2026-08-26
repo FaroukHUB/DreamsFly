@@ -67,9 +67,10 @@ export default async function ThanksPage({ searchParams }: { searchParams?: Sear
 
   return (
     <main className="mx-auto flex min-h-screen max-w-2xl flex-col items-center justify-center px-6 py-24 text-center md:px-10">
-      {/* Le panier n'est vidé qu'ici : tant que le paiement n'a pas abouti,
-          le client doit retrouver ses articles s'il revient en arrière. */}
-      <ClearCartOnSuccess />
+      {/* Le panier n'est vidé qu'ici, et seulement si Stripe a confirmé :
+          tant que le paiement n'a pas abouti, le client doit retrouver ses
+          articles s'il revient en arrière. */}
+      <ClearCartOnSuccess confirmed={status === "succeeded" || pending} />
 
       <span className="eyebrow-editorial mb-4 mx-auto text-taupe">
         {pending ? "Paiement en cours de traitement" : "Confirmation de commande"}
