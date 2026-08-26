@@ -278,3 +278,43 @@ test("les liens légitimes ne sont pas touchés", () => {
   assert.match(out, /href="\/matelas"/);
   assert.match(out, /href="https:\/\/institut-sommeil-vigilance\.org\/"/);
 });
+
+// ─────────────────────────────────────────────────────────────
+// Table complète des liens hérités
+// ─────────────────────────────────────────────────────────────
+
+/**
+ * Relevé par l'audit des sept guides. La première version de la table n'en
+ * couvrait que cinq sur douze : les liens vers les guides sommier, oreiller
+ * et lit, ainsi que trois anciennes collections, restaient morts.
+ */
+const LEGACY_EXPECTED: [string, string][] = [
+  ["/blog/comment-choisir-son-matelas", "/magazine/guide-choisir-matelas"],
+  ["/blog/comment-choisir-son-sommier", "/magazine/guide-choisir-sommier"],
+  ["/blog/comment-choisir-son-oreiller", "/magazine/guide-choisir-oreiller"],
+  ["/blog/comment-choisir-son-lit", "/magazine/guide-choisir-lit"],
+  ["/blog/quel-matelas-mal-de-dos", "/magazine/matelas-mal-de-dos"],
+  ["/blog/memoire-de-forme-ou-ressorts-ensaches", "/magazine/memoire-forme-vs-ressorts"],
+  ["/collections/matelas", "/matelas"],
+  ["/collections/sommiers", "/sommiers"],
+  ["/collections/oreillers", "/oreillers"],
+  ["/collections/lits", "/lits"],
+  ["/quiz-oreiller", "/quiz"],
+  ["/showrooms", "/magasins"],
+];
+
+for (const [from, to] of LEGACY_EXPECTED) {
+  test(`réécrit ${from} → ${to}`, () => {
+    const out = sanitizeEditorialHtml(`<a href="${from}">Lien</a>`);
+    assert.match(out, new RegExp(`href="${to.replace(/\//g, "\\/")}"`));
+  });
+}
+
+test("plus aucun lien hérité après nettoyage d'un article complet", () => {
+  const links = LEGACY_EXPECTED.map(([from]) => `<a href="${from}">x</a>`).join("");
+  const out = sanitizeEditorialHtml(links);
+  assert.ok(!/href="[^"]*\/blog\//.test(out), "aucun /blog/ restant");
+  assert.ok(!/href="[^"]*\/collections\//.test(out), "aucun /collections/ restant");
+  assert.ok(!/href="\/showrooms"/.test(out), "aucun /showrooms restant");
+  assert.ok(!/href="\/quiz-oreiller"/.test(out), "aucun /quiz-oreiller restant");
+});

@@ -44,13 +44,29 @@ const BARE_WRAPPERS = /<\/?(?:html|head|body)(?![\w-])[^>]*>/gi;
  * principe que pour le <h1>. Le contenu n'est pas touché, le CSS non plus.
  */
 
-/** Anciennes URL encore présentes dans le contenu Sanity → routes réelles. */
+/**
+ * Anciennes URL encore présentes dans le contenu Sanity → routes réelles.
+ *
+ * Relevé par l'audit des sept guides (scripts/audit-magazine-content.mjs).
+ * Chaque destination correspond à une route existante — vérifiée dans
+ * l'arborescence app/, pas supposée.
+ */
 const LEGACY_LINKS: Record<string, string> = {
+  // Anciens articles de blog → Magazine
   "/blog/comment-choisir-son-matelas": "/magazine/guide-choisir-matelas",
+  "/blog/comment-choisir-son-sommier": "/magazine/guide-choisir-sommier",
+  "/blog/comment-choisir-son-oreiller": "/magazine/guide-choisir-oreiller",
+  "/blog/comment-choisir-son-lit": "/magazine/guide-choisir-lit",
   "/blog/quel-matelas-mal-de-dos": "/magazine/matelas-mal-de-dos",
+  "/blog/memoire-de-forme-ou-ressorts-ensaches": "/magazine/memoire-forme-vs-ressorts",
+  // Anciennes collections → pages catégorie
+  "/collections/matelas": "/matelas",
+  "/collections/sommiers": "/sommiers",
+  "/collections/oreillers": "/oreillers",
+  "/collections/lits": "/lits",
+  // Divers
   "/quiz-oreiller": "/quiz",
   "/showrooms": "/magasins",
-  "/collections/oreillers": "/oreillers",
 };
 
 /**
