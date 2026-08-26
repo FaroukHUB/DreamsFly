@@ -282,3 +282,30 @@ export const pillarLitsQuery = groq`
     publishedAt
   }
 `;
+
+/**
+ * Produits du quiz — les TROIS types proposés, pas seulement les matelas.
+ *
+ * `allProductsForPillarQuery` ne charge que `productType == "matelas"` : le
+ * quiz notait donc un ensemble sans aucun lit ni oreiller, et recommandait
+ * fatalement un matelas quel que soit le produit demandé.
+ *
+ * Les champs spécifiques à chaque type sont inclus — sans eux, l'algorithme
+ * n'aurait rien pour départager un lit d'un autre.
+ */
+export const quizProductsQuery = groq`
+  *[_type == "product" && productType in ["matelas", "lit", "oreiller"]
+    && defined(slug.current) && defined(variants[0].price)] | order(name asc) {
+    _id, name, title, "slug": slug.current, tagline, productType,
+    type, firmness, welcome, thicknessCm, features,
+    "image": images[0],
+    "minPrice": variants[0].price,
+    "compareAtPrice": variants[0].compareAtPrice,
+    "variants": variants[]{ size },
+    badges, rating,
+    // Oreiller
+    oreillerFilling, oreillerShape,
+    // Lit coffre
+    litMaterial, litColor, litCoffreType, litCoffreCapacityL
+  }
+`;

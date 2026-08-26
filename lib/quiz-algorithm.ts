@@ -17,6 +17,13 @@ export type QuizAnswers = {
   priorities?: string[]; // ["thermique", "soutien", "silence", "enveloppant", "eco"]
   firmnessPreference?: "moelleux" | "equilibre" | "ferme" | "sans-preference";
   budget?: [number, number];
+  // Oreiller
+  pillowFilling?: string;
+  allergies?: "oui" | "non";
+  // Lit coffre
+  bedCoffreType?: string;
+  bedMaterial?: string;
+  storageNeed?: "beaucoup" | "modere" | "sans-preference";
 };
 
 export type ScoredProduct = {
@@ -163,4 +170,191 @@ function extractDims(s?: string): { w: number; l: number } | null {
 function dimsInText(text: string | undefined, requested: { w: number; l: number } | null): boolean {
   if (!text || !requested) return false;
   return text.includes(String(requested.w)) && text.includes(String(requested.l));
+}
+
+// ─────────────────────────────────────────────────────────────
+// Oreiller et lit coffre
+// ─────────────────────────────────────────────────────────────
+
+/**
+ * `scoreMattress` note sur `product.type` — mousse, ressorts ensachés — un
+ * champ que ni un oreiller ni un lit ne porte. Appliqué à ces produits, il
+ * renvoyait donc un score plat : le classement devenait arbitraire.
+ *
+ * Les deux fonctions ci-dessous notent sur les champs que ces produits
+ * portent RÉELLEMENT en base (cf. sanity/schemas/product.ts).
+ */
+
+/** Hauteur d'oreiller adaptée à la position, exprimée en fermeté. */
+const PILLOW_FIRMNESS_FROM_POSITION: Record<string, string[]> = {
+  // Sur le côté, il faut combler l'espace de l'épaule : maintien plus stable.
+  cote: ["ferme", "mi-ferme"],
+  dos: ["mi-ferme", "equilibre"],
+  // Sur le ventre, un oreiller épais cambre la nuque.
+  ventre: ["moelleux"],
+  variable: ["mi-ferme", "equilibre"],
+};
+
+export function scorePillow(product: any, answers: QuizAnswers): ScoredProduct {
+  let score = 0;
+  const reasons: string[] = [];
+
+  // ─── Position → hauteur et maintien (30 pts) ─────────
+  const wanted = PILLOW_FIRMNESS_FROM_POSITION[answers.sleepPosition || ""] || [];
+  if (wanted.length && product.firmness) {
+    if (wanted.includes(product.firmness)) {
+      score += 30;
+      if (answers.sleepPosition === "cote")
+        reasons.push("Maintien stable pour combler l'espace de l'épaule");
+      if (answers.sleepPosition === "ventre")
+        reasons.push("Accueil souple, qui évite de cambrer la nuque");
+      if (answers.sleepPosition === "dos") reasons.push("Hauteur adaptée au sommeil sur le dos");
+    } else {
+      score += 8;
+    }
+  } else {
+    score += 12; // information absente : ni bonus, ni pénalité écrasante
+  }
+
+  // ─── Garnissage (25 pts) ─────────────────────────────
+  if (answers.pillowFilling && answers.pillowFilling !== "sans-preference") {
+    if (product.oreillerFilling === answers.pillowFilling) {
+      score += 25;
+      reasons.push("Le garnissage que vous préférez");
+    }
+  } else {
+    score += 10;
+  }
+
+  // ─── Fermeté déclarée (20 pts) ───────────────────────
+  if (answers.firmnessPreference && answers.firmnessPreference !== "sans-preference") {
+    if (product.firmness === answers.firmnessPreference) {
+      score += 20;
+      reasons.push("Le maintien que vous recherchez");
+    } else {
+      score += 6;
+    }
+  } else {
+    score += 10;
+  }
+
+  // ─── Allergies (15 pts) ──────────────────────────────
+  if (answers.allergies === "oui") {
+    const f = product.features || {};
+    if (f.antiAcariens || f.hypoallergenique) {
+      score += 15;
+      reasons.push("Traitement anti-acariens, adapté aux personnes sensibles");
+    }
+    // Le duvet et les plumes sont déconseillés aux allergiques.
+    if (product.oreillerFilling === "duvet-oie" || product.oreillerFilling === "plumes") {
+      score -= 10;
+    }
+  } else {
+    score += 7;
+  }
+
+  score += scoreBudget(product, answers, reasons);
+  return { product, score, reasons: reasons.slice(0, 4) };
+}
+
+export function scoreBed(product: any, answers: QuizAnswers): ScoredProduct {
+  let score = 0;
+  const reasons: string[] = [];
+
+  // ─── Taille de couchage (30 pts) ─────────────────────
+  const requested = extractDims(answers.size);
+  if (requested) {
+    const sizes = (product.variants || []).map((v: any) => v?.size).filter(Boolean);
+    const match = sizes.some((s: string) => {
+      const d = extractDims(s);
+      return d && d.w === requested.w && d.l === requested.l;
+    });
+    if (match) {
+      score += 30;
+      reasons.push(`Disponible en ${requested.w} × ${requested.l} cm`);
+    } else {
+      // Taille indisponible : le produit ne peut pas être recommandé.
+      score -= 25;
+    }
+  } else {
+    score += 12;
+  }
+
+  // ─── Type d'ouverture du coffre (25 pts) ─────────────
+  if (answers.bedCoffreType && answers.bedCoffreType !== "sans-preference") {
+    if (product.litCoffreType === answers.bedCoffreType) {
+      score += 25;
+      if (answers.bedCoffreType === "frontal") reasons.push("Ouverture frontale, par les pieds du lit");
+      if (answers.bedCoffreType === "lateral") reasons.push("Ouverture latérale, pratique contre un mur");
+      if (answers.bedCoffreType === "aucun") reasons.push("Lit classique, sans coffre");
+    } else {
+      score += 5;
+    }
+  } else {
+    score += 10;
+  }
+
+  // ─── Matière (20 pts) ────────────────────────────────
+  if (answers.bedMaterial && answers.bedMaterial !== "sans-preference") {
+    if (product.litMaterial === answers.bedMaterial) {
+      score += 20;
+      reasons.push("La matière que vous avez choisie");
+    }
+  } else {
+    score += 8;
+  }
+
+  // ─── Capacité de rangement (10 pts) ──────────────────
+  const capacity = Number(product.litCoffreCapacityL) || 0;
+  if (answers.storageNeed === "beaucoup" && capacity >= 400) {
+    score += 10;
+    reasons.push(`Coffre de ${capacity} L — l'équivalent d'une commode`);
+  } else if (answers.storageNeed === "modere" && capacity > 0) {
+    score += 6;
+  } else if (answers.storageNeed === "sans-preference") {
+    score += 5;
+  }
+
+  score += scoreBudget(product, answers, reasons);
+  return { product, score, reasons: reasons.slice(0, 4) };
+}
+
+/** Budget — commun aux trois parcours, 15 points. */
+function scoreBudget(product: any, answers: QuizAnswers, reasons: string[]): number {
+  const price = Number(product.minPrice);
+  if (!answers.budget || !Number.isFinite(price)) return 7;
+  const [min, max] = answers.budget;
+  if (price >= min && price <= max) {
+    reasons.push("Dans votre fourchette de budget");
+    return 15;
+  }
+  // Juste au-dessus : on ne l'écarte pas, on le déclasse.
+  if (price <= max * 1.15) return 5;
+  return 0;
+}
+
+/**
+ * Point d'entrée unique du quiz : aiguille vers la notation du type demandé
+ * et n'évalue que les produits de ce type.
+ *
+ * Auparavant `recommendMatelas` notait indistinctement tout ce qu'on lui
+ * passait — et la page ne lui passait que des matelas. Un visiteur venu
+ * pour un oreiller repartait donc avec un matelas.
+ */
+export function recommendProduct(
+  products: any[],
+  answers: QuizAnswers,
+): { best?: ScoredProduct; alternatives: ScoredProduct[] } {
+  const type = answers.productType || "matelas";
+
+  const pool = (products || []).filter((p) => {
+    const pt = p?.productType || "matelas";
+    return pt === type;
+  });
+  if (!pool.length) return { alternatives: [] };
+
+  const scorer = type === "oreiller" ? scorePillow : type === "lit" ? scoreBed : scoreMattress;
+  const scored = pool.map((p) => scorer(p, answers)).sort((a, b) => b.score - a.score);
+
+  return { best: scored[0], alternatives: scored.slice(1, 3).filter((s) => s.score > 0) };
 }

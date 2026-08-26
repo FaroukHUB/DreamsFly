@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { sanityClient } from "@/lib/sanity/client";
-import { allProductsForPillarQuery } from "@/lib/sanity/product-queries";
+import { quizProductsQuery } from "@/lib/sanity/product-queries";
 import { siteSettingsQuery } from "@/lib/sanity/queries";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
@@ -71,7 +71,7 @@ function buildSteps(doc: any): QuizStep[] {
 export default async function QuizPage() {
   const [doc, products, siteSettings] = await Promise.all([
     sanityClient?.fetch<any>(quizPageQuery).catch(() => null) ?? null,
-    sanityClient?.fetch<any[]>(allProductsForPillarQuery).catch(() => []) ?? [],
+    sanityClient?.fetch<any[]>(quizProductsQuery).catch(() => []) ?? [],
     sanityClient?.fetch<any>(siteSettingsQuery).catch(() => null) ?? null,
   ]);
 

@@ -3,8 +3,8 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { urlFor } from "@/lib/sanity/image";
-import { recommendMatelas, type QuizAnswers } from "@/lib/quiz-algorithm";
-import type { QuizStep } from "@/lib/quiz-defaults";
+import { recommendProduct, type QuizAnswers } from "@/lib/quiz-algorithm";
+import { quizStepsFor, type QuizStep } from "@/lib/quiz-defaults";
 
 type Product = {
   _id: string;
@@ -23,7 +23,7 @@ type Product = {
 };
 
 export function QuizWidget({
-  steps,
+  steps: configuredSteps,
   products,
 }: {
   steps: QuizStep[];
@@ -32,6 +32,22 @@ export function QuizWidget({
   const [stepIndex, setStepIndex] = useState(0);
   const [answers, setAnswers] = useState<QuizAnswers>({});
   const [showResult, setShowResult] = useState(false);
+
+  /**
+   * Le parcours dépend du produit choisi à la première question.
+   *
+   * Auparavant les six mêmes questions matelas étaient posées à tout le
+   * monde : un visiteur venu pour un oreiller devait renseigner son gabarit,
+   * son indépendance de couchage, puis un budget de 200 à 2 500 €.
+   *
+   * `configuredSteps` vient de Sanity et n'a été écrit que pour le matelas :
+   * il ne pilote donc que ce parcours-là.
+   */
+  const steps = useMemo(() => {
+    const first = configuredSteps[0];
+    const rest = quizStepsFor(answers.productType, configuredSteps.slice(1));
+    return [first, ...rest];
+  }, [configuredSteps, answers.productType]);
 
   const step = steps[stepIndex];
   const totalSteps = steps.length;
@@ -49,7 +65,15 @@ export function QuizWidget({
 
   const handleAnswer = (value: any) => {
     if (!step) return;
-    setAnswers((prev) => ({ ...prev, [step.key]: value }));
+    setAnswers((prev) => {
+      // Changer de produit invalide les réponses du parcours précédent :
+      // sans ce nettoyage, une fermeté de matelas se retrouverait appliquée
+      // à un oreiller.
+      if (step.key === "productType" && prev.productType && prev.productType !== value) {
+        return { productType: value };
+      }
+      return { ...prev, [step.key]: value };
+    });
     // Auto-advance sauf multi et slider (nécessitent bouton "Continuer")
     if (step.type === "single") {
       setTimeout(() => next(), 200);
@@ -290,12 +314,12 @@ function BudgetSlider({ step, value, onChange }: { step: any; value?: [number, n
 }
 
 function QuizResult({ answers, products, onRestart }: { answers: QuizAnswers; products: Product[]; onRestart: () => void }) {
-  const { best, alternatives } = useMemo(() => recommendMatelas(products, answers), [answers, products]);
+  const { best, alternatives } = useMemo(() => recommendProduct(products, answers), [answers, products]);
 
   if (!best?.product) {
     return (
       <div className="rounded-3xl border border-border bg-sable p-8 text-center">
-        <h3 className="font-sora text-xl font-semibold text-ink">Aucun matelas ne correspond exactement</h3>
+        <h3 className="font-sora text-xl font-semibold text-ink">Aucun produit ne correspond exactement</h3>
         <p className="mt-2 text-pierre">Élargissez votre budget ou modifiez une préférence pour obtenir une reco.</p>
         <button type="button" onClick={onRestart} className="mt-4 rounded-pill bg-midnight px-6 py-2.5 text-sm font-semibold text-white">
           Refaire le quiz

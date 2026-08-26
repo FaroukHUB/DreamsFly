@@ -13,7 +13,18 @@ export type QuizOption = {
 
 export type QuizStep =
   | {
-      key: "productType" | "sleepPosition" | "weight" | "firmnessPreference";
+      key:
+        | "productType"
+        | "sleepPosition"
+        | "weight"
+        | "firmnessPreference"
+        // Oreiller
+        | "pillowFilling"
+        | "allergies"
+        // Lit coffre
+        | "bedCoffreType"
+        | "bedMaterial"
+        | "storageNeed";
       type: "single";
       question: string;
       subtitle?: string;
@@ -216,3 +227,176 @@ export const defaultQuizContent = {
     ],
   },
 };
+
+// ─────────────────────────────────────────────────────────────
+// Parcours par type de produit
+// ─────────────────────────────────────────────────────────────
+
+/**
+ * Le quiz posait les mêmes six questions à tout le monde — toutes écrites
+ * pour le matelas. Un visiteur venu pour un oreiller se voyait demander son
+ * gabarit et son indépendance de couchage, puis un budget de 200 à 2 500 €.
+ *
+ * Chaque parcours ci-dessous n'interroge que des critères que les produits
+ * du type concerné portent RÉELLEMENT en base (cf. sanity/schemas/product.ts) :
+ * sans quoi la réponse ne pourrait pas servir à départager quoi que ce soit.
+ */
+
+/** Première question, commune : elle détermine le parcours. */
+export const productTypeStep: QuizStep = defaultQuizSteps[0];
+
+/** Étapes matelas — le parcours historique, sans sa première question. */
+const matelasSteps: QuizStep[] = defaultQuizSteps.slice(1);
+
+/**
+ * Étapes oreiller.
+ *
+ * Position et fermeté déterminent la hauteur nécessaire ; le garnissage
+ * correspond au champ `oreillerFilling`, et les allergies aux indicateurs
+ * `features.antiAcariens` / `features.hypoallergenique`.
+ */
+const oreillerSteps: QuizStep[] = [
+  {
+    key: "sleepPosition",
+    type: "single",
+    question: "Dans quelle position dormez-vous principalement ?",
+    subtitle: "C'est ce qui détermine la hauteur dont votre nuque a besoin",
+    options: [
+      { value: "cote", label: "Sur le côté", subtitle: "Il faut combler l'espace de l'épaule" },
+      { value: "dos", label: "Sur le dos", subtitle: "Hauteur moyenne" },
+      { value: "ventre", label: "Sur le ventre", subtitle: "Oreiller plat et souple" },
+      { value: "variable", label: "Ça change chaque nuit", subtitle: "Un modèle polyvalent" },
+    ],
+  },
+  {
+    key: "pillowFilling",
+    type: "single",
+    question: "Quel garnissage préférez-vous ?",
+    subtitle: "Chacun a son toucher et son maintien",
+    options: [
+      { value: "duvet-oie", label: "Duvet", subtitle: "Léger, malléable, à remodeler" },
+      { value: "memoire-forme", label: "Mémoire de forme", subtitle: "Contour stable, déformation lente" },
+      { value: "latex", label: "Latex naturel", subtitle: "Élastique et respirant" },
+      { value: "fibre-recyclee", label: "Fibre", subtitle: "Souple et lavable" },
+      { value: "sans-preference", label: "Sans préférence", subtitle: "À vous de me guider" },
+    ],
+  },
+  {
+    key: "firmnessPreference",
+    type: "single",
+    question: "Quel maintien recherchez-vous ?",
+    subtitle: "La fermeté doit préserver la hauteur sans créer de pression",
+    options: [
+      { value: "moelleux", label: "Moelleux", subtitle: "La tête s'enfonce" },
+      { value: "equilibre", label: "Équilibré", subtitle: "Le compromis courant" },
+      { value: "ferme", label: "Ferme", subtitle: "Maintien tonique de la nuque" },
+      { value: "sans-preference", label: "Sans préférence", subtitle: "À vous de me guider" },
+    ],
+  },
+  {
+    key: "allergies",
+    type: "single",
+    question: "Êtes-vous sensible aux acariens ?",
+    subtitle: "Cela oriente vers un traitement anti-acariens ou une garniture hypoallergénique",
+    options: [
+      { value: "oui", label: "Oui", subtitle: "Anti-acariens indispensable" },
+      { value: "non", label: "Non", subtitle: "Aucune contrainte particulière" },
+    ],
+  },
+];
+
+/**
+ * Étapes lit coffre.
+ *
+ * Les trois critères correspondent aux champs `litCoffreType`,
+ * `litMaterial` et `litCoffreCapacityL`.
+ */
+const litSteps: QuizStep[] = [
+  {
+    key: "size",
+    type: "single",
+    question: "Quelle taille de couchage ?",
+    subtitle: "La dimension du matelas que le lit accueillera",
+    options: [
+      { value: "90x190", label: "90 × 190 cm", subtitle: "Une place" },
+      { value: "140x190", label: "140 × 190 cm", subtitle: "Deux places" },
+      { value: "160x200", label: "160 × 200 cm", subtitle: "Queen size" },
+      { value: "180x200", label: "180 × 200 cm", subtitle: "King size" },
+    ],
+  },
+  {
+    key: "bedCoffreType",
+    type: "single",
+    question: "Quel type d'ouverture ?",
+    subtitle: "Prévoyez 60 cm devant le lit pour une ouverture frontale",
+    options: [
+      { value: "frontal", label: "Frontale", subtitle: "Par les pieds — la plus courante" },
+      { value: "lateral", label: "Latérale", subtitle: "Utile si le lit est contre un mur" },
+      { value: "aucun", label: "Sans coffre", subtitle: "Un lit classique me suffit" },
+      { value: "sans-preference", label: "Peu importe", subtitle: "À vous de me guider" },
+    ],
+  },
+  {
+    key: "bedMaterial",
+    type: "single",
+    question: "Quelle matière pour la tête de lit ?",
+    subtitle: "C'est ce qui donne le caractère de la chambre",
+    options: [
+      { value: "velours", label: "Velours", subtitle: "Chaleureux, cocooning" },
+      { value: "tissu-trame", label: "Tissu tramé", subtitle: "Sobre et contemporain" },
+      { value: "capitonne", label: "Capitonné", subtitle: "Classique, travaillé" },
+      { value: "lin", label: "Lin", subtitle: "Naturel, aspect rustique" },
+      { value: "sans-preference", label: "Sans préférence", subtitle: "À vous de me guider" },
+    ],
+  },
+  {
+    key: "storageNeed",
+    type: "single",
+    question: "Quel besoin de rangement ?",
+    subtitle: "Un coffre remplace l'équivalent d'une commode",
+    options: [
+      { value: "beaucoup", label: "Important", subtitle: "Couettes, valises, linge de saison" },
+      { value: "modere", label: "Modéré", subtitle: "L'appoint suffit" },
+      { value: "sans-preference", label: "Peu importe", subtitle: "Ce n'est pas mon critère" },
+    ],
+  },
+];
+
+/** Fourchettes de prix par type, en euros. Le curseur y est borné. */
+export const BUDGET_RANGE: Record<string, { min: number; max: number; step: number }> = {
+  matelas: { min: 200, max: 2500, step: 50 },
+  lit: { min: 300, max: 2500, step: 50 },
+  // Fourchette réelle du catalogue oreillers. Un curseur 200–2 500 € y était
+  // absurde : aucun oreiller n'atteint le quart du minimum.
+  oreiller: { min: 50, max: 120, step: 5 },
+};
+
+function budgetStep(productType: string): QuizStep {
+  const r = BUDGET_RANGE[productType] || BUDGET_RANGE.matelas;
+  return {
+    key: "budget",
+    type: "slider",
+    question: "Quel est votre budget ?",
+    subtitle: "Faites glisser pour ajuster votre fourchette",
+    min: r.min,
+    max: r.max,
+    step: r.step,
+  };
+}
+
+/**
+ * Étapes à poser après le choix du produit.
+ *
+ * `matelasOverride` permet aux questions saisies dans Sanity de continuer à
+ * piloter le parcours matelas — le seul pour lequel elles ont été écrites.
+ */
+export function quizStepsFor(productType: string | undefined, matelasOverride?: QuizStep[]): QuizStep[] {
+  switch (productType) {
+    case "oreiller":
+      return [...oreillerSteps, budgetStep("oreiller")];
+    case "lit":
+      return [...litSteps, budgetStep("lit")];
+    default:
+      return matelasOverride?.length ? matelasOverride : [...matelasSteps, budgetStep("matelas")];
+  }
+}
