@@ -104,16 +104,14 @@ export async function POST(req: NextRequest) {
     // La référence (code HTTP renvoyé par Brevo) aide au diagnostic sans
     // rien exposer de sensible : 401 = clé invalide, 400 = expéditeur ou
     // payload refusé, 403 = domaine non autorisé.
+    //
+    // Le détail complet reste dans les logs serveur ci-dessus. Il était
+    // renvoyé au navigateur pendant la mise au point de Brevo ; ce champ a
+    // été retiré une fois l'envoi opérationnel — la réponse d'un
+    // prestataire n'a rien à faire dans une réponse HTTP publique.
     const ref = sent.status ? ` (réf. ${sent.status})` : "";
     return NextResponse.json(
-      {
-        error: `L'envoi a échoué${ref}. Écrivez-nous directement à contact@dreamsfly.fr.`,
-        // Champ de diagnostic : non affiché à l'utilisateur (le formulaire
-        // ne lit que `error`), consultable dans DevTools → Network.
-        // Contient uniquement la réponse du fournisseur d'email, jamais
-        // la clé API ni de donnée personnelle.
-        debug: sent.error,
-      },
+      { error: `L'envoi a échoué${ref}. Écrivez-nous directement à contact@dreamsfly.fr.` },
       { status: 502 },
     );
   }
