@@ -3,7 +3,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
-import { sanitizeHtmlBlocks, hasEditorialH1 } from "@/lib/seo/editorial-blocks";
+import {
+  sanitizeHtmlBlocks,
+  hasEditorialH1,
+  hasEditorialMain,
+  hasEditorialArticle,
+} from "@/lib/seo/editorial-blocks";
 import { sanityClient } from "@/lib/sanity/client";
 import { guideBySlugQuery, allGuideSlugsQuery } from "@/lib/sanity/guide-queries";
 import { siteSettingsQuery } from "@/lib/sanity/queries";
@@ -189,6 +194,12 @@ export default async function GuidePage({ params }: { params: Promise<Params> })
   const editorialHasH1 = hasEditorialH1(sanitizedHtml);
   const portableComponents = buildPortableComponents(sanitizedHtml);
 
+  // Quand le contenu apporte ses propres <main> / <article>, la page rend un
+  // <div> à la place du sien : un seul de chaque dans le document, et le CSS
+  // de l'article — qui s'appuie sur ces noms d'éléments — reste valide.
+  const Main = hasEditorialMain(sanitizedHtml) ? "div" : "main";
+  const Article = hasEditorialArticle(sanitizedHtml) ? "div" : "article";
+
   const isHowTo = g.articleType === "how-to";
   const howToSteps = g.body?.filter((b: any) => b._type === "howToStep").map((s: any) => ({
     name: s.name,
@@ -200,7 +211,7 @@ export default async function GuidePage({ params }: { params: Promise<Params> })
     <>
       <Header settings={siteSettings} />
 
-      <main className="mx-auto max-w-3xl px-6 py-14 md:px-8 md:py-20">
+      <Main className="mx-auto max-w-3xl px-6 py-14 md:px-8 md:py-20">
         <nav aria-label="Fil d'Ariane" className="mb-10 flex flex-wrap items-center gap-2 font-sans text-[11px] uppercase tracking-[0.14em] text-taupe">
           <Link href="/" className="transition-colors hover:text-or">Accueil</Link>
           <span className="opacity-40">/</span>
@@ -209,7 +220,7 @@ export default async function GuidePage({ params }: { params: Promise<Params> })
           <span className="text-ink line-clamp-1">{g.title}</span>
         </nav>
 
-        <article>
+        <Article>
           <header className="mb-14">
             {g.articleType && (
               <span className="eyebrow-editorial on-cream mb-3">
@@ -347,8 +358,8 @@ export default async function GuidePage({ params }: { params: Promise<Params> })
               </div>
             </section>
           )}
-        </article>
-      </main>
+        </Article>
+      </Main>
 
       <Footer settings={siteSettings} />
 

@@ -26,16 +26,23 @@
 const BARE_WRAPPERS = /<\/?(?:html|head|body)(?![\w-])[^>]*>/gi;
 
 /**
- * Conteneurs sémantiques à TRANSFORMER en <div>, pas à supprimer.
+ * Les <main> et <article> du contenu sont laissés INTACTS.
  *
- * Un article rédigé porte sa mise en forme sur son conteneur racine —
- * typiquement <main class="df-guide">. Supprimer la balise emporterait la
- * classe, et avec elle toutes les règles CSS `.df-guide …`. On remplace donc
- * le nom de l'élément en conservant ses attributs intacts : la page garde un
- * seul <main> et un seul <article>, sans rien perdre du design.
+ * Une version précédente les transformait en <div> pour éviter les doublons
+ * dans la page. C'était une erreur : tout sélecteur CSS nommant l'élément
+ * cessait alors de matcher —
+ *
+ *     main.df-guide .df-hero::before   → le voile sombre du hero disparaît
+ *     .df-guide article .df-pullquote  → le fond noir des encarts disparaît
+ *
+ * Le fond partait, la couleur du texte restait, et l'article devenait
+ * illisible : texte sombre sur photo sombre, texte blanc sur fond crème.
+ *
+ * L'unicité de <main> et <article> est désormais obtenue à l'autre bout :
+ * la page interroge le contenu (voir lib/seo/editorial-blocks.ts) et rend
+ * un <div> à la place du sien quand le contenu en fournit déjà un. Même
+ * principe que pour le <h1>. Le contenu n'est pas touché, le CSS non plus.
  */
-const SEMANTIC_WRAPPERS_OPEN = /<(?:main|article)(?![\w-])([^>]*)>/gi;
-const SEMANTIC_WRAPPERS_CLOSE = /<\/(?:main|article)(?![\w-])\s*>/gi;
 
 /** Anciennes URL encore présentes dans le contenu Sanity → routes réelles. */
 const LEGACY_LINKS: Record<string, string> = {
@@ -141,12 +148,8 @@ function stripDocumentChrome(html: string): string {
   out = out.replace(/<script\b[^>]*>[\s\S]*?<\/script\s*>/gi, "");
   out = out.replace(/<script\b[^>]*\/?>/gi, "");
 
-  // <main> et <article> deviennent des <div> : leurs attributs — donc leurs
-  // classes de mise en forme — sont conservés tels quels.
-  out = out.replace(SEMANTIC_WRAPPERS_OPEN, (_m, attrs: string) => `<div${attrs}>`);
-  out = out.replace(SEMANTIC_WRAPPERS_CLOSE, "</div>");
-
   // html / head / body : purement retirés, ils ne portent pas de style.
+  // <main> et <article> sont volontairement CONSERVÉS — voir plus haut.
   out = out.replace(BARE_WRAPPERS, "");
 
   return out;
@@ -183,6 +186,16 @@ export function sanitizeEditorialHtml(dirty: string): string {
  */
 export function containsH1(html: string): boolean {
   return /<h1(?![\w-])/i.test(html);
+}
+
+/** Le fragment porte-t-il son propre <main> ? */
+export function containsMain(html: string): boolean {
+  return /<main(?![\w-])/i.test(html);
+}
+
+/** Le fragment porte-t-il son propre <article> ? */
+export function containsArticle(html: string): boolean {
+  return /<article(?![\w-])/i.test(html);
 }
 
 const IFRAME_ALLOWED_HOSTS = [
@@ -270,10 +283,9 @@ function buildSanitizer(): Sanitizer {
           "width",
           "height",
         ],
-        // main/article/title/meta/link/base sont déjà retirés en amont par
-        // stripDocumentChrome ; les interdire ici couvre le cas où
-        // sanitizeHtml serait appelé directement. KEEP_CONTENT (défaut
-        // true) garantit que seuls les conteneurs partent, pas leur contenu.
+        // main et article NE SONT PAS interdits : les retirer casserait les
+        // sélecteurs CSS qui les nomment. Leur unicité dans la page est
+        // gérée par le rendu, pas par la sanitisation.
         FORBID_TAGS: [
           "script",
           "object",
@@ -281,8 +293,6 @@ function buildSanitizer(): Sanitizer {
           "form",
           "input",
           "button",
-          "main",
-          "article",
           "title",
           "meta",
           "link",

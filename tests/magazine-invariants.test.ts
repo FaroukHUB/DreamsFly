@@ -1,6 +1,11 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { sanitizeEditorialHtml, containsH1 } from "../lib/sanitize-html.ts";
+import {
+  sanitizeEditorialHtml,
+  containsH1,
+  containsMain,
+  containsArticle,
+} from "../lib/sanitize-html.ts";
 
 /**
  * Vérifie les critères d'acceptation au niveau du contenu, en simulant
@@ -15,20 +20,28 @@ import { sanitizeEditorialHtml, containsH1 } from "../lib/sanitize-html.ts";
  * `npm run seo:check <url>` (scripts/check-seo-invariants.mjs).
  */
 
-/** Rejoue la décision de rendu du <h1> prise par la page. */
+/**
+ * Rejoue les décisions de rendu de la page : <h1>, <main> et <article> ne
+ * sont produits que si le contenu n'en apporte pas déjà.
+ *
+ * Les conteneurs du contenu ne sont JAMAIS transformés — leur nom d'élément
+ * fait partie du contrat CSS de l'article.
+ */
 function renderPage(guideTitle: string, editorialBlocks: string[]): string {
   const sanitized = editorialBlocks.map(sanitizeEditorialHtml);
   const editorialHasH1 = sanitized.some(containsH1);
+  const Main = sanitized.some(containsMain) ? "div" : "main";
+  const Article = sanitized.some(containsArticle) ? "div" : "article";
 
-  return `<main class="mx-auto">
+  return `<${Main} class="mx-auto">
   <nav aria-label="Fil d'Ariane">…</nav>
-  <article>
+  <${Article}>
     <header>
       ${editorialHasH1 ? "" : `<h1>${guideTitle}</h1>`}
     </header>
     <div class="prose-content">${sanitized.join("\n")}</div>
-  </article>
-</main>`;
+  </${Article}>
+</${Main}>`;
 }
 
 const countOf = (html: string, re: RegExp) => (html.match(re) || []).length;
@@ -49,20 +62,31 @@ test("contenu AVEC h1 : la page s'efface, un seul h1 subsiste", () => {
   const page = renderPage("Titre Sanity", [
     `<main><article><h1>Titre editorial</h1><p>Texte.</p></article></main>`,
   ]);
+  assert.equal(countOf(page, MAIN), 1, "toujours un seul <main>");
   assert.equal(countOf(page, H1), 1, "exactement un <h1>");
   assert.match(page, /<h1>Titre editorial<\/h1>/, "c'est le h1 éditorial qui reste");
   assert.ok(!/Titre Sanity/.test(page), "le h1 générique ne doit pas être rendu");
 });
 
 test("un seul <main> et un seul <article> malgré une enveloppe collée", () => {
+  // Deux blocs apportent chacun leur enveloppe. La page renonce aux siens,
+  // mais le PREMIER bloc garde les siens : c'est lui qui porte le CSS.
   const page = renderPage("Titre", [
-    `<!DOCTYPE html><html><body><main><article><h1>T</h1><p>A</p></article></main></body></html>`,
-    `<main><article><section>B</section></article></main>`,
+    `<!DOCTYPE html><html><body><main class="df-guide"><article><h1>T</h1><p>A</p></article></main></body></html>`,
+    `<section>B</section>`,
   ]);
-  assert.equal(countOf(page, MAIN), 1, "un seul <main>, celui de la coquille");
-  assert.equal(countOf(page, ARTICLE), 1, "un seul <article>, celui de la coquille");
+  assert.equal(countOf(page, MAIN), 1, "un seul <main> dans le document");
+  assert.equal(countOf(page, ARTICLE), 1, "un seul <article> dans le document");
+  assert.match(page, /<main class="df-guide"/, "la classe racine du contenu survit");
   assert.match(page, /A/, "contenu du premier bloc préservé");
   assert.match(page, /B/, "contenu du second bloc préservé");
+});
+
+test("sans enveloppe dans le contenu, la page fournit la sienne", () => {
+  const page = renderPage("Titre", [`<section><p>Texte.</p></section>`]);
+  assert.equal(countOf(page, MAIN), 1);
+  assert.equal(countOf(page, ARTICLE), 1);
+  assert.match(page, /<main class="mx-auto">/, "le <main> vient de la coquille");
 });
 
 test("aucune métadonnée ni donnée structurée injectée par le contenu", () => {
@@ -92,6 +116,7 @@ test("plusieurs blocs, un seul portant un h1", () => {
     `<article><h1>Le vrai titre</h1></article>`,
     `<section><h2>Suite</h2></section>`,
   ]);
+  assert.equal(countOf(page, ARTICLE), 1, "toujours un seul <article>");
   assert.equal(countOf(page, H1), 1);
   assert.ok(!/Titre Sanity/.test(page));
 });

@@ -73,12 +73,19 @@ test("retire tout script, JSON-LD compris", () => {
   assert.ok(!/schema\.org/.test(out), "aucune donnée structurée ne doit subsister");
 });
 
-test("retire les wrappers de document sans toucher à leur contenu", () => {
+test("retire html, head et body sans toucher à leur contenu", () => {
   assert.ok(!/<html/i.test(out), "pas de <html>");
   assert.ok(!/<head/i.test(out), "pas de <head>");
   assert.ok(!/<body/i.test(out), "pas de <body>");
-  assert.ok(!/<main(?![\w-])/i.test(out), "pas de <main>");
-  assert.ok(!/<article(?![\w-])/i.test(out), "pas de <article>");
+});
+
+test("CONSERVE main et article — leur suppression cassait le CSS", () => {
+  // Une version précédente les transformait en <div>. Tout sélecteur CSS
+  // nommant l'élément — main.df-guide, .df-guide article — cessait alors de
+  // matcher : les fonds sombres disparaissaient, le texte clair restait, et
+  // l'article devenait illisible. L'unicité est gérée au rendu, pas ici.
+  assert.match(out, /<main(?![\w-])/i, "le <main> du contenu doit survivre");
+  assert.match(out, /<article(?![\w-])/i, "le <article> du contenu doit survivre");
 });
 
 test("conserve le H1 éditorial", () => {
@@ -195,17 +202,14 @@ test("la feuille de style éditoriale survit intégralement", () => {
   assert.match(styled, /--df-or:\s*#C8A876/i, "les variables CSS doivent rester");
 });
 
-test("main et article deviennent des div en gardant leurs attributs", () => {
-  assert.match(styled, /<div[^>]*class="df-guide"/i, "la classe racine doit survivre");
-  assert.match(styled, /<div[^>]*class="df-content"/i);
+test("main et article gardent leur nom d'élément ET leurs attributs", () => {
+  // Le nom de l'élément fait partie du contrat CSS au même titre que la
+  // classe : `main.df-guide .df-hero::before` porte le voile sombre du hero.
+  assert.match(styled, /<main[^>]*class="df-guide"/i, "le <main> et sa classe");
+  assert.match(styled, /<article[^>]*class="df-content"/i, "le <article> et sa classe");
   assert.match(styled, /id="guide"/i, "l'id doit survivre");
   assert.match(styled, /data-df-variant="oreiller"/i, "les data-* doivent survivre");
   assert.match(styled, /aria-label="Guide"/i, "les aria-* doivent survivre");
-});
-
-test("aucun main ni article éditorial ne subsiste", () => {
-  assert.ok(!/<main(?![\w-])/i.test(styled), "aucun <main> issu du contenu");
-  assert.ok(!/<article(?![\w-])/i.test(styled), "aucun <article> issu du contenu");
 });
 
 test("le header éditorial et son unique h1 sont conservés", () => {

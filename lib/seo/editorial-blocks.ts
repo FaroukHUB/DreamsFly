@@ -1,4 +1,9 @@
-import { sanitizeEditorialHtml, containsH1 } from "@/lib/sanitize-html";
+import {
+  sanitizeEditorialHtml,
+  containsH1,
+  containsMain,
+  containsArticle,
+} from "@/lib/sanitize-html";
 
 /**
  * Préparation des blocs HTML libres d'un document Sanity avant rendu.
@@ -33,6 +38,29 @@ export function sanitizeHtmlBlocks(body: BodyBlock[] | null | undefined): Map<st
 export function hasEditorialH1(sanitized: Map<string, string>): boolean {
   for (const html of sanitized.values()) {
     if (containsH1(html)) return true;
+  }
+  return false;
+}
+
+/**
+ * Le contenu apporte-t-il ses propres conteneurs sémantiques ?
+ *
+ * Les articles rédigés hors du site arrivent souvent enveloppés dans
+ * <main class="df-guide"><article class="df-content">, et leur feuille de
+ * style s'appuie sur ces noms d'éléments. Plutôt que de les transformer —
+ * ce qui casserait le CSS — la page renonce aux siens et rend des <div>.
+ * Il ne reste ainsi qu'un seul <main> et un seul <article> dans le document.
+ */
+export function hasEditorialMain(sanitized: Map<string, string>): boolean {
+  for (const html of sanitized.values()) {
+    if (containsMain(html)) return true;
+  }
+  return false;
+}
+
+export function hasEditorialArticle(sanitized: Map<string, string>): boolean {
+  for (const html of sanitized.values()) {
+    if (containsArticle(html)) return true;
   }
   return false;
 }
