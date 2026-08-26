@@ -68,6 +68,8 @@ export default async function ShowroomPage({ params }: { params: Promise<Params>
     { name: s.name, url: `/magasins/${slug}` },
   ];
 
+  const mapsUrl = buildMapsUrl(s);
+
   // Trier les horaires
   const sortedHours =
     s.openingHours
@@ -187,14 +189,15 @@ export default async function ShowroomPage({ params }: { params: Promise<Params>
                 </div>
               )}
 
-              {s.coordinates?.lat && s.coordinates?.lng && (
+              {mapsUrl && (
                 <a
-                  href={`https://www.google.com/maps?q=${s.coordinates.lat},${s.coordinates.lng}`}
+                  href={mapsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-pill bg-midnight px-5 py-3 font-sora text-sm font-semibold text-white transition-colors hover:bg-midnight-dark"
                 >
-                  📍 Itinéraire Google Maps
+                  <PinIcon />
+                  Itinéraire Google Maps
                 </a>
               )}
             </div>
@@ -222,5 +225,64 @@ export default async function ShowroomPage({ params }: { params: Promise<Params>
         })}
       />
     </>
+  );
+}
+
+/**
+ * Lien « Itinéraire » vers Google Maps, construit à partir de la meilleure
+ * information disponible.
+ *
+ * Trois sources, par ordre de fiabilité décroissante :
+ *
+ *  1. Le Google Place ID — désigne l'établissement lui-même. C'est le seul
+ *     qui reste juste si l'adresse est mal saisie ou si la rue est mal
+ *     géocodée. Format d'URL officiel de Google.
+ *  2. Les coordonnées GPS — précises, mais pointent un point au sol sans
+ *     rattacher la fiche de l'établissement.
+ *  3. L'adresse postale — le repli, tributaire de l'interprétation de Google.
+ *
+ * Auparavant seules les coordonnées étaient utilisées : un showroom
+ * renseigné uniquement par son Place ID n'affichait aucun bouton.
+ */
+function buildMapsUrl(s: any): string | null {
+  const placeId = typeof s?.googlePlaceId === "string" ? s.googlePlaceId.trim() : "";
+  const parts = [s?.name, s?.address?.street, s?.address?.postalCode, s?.address?.city]
+    .filter(Boolean)
+    .join(" ");
+
+  if (placeId) {
+    // Google exige un `query` même lorsque le place_id est fourni : il sert
+    // de libellé et de repli si l'identifiant n'est plus valide.
+    const query = encodeURIComponent(parts || placeId);
+    return `https://www.google.com/maps/search/?api=1&query=${query}&query_place_id=${encodeURIComponent(placeId)}`;
+  }
+
+  const { lat, lng } = s?.coordinates || {};
+  if (lat && lng) {
+    return `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+  }
+
+  if (parts) {
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(parts)}`;
+  }
+
+  return null;
+}
+
+/** Épingle de carte — remplace l'emoji, hors charte du site. */
+function PinIcon() {
+  return (
+    <svg
+      width="15"
+      height="15"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.7"
+      aria-hidden="true"
+    >
+      <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+      <circle cx="12" cy="10" r="3" />
+    </svg>
   );
 }
