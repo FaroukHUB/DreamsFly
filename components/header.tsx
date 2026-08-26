@@ -28,20 +28,27 @@ export function Header({ settings }: { settings?: any }) {
 
       <header className="sticky top-0 z-50 border-b border-ink/10 bg-page/85 backdrop-blur-xl">
         <div className="mx-auto flex max-w-site items-center justify-between px-4 py-4 md:px-8 md:py-5">
-          {/* Hamburger mobile */}
-          <button
-            onClick={() => setMobileOpen(true)}
-            aria-label="Ouvrir le menu"
-            className="flex h-10 w-10 items-center justify-center text-ink lg:hidden"
-          >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
-              <line x1="3" y1="7" x2="21" y2="7" />
-              <line x1="3" y1="17" x2="21" y2="17" />
-            </svg>
-          </button>
+          {/* Hamburger mobile.
+              Le conteneur prend `flex-1`, comme le groupe d'actions à droite :
+              les deux côtés se partagent l'espace restant à parts égales, ce
+              qui centre le logo sans le sortir du flux. Une position absolue
+              le centrerait aussi, mais la hauteur de l'en-tête est dictée par
+              le logo — il déborderait du bandeau. */}
+          <div className="flex flex-1 items-center lg:hidden">
+            <button
+              onClick={() => setMobileOpen(true)}
+              aria-label="Ouvrir le menu"
+              className="flex h-10 w-10 items-center justify-center text-ink"
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+                <line x1="3" y1="7" x2="21" y2="7" />
+                <line x1="3" y1="17" x2="21" y2="17" />
+              </svg>
+            </button>
+          </div>
 
           {/* Logo */}
-          <Link href="/" aria-label="DreamsFly — accueil" className="text-ink">
+          <Link href="/" aria-label="DreamsFly — accueil" className="shrink-0 text-ink">
             <Logo size={26} />
           </Link>
 
@@ -61,8 +68,9 @@ export function Header({ settings }: { settings?: any }) {
             </ul>
           </nav>
 
-          {/* Actions droite */}
-          <div className="flex items-center gap-1 md:gap-2">
+          {/* Actions droite — `flex-1` en miroir du hamburger sur mobile,
+              largeur naturelle à partir de lg où `justify-between` reprend. */}
+          <div className="flex flex-1 items-center justify-end gap-1 md:gap-2 lg:flex-none">
             <button
               aria-label="Rechercher (⌘K)"
               onClick={() => window.dispatchEvent(new Event("df:open-search"))}
