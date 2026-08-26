@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import { urlFor } from "@/lib/sanity/image";
-import { sanitizeHtml } from "@/lib/sanitize-html";
+import { sanitizeEditorialHtml } from "@/lib/sanitize-html";
 
 const components: PortableTextComponents = {
   block: {
@@ -44,7 +44,10 @@ const components: PortableTextComponents = {
         <div
           className="df-html-block relative my-12 w-screen"
           style={{ marginLeft: "calc(50% - 50vw)", marginRight: "calc(50% - 50vw)" }}
-          dangerouslySetInnerHTML={{ __html: sanitizeHtml(value.html) }}
+          // Même nettoyage que le Magazine : retire l'enveloppe de document
+          // (<main>, <article>, <title>, <meta>, <link>, <script>) sans
+          // toucher au contenu ni au rendu visuel de la page.
+          dangerouslySetInnerHTML={{ __html: sanitizeEditorialHtml(value.html) }}
         />
       ) : null,
     faqItem: ({ value }: any) => (
