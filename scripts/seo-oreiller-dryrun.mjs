@@ -95,6 +95,11 @@ function removeVagueDate(html) {
   //    seraient alors jamais examinés.
   const BLOCK = /<(span|li|em|strong|small|b|i)\b[^>]*>((?:(?!<\/?\1\b)[\s\S])*)<\/\1\s*>/gi;
   let out = html.replace(BLOCK, (match, _tag, inner) => {
+    // Garde-fou : un élément contenant une image ou une icône vectorielle
+    // porte du contenu visuel qu'aucune analyse de texte ne voit. On n'y
+    // touche jamais.
+    if (/<(svg|img|picture|video)\b/i.test(inner)) return match;
+
     const textOnly = inner
       .replace(/<[^>]*>/g, "") // balises décoratives
       .replace(/[◆•·|—–\-\s]/g, " ") // puces et séparateurs
@@ -120,19 +125,15 @@ function removeVagueDate(html) {
   out = out.replace(/\[\s*\]/g, "");
   out = out.replace(/\s+([.,;:!?])/g, "$1");
 
-  // Filet de sécurité : tout élément en ligne dont il ne reste que de la
-  // décoration — une puce ◆, un séparateur — est retiré à son tour. Sans
-  // cela, retirer le texte d'un <span><b>◆</b> texte</span> laisserait un
-  // losange orphelin flottant dans la barre de méta.
-  const DECORATIVE_ONLY = /<(span|li)\b[^>]*>((?:(?!<\/?\1\b)[\s\S])*)<\/\1\s*>/gi;
-  out = out.replace(DECORATIVE_ONLY, (match, _tag, inner) => {
-    const textOnly = inner.replace(/<[^>]*>/g, "").replace(/[◆•·|—–\s]/g, "").trim();
-    if (textOnly === "") {
-      removals.push({ kind: "conteneur devenu décoratif", snippet: match });
-      return "";
-    }
-    return match;
-  });
+  // PAS de passe globale « supprimer les éléments au texte vide ».
+  //
+  // Une telle passe a été écrite puis retirée : elle emportait tous les
+  // <span class="df-icon-ring"><svg>…</svg></span> de l'article — icônes des
+  // cartes et de l'encadré médical — puisque leur contenu textuel est vide
+  // par nature. Un élément sans texte n'est pas un élément vide.
+  //
+  // Le seul cas à traiter est celui de l'élément porteur de la date, géré
+  // ci-dessus en le retirant EN ENTIER. Rien d'autre ne doit être touché.
 
   out = out.replace(/[ \t]{2,}/g, " ");
 
