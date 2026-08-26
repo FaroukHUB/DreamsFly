@@ -24,6 +24,29 @@ import { sanityWriteClient } from "@/lib/sanity/client";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+/**
+ * Libellé ajouté sur le relevé bancaire du client.
+ *
+ * Le compte Stripe porte le nom de la société, qui exploite plusieurs
+ * marques. Sans ce suffixe, un client DreamsFly voit sur son relevé un nom
+ * qu'il ne reconnaît pas — première cause de contestation de paiement : le
+ * client fait opposition sur un achat pourtant légitime, et la société paie
+ * des frais de litige.
+ *
+ * Le relevé affichera « PREFIXE* DREAMSFLY ».
+ *
+ * ⚠️  Contrainte Stripe : préfixe + « * » + espace + suffixe ≤ 22 caractères.
+ * Avec un préfixe de 14 caractères, il ne reste que 6 caractères de suffixe.
+ * Le préfixe se lit dans Stripe → Paramètres → Informations publiques.
+ * Ajuster via STRIPE_STATEMENT_SUFFIX si le libellé est tronqué.
+ *
+ * Caractères interdits par Stripe : < > ' " *
+ */
+const STATEMENT_SUFFIX = (process.env.STRIPE_STATEMENT_SUFFIX || "DREAMSFLY")
+  .replace(/[<>'"*]/g, "")
+  .trim()
+  .slice(0, 22);
+
 const BodySchema = z.object({
   lines: z
     .array(
@@ -86,6 +109,9 @@ export async function POST(req: NextRequest) {
 
     const metadata: Record<string, string> = {
       source: "dreamsfly-web",
+      // Sépare les deux marques du compte dans les exports et les rapports
+      // Stripe : la société est unique, les activités ne le sont pas.
+      brand: "DreamsFly",
       // Le webhook retrouve la commande par cette clé.
       ...(orderId ? { sanityOrderId: orderId } : {}),
     };
@@ -107,6 +133,7 @@ export async function POST(req: NextRequest) {
           currency: "eur",
           automatic_payment_methods: { enabled: true },
           metadata,
+          ...(STATEMENT_SUFFIX ? { statement_descriptor_suffix: STATEMENT_SUFFIX } : {}),
           ...(email ? { receipt_email: email } : {}),
         });
       }
@@ -116,6 +143,7 @@ export async function POST(req: NextRequest) {
         currency: "eur",
         automatic_payment_methods: { enabled: true },
         metadata,
+        ...(STATEMENT_SUFFIX ? { statement_descriptor_suffix: STATEMENT_SUFFIX } : {}),
         ...(email ? { receipt_email: email } : {}),
       });
     }
