@@ -255,8 +255,17 @@ export default async function GuidePage({ params }: { params: Promise<Params> })
             </div>
           </header>
 
-          {/* Image cover */}
-          {g.coverImage && (
+          {/* Image de couverture.
+              Rendue UNIQUEMENT quand le contenu éditorial n'apporte pas son
+              propre hero — détecté par la présence d'un <h1>, qui accompagne
+              toujours une mise en page sur mesure. Sans cette condition,
+              l'article commençait par deux images empilées.
+
+              Le champ reste utile même non affiché : il alimente l'og:image
+              du partage social, la vignette dans la liste du Magazine, et le
+              champ `image` du BlogPosting pour Google Discover. Il faut donc
+              le renseigner, pas le laisser vide. */}
+          {g.coverImage && !editorialHasH1 && (
             <div className="mb-12 overflow-hidden rounded-3xl">
               <Image
                 src={urlFor(g.coverImage).width(1400).quality(90).url()}
