@@ -99,6 +99,26 @@ const nextConfig: NextConfig = {
     return [
       { source: "/promos", destination: "/", permanent: false },
       { source: "/promotions", destination: "/", permanent: false },
+
+      // Anciennes URL encore présentes dans le contenu Sanity et dans les
+      // liens externes. Le rendu des articles réécrit déjà ces href
+      // (normalizeLegacyLinks) ; ces redirections couvrent le reste : les
+      // liens entrants, les favoris et tout ce qui a pu être indexé.
+      // Permanentes : ces adresses n'ont jamais existé sur ce site et ne
+      // reviendront pas, autant transmettre le signal à Google.
+      {
+        source: "/blog/comment-choisir-son-matelas",
+        destination: "/magazine/guide-choisir-matelas",
+        permanent: true,
+      },
+      {
+        source: "/blog/quel-matelas-mal-de-dos",
+        destination: "/magazine/matelas-mal-de-dos",
+        permanent: true,
+      },
+      { source: "/quiz-oreiller", destination: "/quiz", permanent: true },
+      { source: "/showrooms", destination: "/magasins", permanent: true },
+      { source: "/collections/oreillers", destination: "/oreillers", permanent: true },
     ];
   },
 };

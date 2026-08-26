@@ -17,16 +17,102 @@
  */
 
 /**
- * Balises structurelles de document qui n'ont rien à faire dans un fragment
- * injecté au milieu d'une page. On retire la BALISE, jamais son contenu :
- * un article collé depuis un éditeur externe arrive souvent enveloppé dans
- * <html><body><main><article>, et supprimer ces conteneurs avec leurs
- * enfants effacerait l'article entier.
+ * Enveloppes de document à retirer PUREMENT (la balise part, les enfants
+ * restent) : elles ne portent jamais de mise en forme.
  *
  * `(?![\w-])` plutôt que `\b` : évite de casser un élément personnalisé
  * comme <article-card> ou <main-nav>, dont le nom commence par le même mot.
  */
-const DOCUMENT_WRAPPERS = /<\/?(?:html|head|body|main|article)(?![\w-])[^>]*>/gi;
+const BARE_WRAPPERS = /<\/?(?:html|head|body)(?![\w-])[^>]*>/gi;
+
+/**
+ * Conteneurs sémantiques à TRANSFORMER en <div>, pas à supprimer.
+ *
+ * Un article rédigé porte sa mise en forme sur son conteneur racine —
+ * typiquement <main class="df-guide">. Supprimer la balise emporterait la
+ * classe, et avec elle toutes les règles CSS `.df-guide …`. On remplace donc
+ * le nom de l'élément en conservant ses attributs intacts : la page garde un
+ * seul <main> et un seul <article>, sans rien perdre du design.
+ */
+const SEMANTIC_WRAPPERS_OPEN = /<(?:main|article)(?![\w-])([^>]*)>/gi;
+const SEMANTIC_WRAPPERS_CLOSE = /<\/(?:main|article)(?![\w-])\s*>/gi;
+
+/** Anciennes URL encore présentes dans le contenu Sanity → routes réelles. */
+const LEGACY_LINKS: Record<string, string> = {
+  "/blog/comment-choisir-son-matelas": "/magazine/guide-choisir-matelas",
+  "/blog/quel-matelas-mal-de-dos": "/magazine/matelas-mal-de-dos",
+  "/quiz-oreiller": "/quiz",
+  "/showrooms": "/magasins",
+  "/collections/oreillers": "/oreillers",
+};
+
+/**
+ * Réécrit les liens hérités au moment du rendu.
+ *
+ * Les anciennes URL restent enregistrées en base : plutôt que de modifier le
+ * contenu des rédacteurs, on les corrige à l'affichage. Des redirections
+ * permanentes dans next.config.ts couvrent en second rideau les liens
+ * externes et les favoris déjà en circulation.
+ *
+ * La partie query et ancre est préservée : /showrooms#paris → /magasins#paris
+ */
+export function normalizeLegacyLinks(html: string): string {
+  return html.replace(
+    /(\shref\s*=\s*)(["'])([^"']*)\2/gi,
+    (match, prefix: string, quote: string, href: string) => {
+      const [pathPart, ...restParts] = href.split(/(?=[?#])/);
+      const rest = restParts.join("");
+      const clean = pathPart.replace(/\/+$/, "") || pathPart;
+      const target = LEGACY_LINKS[clean] ?? LEGACY_LINKS[pathPart];
+      return target ? `${prefix}${quote}${target}${rest}${quote}` : match;
+    },
+  );
+}
+
+/**
+ * Neutralise le contenu d'une feuille de style éditoriale.
+ *
+ * Le CSS n'est pas exécutable, mais trois vecteurs subsistent : `expression()`
+ * (vieux IE), les URL `javascript:`, et `@import` qui chargerait une feuille
+ * distante — bloquée par la CSP du site, donc autant la retirer proprement.
+ * On neutralise aussi toute séquence `</style` qui permettrait de sortir de
+ * l'élément et d'injecter du balisage.
+ */
+function sanitizeCss(css: string): string {
+  return css
+    .replace(/<\/style/gi, "<\\/style")
+    .replace(/expression\s*\(/gi, "expr-blocked(")
+    .replace(/javascript\s*:/gi, "blocked:")
+    .replace(/@import\b[^;]*;?/gi, "");
+}
+
+/**
+ * Extrait les feuilles de style avant sanitisation.
+ *
+ * Les <style> sont mis de côté puis réinjectés APRÈS le passage dans le
+ * sanitizer, et non confiés à DOMPurify. Raison : la préservation du CSS
+ * devient alors indépendante du chemin emprunté — DOMPurify chargé ou repli
+ * regex, le résultat est le même. C'est ce qui garantit que le design
+ * éditorial `.df-` survit sur le runtime serverless, là où jsdom échoue
+ * parfois à se charger.
+ *
+ * Fonctionne que le <style> vienne du <head> ou du corps du document.
+ */
+function extractStyles(html: string): { styles: string[]; rest: string } {
+  const styles: string[] = [];
+  const rest = html.replace(
+    /<style\b([^>]*)>([\s\S]*?)<\/style\s*>/gi,
+    (_match, attrs: string, css: string) => {
+      // Seuls `media` et `type` sont conservés : tout le reste, à commencer
+      // par un éventuel handler on*, est écarté.
+      const media = /\smedia\s*=\s*(["'])([^"']*)\1/i.exec(attrs);
+      const openTag = media ? `<style media="${media[2]}">` : "<style>";
+      styles.push(`${openTag}${sanitizeCss(css)}</style>`);
+      return "";
+    },
+  );
+  return { styles, rest };
+}
 
 /**
  * Retire l'enveloppe de document d'un fragment éditorial.
@@ -46,7 +132,7 @@ function stripDocumentChrome(html: string): string {
   out = out.replace(/<!--[\s\S]*?-->/g, "");
 
   // Éléments de <head> : dupliqueraient title, canonical et Open Graph
-  // déjà émis par generateMetadata.
+  // déjà émis par generateMetadata. Les <style> ont été mis à l'abri avant.
   out = out.replace(/<title\b[^>]*>[\s\S]*?<\/title\s*>/gi, "");
   out = out.replace(/<(?:meta|link|base)\b[^>]*\/?>/gi, "");
 
@@ -55,8 +141,13 @@ function stripDocumentChrome(html: string): string {
   out = out.replace(/<script\b[^>]*>[\s\S]*?<\/script\s*>/gi, "");
   out = out.replace(/<script\b[^>]*\/?>/gi, "");
 
-  // Conteneurs de document : la balise part, les enfants restent.
-  out = out.replace(DOCUMENT_WRAPPERS, "");
+  // <main> et <article> deviennent des <div> : leurs attributs — donc leurs
+  // classes de mise en forme — sont conservés tels quels.
+  out = out.replace(SEMANTIC_WRAPPERS_OPEN, (_m, attrs: string) => `<div${attrs}>`);
+  out = out.replace(SEMANTIC_WRAPPERS_CLOSE, "</div>");
+
+  // html / head / body : purement retirés, ils ne portent pas de style.
+  out = out.replace(BARE_WRAPPERS, "");
 
   return out;
 }
@@ -71,10 +162,16 @@ function stripDocumentChrome(html: string): string {
  *
  * Les <h1> du contenu sont volontairement CONSERVÉS : c'est à la page
  * appelante de décider si elle rend en plus son propre titre.
+ *
+ * Les feuilles de style sont remises en tête du fragment. L'ordre n'a pas
+ * d'incidence sur l'application du CSS, et cela garantit leur survie quel
+ * que soit le comportement de DOMPurify.
  */
 export function sanitizeEditorialHtml(dirty: string): string {
   if (!dirty) return "";
-  return sanitizeHtml(stripDocumentChrome(dirty));
+  const { styles, rest } = extractStyles(dirty);
+  const body = sanitizeHtml(normalizeLegacyLinks(stripDocumentChrome(rest)));
+  return styles.join("") + body;
 }
 
 /**

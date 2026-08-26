@@ -145,3 +145,132 @@ test("est idempotent — un second passage ne change rien", () => {
 test("tolère les entrées vides", () => {
   assert.equal(sanitizeEditorialHtml(""), "");
 });
+
+// ─────────────────────────────────────────────────────────────
+// Non-régression : préservation du design éditorial
+// ─────────────────────────────────────────────────────────────
+
+/**
+ * Régression constatée sur la preview : le design disparaissait.
+ *
+ * Deux causes cumulées. D'une part <main class="df-guide"> était supprimé
+ * avec sa classe racine, ce qui invalidait toutes les règles `.df-guide …`.
+ * D'autre part la feuille de style embarquée ne survivait pas au passage
+ * dans le sanitizer.
+ */
+const STYLED_DOCUMENT = `<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <title>Titre pirate | DreamsFly</title>
+  <meta property="og:title" content="Pirate">
+  <link rel="canonical" href="https://exemple.invalid/blog/x">
+  <script type="application/ld+json">{"@type":"BlogPosting"}</script>
+  <style>
+    .df-guide { background: #F4EFE7; }
+    .df-hero h1 { font-size: 72px; }
+    @media (max-width: 640px) { .df-hero h1 { font-size: 40px; } }
+    @keyframes df-fade { from { opacity: 0; } to { opacity: 1; } }
+    :root { --df-or: #C8A876; }
+  </style>
+</head>
+<body>
+  <main class="df-guide" id="guide" data-df-variant="oreiller" aria-label="Guide">
+    <article class="df-content">
+      <header class="df-hero">
+        <h1>Titre</h1>
+      </header>
+    </article>
+  </main>
+</body>
+</html>`;
+
+const styled = sanitizeEditorialHtml(STYLED_DOCUMENT);
+
+test("la feuille de style éditoriale survit intégralement", () => {
+  assert.match(styled, /<style[^>]*>/i, "la balise <style> doit être présente");
+  assert.match(styled, /\.df-guide\s*\{\s*background:\s*#F4EFE7/i);
+  assert.match(styled, /\.df-hero h1\s*\{\s*font-size:\s*72px/i);
+  assert.match(styled, /@media \(max-width: 640px\)/i, "les media queries doivent rester");
+  assert.match(styled, /@keyframes df-fade/i, "les keyframes doivent rester");
+  assert.match(styled, /--df-or:\s*#C8A876/i, "les variables CSS doivent rester");
+});
+
+test("main et article deviennent des div en gardant leurs attributs", () => {
+  assert.match(styled, /<div[^>]*class="df-guide"/i, "la classe racine doit survivre");
+  assert.match(styled, /<div[^>]*class="df-content"/i);
+  assert.match(styled, /id="guide"/i, "l'id doit survivre");
+  assert.match(styled, /data-df-variant="oreiller"/i, "les data-* doivent survivre");
+  assert.match(styled, /aria-label="Guide"/i, "les aria-* doivent survivre");
+});
+
+test("aucun main ni article éditorial ne subsiste", () => {
+  assert.ok(!/<main(?![\w-])/i.test(styled), "aucun <main> issu du contenu");
+  assert.ok(!/<article(?![\w-])/i.test(styled), "aucun <article> issu du contenu");
+});
+
+test("le header éditorial et son unique h1 sont conservés", () => {
+  assert.match(styled, /<header[^>]*class="df-hero"/i);
+  assert.equal((styled.match(/<h1(?![\w-])/gi) || []).length, 1, "un seul <h1>");
+});
+
+test("les métadonnées et données structurées restent supprimées", () => {
+  assert.ok(!/<title/i.test(styled));
+  assert.ok(!/<meta/i.test(styled));
+  assert.ok(!/canonical/i.test(styled));
+  assert.ok(!/<script/i.test(styled));
+  assert.ok(!/BlogPosting/.test(styled));
+});
+
+test("le CSS dangereux est neutralisé sans casser la feuille", () => {
+  const risky = `<style>
+    .a { background: url(javascript:alert(1)); }
+    .b { width: expression(alert(1)); }
+    @import url("https://evil.invalid/x.css");
+    .df-ok { color: red; }
+  </style>`;
+  const safe = sanitizeEditorialHtml(risky);
+  assert.ok(!/javascript\s*:/i.test(safe), "les URL javascript: doivent partir");
+  assert.ok(!/expression\s*\(/i.test(safe), "expression() doit partir");
+  assert.ok(!/@import/i.test(safe), "@import doit partir");
+  assert.match(safe, /\.df-ok\s*\{\s*color:\s*red/i, "le CSS légitime doit rester");
+});
+
+// ─────────────────────────────────────────────────────────────
+// Normalisation des liens hérités
+// ─────────────────────────────────────────────────────────────
+
+test("les cinq anciennes URL sont réécrites vers les routes réelles", () => {
+  const links = `
+    <a href="/blog/comment-choisir-son-matelas">A</a>
+    <a href="/blog/quel-matelas-mal-de-dos">B</a>
+    <a href="/quiz-oreiller">C</a>
+    <a href="/showrooms">D</a>
+    <a href="/collections/oreillers">E</a>
+  `;
+  const out = sanitizeEditorialHtml(links);
+  assert.match(out, /href="\/magazine\/guide-choisir-matelas"/);
+  assert.match(out, /href="\/magazine\/matelas-mal-de-dos"/);
+  assert.match(out, /href="\/quiz"/);
+  assert.match(out, /href="\/magasins"/);
+  assert.match(out, /href="\/oreillers"/);
+  assert.ok(!/\/blog\//.test(out), "plus aucun lien /blog/");
+  assert.ok(!/\/collections\//.test(out), "plus aucun lien /collections/");
+});
+
+test("ancres et paramètres sont préservés lors de la réécriture", () => {
+  const out = sanitizeEditorialHtml(`<a href="/showrooms#paris">Paris</a>`);
+  assert.match(out, /href="\/magasins#paris"/);
+});
+
+test("la barre oblique finale est tolérée", () => {
+  const out = sanitizeEditorialHtml(`<a href="/quiz-oreiller/">Quiz</a>`);
+  assert.match(out, /href="\/quiz"/);
+});
+
+test("les liens légitimes ne sont pas touchés", () => {
+  const out = sanitizeEditorialHtml(
+    `<a href="/matelas">M</a><a href="https://institut-sommeil-vigilance.org/">S</a>`,
+  );
+  assert.match(out, /href="\/matelas"/);
+  assert.match(out, /href="https:\/\/institut-sommeil-vigilance\.org\/"/);
+});
