@@ -137,6 +137,10 @@ export async function POST(req: NextRequest) {
       subtotal: cart.subtotal,
       shipping: cart.shipping,
       amount: cart.total,
+      // Moyens de paiement réellement activés sur le compte Stripe pour ce
+      // montant. La page les affiche tels quels : impossible d'y promettre
+      // un moyen de paiement qui ne serait pas proposé au client.
+      paymentMethodTypes: intent.payment_method_types,
       // Renvoyé pour que le récapitulatif affiche les prix du serveur,
       // pas ceux du localStorage : si les deux divergent, le client voit
       // immédiatement le montant réellement facturé.

@@ -31,6 +31,7 @@ type Totals = {
   shipping: number;
   amount: number;
   lines: PricedLine[];
+  paymentMethodTypes: string[];
 };
 
 export function CheckoutClient() {
@@ -97,6 +98,7 @@ export function CheckoutClient() {
         shipping: data.shipping,
         amount: data.amount,
         lines: data.lines || [],
+        paymentMethodTypes: data.paymentMethodTypes || [],
       });
 
       setClientSecret((prev) => {

@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { formatCents, type PricedLine } from "./types";
+import { AcceptedMethods, SecurityAssurances } from "./payment-badges";
 
 /**
  * Formulaire de commande — mise en page et champs entièrement maison.
@@ -20,6 +21,8 @@ type Totals = {
   shipping: number;
   amount: number;
   lines: PricedLine[];
+  /** Moyens de paiement réellement activés côté Stripe. */
+  paymentMethodTypes: string[];
 };
 
 const COUNTRIES = [
@@ -223,15 +226,29 @@ export function CheckoutForm({
         </Section>
 
         <Section step="03" title="Paiement">
+          {totals.paymentMethodTypes.length > 0 && (
+            <div className="mb-6 flex flex-wrap items-center gap-x-5 gap-y-3 border-b border-border pb-6">
+              <span className="font-sans text-[11px] uppercase tracking-[0.14em] text-taupe">
+                Moyens acceptés
+              </span>
+              <AcceptedMethods types={totals.paymentMethodTypes} />
+            </div>
+          )}
+
           <PaymentElement options={{ layout: "tabs" }} />
+
           <p className="mt-4 flex items-start gap-2 font-sans text-[12px] leading-relaxed text-taupe">
             <LockIcon />
             <span>
-              Paiement sécurisé par Stripe. Vos coordonnées bancaires ne transitent jamais par nos
+              Paiement traité par Stripe. Vos coordonnées bancaires ne transitent jamais par nos
               serveurs et ne sont pas conservées par DreamsFly.
             </span>
           </p>
         </Section>
+
+        <div className="rounded-[20px] bg-sable p-7">
+          <SecurityAssurances />
+        </div>
       </div>
 
       {/* ─── Colonne droite : récapitulatif ──────────────────── */}
@@ -286,6 +303,11 @@ export function CheckoutForm({
                 : `Payer ${formatCents(totals.amount)}`}
           </button>
 
+          <p className="mt-3 flex items-center justify-center gap-1.5 font-sans text-[11px] uppercase tracking-[0.12em] text-taupe">
+            <LockIcon />
+            Paiement chiffré · 3-D Secure
+          </p>
+
           <p className="mt-4 text-center font-sans text-[11px] leading-relaxed text-taupe">
             En validant, vous acceptez nos{" "}
             <Link href="/cgv" className="underline hover:text-noir">
@@ -294,10 +316,30 @@ export function CheckoutForm({
             .
           </p>
 
+          <ul className="mt-6 space-y-3 border-t border-border pt-6">
+            <Perk title="Livraison à domicile">
+              5 à 7 jours ouvrés, montée à l'étage incluse par deux livreurs. Rendez-vous confirmé
+              par SMS 48 h avant.
+            </Perk>
+            <Perk title="Reprise de l'ancien matelas">
+              Gratuite le jour de la livraison, sur simple demande. Remise à un centre de recyclage
+              agréé.
+            </Perk>
+            <Perk title="Une question ?">
+              <a href="tel:0785889260" className="underline hover:text-noir">
+                07 85 88 92 60
+              </a>{" "}
+              ou{" "}
+              <a href="mailto:contact@dreamsfly.fr" className="underline hover:text-noir">
+                contact@dreamsfly.fr
+              </a>
+            </Perk>
+          </ul>
+
           <button
             type="button"
             onClick={onRetry}
-            className="mt-3 block w-full text-center font-sans text-[11px] uppercase tracking-[0.12em] text-taupe underline hover:text-noir"
+            className="mt-6 block w-full text-center font-sans text-[11px] uppercase tracking-[0.12em] text-taupe underline hover:text-noir"
           >
             Recalculer le total
           </button>
@@ -376,6 +418,18 @@ function Field({
         <span className="mt-1.5 block font-sans text-[12px] text-taupe">{hint}</span>
       ) : null}
     </label>
+  );
+}
+
+function Perk({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <li className="flex gap-2.5">
+      <span className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-or" aria-hidden="true" />
+      <span>
+        <span className="block font-sans text-[12px] font-medium text-ink">{title}</span>
+        <span className="block font-sans text-[12px] leading-relaxed text-pierre">{children}</span>
+      </span>
+    </li>
   );
 }
 
