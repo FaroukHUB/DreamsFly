@@ -82,12 +82,28 @@ const VAGUE_DATE_RE = /MISE\s+À\s+JOUR\s+AOÛT\s+2026/gi;
 function removeVagueDate(html) {
   const removals = [];
 
-  // 1. Élément dont la mention est le seul contenu.
-  const wrapped =
-    /<(span|em|strong|small|b|i|div|p)(\s[^>]*)?>\s*MISE\s+À\s+JOUR\s+AOÛT\s+2026\s*<\/\1\s*>/gi;
-  let out = html.replace(wrapped, (m) => {
-    removals.push({ kind: "élément entier", snippet: m });
-    return "";
+  // 1. Élément porteur dont la mention est le seul contenu TEXTUEL.
+  //
+  //    Le cas réel n'est pas <span>Mise à jour août 2026</span> mais
+  //    <span><b class="df-diamond">◆</b> Mise à jour août 2026</span> : une
+  //    puce décorative accompagne le texte. N'enlever que le texte laisserait
+  //    un losange orphelin flottant dans la barre de méta. On compare donc le
+  //    contenu débarrassé de ses balises et de ses puces.
+  //    Volontairement limité aux éléments EN LIGNE : inclure div ou p ferait
+  //    capturer le conteneur parent (<div class="df-meta">) avant ses enfants,
+  //    et son texte global ne correspondrait à rien — les spans internes ne
+  //    seraient alors jamais examinés.
+  const BLOCK = /<(span|li|em|strong|small|b|i)\b[^>]*>((?:(?!<\/?\1\b)[\s\S])*)<\/\1\s*>/gi;
+  let out = html.replace(BLOCK, (match, _tag, inner) => {
+    const textOnly = inner
+      .replace(/<[^>]*>/g, "") // balises décoratives
+      .replace(/[◆•·|—–\-\s]/g, " ") // puces et séparateurs
+      .trim();
+    if (/^mise\s+à\s+jour\s+ao[uû]t\s+2026$/i.test(textOnly)) {
+      removals.push({ kind: "élément porteur entier", snippet: match });
+      return "";
+    }
+    return match;
   });
 
   // 2. Mention nue au fil du texte.
@@ -103,6 +119,21 @@ function removeVagueDate(html) {
   out = out.replace(/\(\s*\)/g, "");
   out = out.replace(/\[\s*\]/g, "");
   out = out.replace(/\s+([.,;:!?])/g, "$1");
+
+  // Filet de sécurité : tout élément en ligne dont il ne reste que de la
+  // décoration — une puce ◆, un séparateur — est retiré à son tour. Sans
+  // cela, retirer le texte d'un <span><b>◆</b> texte</span> laisserait un
+  // losange orphelin flottant dans la barre de méta.
+  const DECORATIVE_ONLY = /<(span|li)\b[^>]*>((?:(?!<\/?\1\b)[\s\S])*)<\/\1\s*>/gi;
+  out = out.replace(DECORATIVE_ONLY, (match, _tag, inner) => {
+    const textOnly = inner.replace(/<[^>]*>/g, "").replace(/[◆•·|—–\s]/g, "").trim();
+    if (textOnly === "") {
+      removals.push({ kind: "conteneur devenu décoratif", snippet: match });
+      return "";
+    }
+    return match;
+  });
+
   out = out.replace(/[ \t]{2,}/g, " ");
 
   return { html: out, removals };
@@ -295,6 +326,19 @@ if (diff("metaDescription", doc.metaDescription, TARGET.metaDescription))
   patch.metaDescription = TARGET.metaDescription;
 if (diff("updatedAt (dateModified)", doc.updatedAt, TARGET.updatedAt))
   patch.updatedAt = TARGET.updatedAt;
+
+// L'excerpt est affiché sous le titre ET sert de description de repli dans
+// le BlogPosting. La mention « Sources SFDO. » y renvoie à une référence
+// introuvable : on retire la phrase entière, pas le sigle seul, sinon il
+// resterait « Sources. » qui ne veut rien dire.
+if (typeof doc.excerpt === "string") {
+  const cleanedExcerpt = doc.excerpt
+    .replace(/\s*Sources?\s*:?\s*SFDO\s*\.?\s*$/i, "")
+    .replace(/\s*\(\s*Sources?\s*:?\s*SFDO\s*\)\s*/gi, " ")
+    .trim();
+  if (diff("excerpt", doc.excerpt, cleanedExcerpt)) patch.excerpt = cleanedExcerpt;
+}
+
 console.log(`\n  ✓  publishedAt conservé : ${doc.publishedAt}`);
 
 // ─── 3. Transformations du contenu HTML ──────────────────────
