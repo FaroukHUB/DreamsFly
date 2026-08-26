@@ -99,6 +99,52 @@ const nextConfig: NextConfig = {
     return [
       { source: "/promos", destination: "/", permanent: false },
       { source: "/promotions", destination: "/", permanent: false },
+
+      // Anciennes URL encore présentes dans le contenu Sanity et dans les
+      // liens externes. Le rendu des articles réécrit déjà ces href
+      // (normalizeLegacyLinks) ; ces redirections couvrent le reste : les
+      // liens entrants, les favoris et tout ce qui a pu être indexé.
+      // Permanentes : ces adresses n'ont jamais existé sur ce site et ne
+      // reviendront pas, autant transmettre le signal à Google.
+      // Doit rester synchronisé avec LEGACY_LINKS dans lib/sanitize-html.ts :
+      // le rendu réécrit les liens internes, ces redirections rattrapent tout
+      // le reste — liens entrants, favoris, pages déjà indexées ailleurs.
+      {
+        source: "/blog/comment-choisir-son-matelas",
+        destination: "/magazine/guide-choisir-matelas",
+        permanent: true,
+      },
+      {
+        source: "/blog/comment-choisir-son-sommier",
+        destination: "/magazine/guide-choisir-sommier",
+        permanent: true,
+      },
+      {
+        source: "/blog/comment-choisir-son-oreiller",
+        destination: "/magazine/guide-choisir-oreiller",
+        permanent: true,
+      },
+      {
+        source: "/blog/comment-choisir-son-lit",
+        destination: "/magazine/guide-choisir-lit",
+        permanent: true,
+      },
+      {
+        source: "/blog/quel-matelas-mal-de-dos",
+        destination: "/magazine/matelas-mal-de-dos",
+        permanent: true,
+      },
+      {
+        source: "/blog/memoire-de-forme-ou-ressorts-ensaches",
+        destination: "/magazine/memoire-forme-vs-ressorts",
+        permanent: true,
+      },
+      { source: "/collections/matelas", destination: "/matelas", permanent: true },
+      { source: "/collections/sommiers", destination: "/sommiers", permanent: true },
+      { source: "/collections/oreillers", destination: "/oreillers", permanent: true },
+      { source: "/collections/lits", destination: "/lits", permanent: true },
+      { source: "/quiz-oreiller", destination: "/quiz", permanent: true },
+      { source: "/showrooms", destination: "/magasins", permanent: true },
     ];
   },
 };

@@ -169,23 +169,36 @@ export function articleSchema(opts: {
   updatedAt?: string;
   author?: { name: string; url?: string };
   reviewedBy?: { name: string };
-  articleType?: "Article" | "TechArticle" | "NewsArticle";
+  articleType?: "Article" | "TechArticle" | "NewsArticle" | "BlogPosting";
 }) {
   const author = opts.author && opts.author.name
     ? { "@type": "Person", name: opts.author.name, url: opts.author.url }
     : { "@type": "Organization", name: "DreamsFly", url: SITE_URL };
+  // Une seule URL absolue sert à la fois de `url` et de `mainEntityOfPage` :
+  // deux valeurs divergentes sur ces champs sont une des causes classiques
+  // d'URL contradictoires dans les données structurées.
+  const canonicalUrl = opts.url.startsWith("http") ? opts.url : `${SITE_URL}${opts.url}`;
   return {
     "@context": "https://schema.org",
     "@type": opts.articleType || "Article",
     headline: opts.title,
     description: opts.description,
     image: opts.image,
-    mainEntityOfPage: opts.url.startsWith("http") ? opts.url : `${SITE_URL}${opts.url}`,
+    url: canonicalUrl,
+    mainEntityOfPage: canonicalUrl,
+    // Dates issues des champs Sanity uniquement — aucune valeur en dur.
+    // `dateModified` retombe sur la date de publication quand l'article
+    // n'a jamais été mis à jour, ce que Google accepte.
     datePublished: opts.publishedAt,
     dateModified: opts.updatedAt || opts.publishedAt,
     author,
     reviewedBy: opts.reviewedBy ? { "@type": "Person", name: opts.reviewedBy.name } : undefined,
-    publisher: { "@id": `${SITE_URL}/#organization` },
+    publisher: {
+      "@type": "Organization",
+      "@id": `${SITE_URL}/#organization`,
+      name: "DreamsFly",
+      url: SITE_URL,
+    },
   };
 }
 

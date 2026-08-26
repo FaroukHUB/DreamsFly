@@ -43,6 +43,28 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: `Webhook invalid: ${err.message}` }, { status: 400 });
   }
 
+  // ─── Cloisonnement : ce compte Stripe est partagé ───────────────────
+  //
+  // Le compte héberge aussi une autre activité (Mobilier Malin). Un compte
+  // Stripe émet ses événements pour TOUS les paiements qu'il traite : sans
+  // filtre, chaque vente de l'autre marque créerait une fausse commande
+  // dans le Sanity de DreamsFly. Une clé API distincte n'y change rien —
+  // elle authentifie, elle ne cloisonne pas.
+  //
+  // Chaque paiement initié par ce site porte `metadata.source` valant
+  // "dreamsfly-web" (posé dans /api/payment-intent). Tout événement sans ce
+  // marqueur vient d'ailleurs et doit être ignoré.
+  //
+  // En cas de doute on IGNORE : rater une commande se voit dans les logs et
+  // se rattrape en rejouant l'événement ; enregistrer la commande d'une
+  // autre entreprise mélange deux comptabilités.
+  if (!belongsToDreamsFly(event)) {
+    console.info(
+      `[stripe-webhook] ${event.type} ignoré — hors périmètre DreamsFly (compte Stripe partagé)`,
+    );
+    return NextResponse.json({ received: true, ignored: true });
+  }
+
   // ─── Tunnel intégré (PaymentElement) ────────────────────────────────
   // Le paiement se fait sur dreamsfly.fr, sans Checkout Session : c'est
   // donc le PaymentIntent qui fait foi. La commande a déjà été écrite en
@@ -116,6 +138,28 @@ export async function POST(req: NextRequest) {
   }
 
   return NextResponse.json({ received: true });
+}
+
+/** Marqueur posé sur tout paiement initié par ce site. */
+const SOURCE_MARKER = "dreamsfly-web";
+
+/**
+ * L'événement concerne-t-il une commande DreamsFly ?
+ *
+ * Le compte Stripe est partagé avec une autre activité : il faut distinguer
+ * ce qui vient de ce site de ce qui vient de l'autre.
+ *
+ * Le marqueur est cherché à deux endroits, car les deux tunnels ne le
+ * posent pas au même niveau :
+ *  · tunnel intégré → sur le PaymentIntent lui-même
+ *  · ancien Checkout → sur la Session ; le PaymentIntent qu'elle engendre
+ *    n'hérite PAS de ses métadonnées. L'événement payment_intent.succeeded
+ *    d'une session sera donc ignoré, et c'est checkout.session.completed
+ *    qui fera foi — ce qui évite au passage tout double traitement.
+ */
+function belongsToDreamsFly(event: Stripe.Event): boolean {
+  const object = event.data.object as { metadata?: Record<string, string> | null };
+  return object?.metadata?.source === SOURCE_MARKER;
 }
 
 /**

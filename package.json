@@ -7,6 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "test": "node --experimental-strip-types --test \"tests/**/*.test.ts\"",
+    "seo:check": "node scripts/check-seo-invariants.mjs",
     "typecheck": "tsc --noEmit",
     "import:trust": "tsx scripts/import-trust-catalog.ts"
   },

@@ -5,6 +5,7 @@ import { CartDrawer } from "@/components/cart/cart-drawer";
 import { SearchDialog } from "@/components/search-dialog";
 import { ChatWidget } from "@/components/chat-widget";
 import { CookieConsent } from "@/components/cookie-consent";
+import { INDEXING_ENABLED } from "@/lib/seo/metadata";
 
 const sora = Sora({
   subsets: ["latin"],
@@ -32,9 +33,12 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://dreamsfly.fr";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
+  // SEUL endroit du site où le nom de marque est ajouté à un titre.
+  // `buildMetadata` renvoie volontairement des titres sans marque : c'est
+  // ce template qui la suffixe, une fois et une seule.
   title: {
-    default: "DreamsFly — Le matelas pensé pour votre meilleur sommeil",
-    template: "%s · DreamsFly",
+    default: "DreamsFly",
+    template: "%s | DreamsFly",
   },
   description:
     "Découvrez nos matelas conçus en France. Mémoire de forme, ressorts ensachés, mousse polyuréthane. Essai en showroom · Garantie fabricant · Paiement 3× sans frais.",
@@ -44,8 +48,12 @@ export const metadata: Metadata = {
     siteName: "DreamsFly",
     url: siteUrl,
   },
-  alternates: { canonical: siteUrl },
-  robots: { index: true, follow: true },
+  // Pas de canonical globale : héritée par toute page qui n'en déclare pas,
+  // elle désignait l'accueil comme canonical de pages sans rapport.
+  // Chaque route publie la sienne via buildMetadata.
+  robots: INDEXING_ENABLED
+    ? { index: true, follow: true }
+    : { index: false, follow: false },
   // Vérification Google Search Console — définir GOOGLE_SITE_VERIFICATION sur Vercel
   // (Search Console → Paramètres → Validation de la propriété → balise HTML → copier le content)
   ...(process.env.GOOGLE_SITE_VERIFICATION

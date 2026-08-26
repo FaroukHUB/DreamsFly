@@ -3,7 +3,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
-import { sanitizeHtml } from "@/lib/sanitize-html";
+import {
+  sanitizeHtmlBlocks,
+  hasEditorialH1,
+  hasEditorialMain,
+  hasEditorialArticle,
+} from "@/lib/seo/editorial-blocks";
 import { sanityClient } from "@/lib/sanity/client";
 import { guideBySlugQuery, allGuideSlugsQuery } from "@/lib/sanity/guide-queries";
 import { siteSettingsQuery } from "@/lib/sanity/queries";
@@ -62,7 +67,13 @@ const ARTICLE_TYPE_LABELS: Record<string, string> = {
   review: "Banc d'essai",
 };
 
-const portableComponents: PortableTextComponents = {
+/**
+ * Les composants PortableText dépendent des blocs déjà nettoyés : d'où une
+ * fabrique plutôt qu'une constante de module. Cela évite aussi tout état
+ * partagé entre deux rendus concurrents.
+ */
+function buildPortableComponents(sanitizedHtml: Map<string, string>): PortableTextComponents {
+  return {
   block: {
     h2: ({ children }) => <h2 className="mt-12 mb-4 font-sora text-3xl font-semibold tracking-tight text-ink">{children}</h2>,
     h3: ({ children }) => <h3 className="mt-8 mb-3 font-sora text-2xl font-semibold tracking-tight text-ink">{children}</h3>,
@@ -116,17 +127,21 @@ const portableComponents: PortableTextComponents = {
         <p className="font-sans text-[15px] leading-relaxed text-ink">{value.text}</p>
       </aside>
     ),
-    htmlBlock: ({ value }: any) =>
-      value?.html ? (
+    htmlBlock: ({ value }: any) => {
+      // Déjà nettoyé en amont par sanitizeHtmlBlocks : on ne re-sanitize pas
+      // ici, sinon le travail serait fait deux fois par bloc et par rendu.
+      const html = sanitizedHtml.get(value?._key);
+      if (!html) return null;
+      return (
         // Sort du max-w-3xl parent pour occuper toute la largeur du viewport,
         // laisse au HTML custom la place de faire ses grilles / tables larges.
-        // HTML sanitizé (DOMPurify) : styles et iframes allowlistés OK, scripts jamais.
         <div
           className="df-html-block relative my-12 w-screen"
           style={{ marginLeft: "calc(50% - 50vw)", marginRight: "calc(50% - 50vw)" }}
-          dangerouslySetInnerHTML={{ __html: sanitizeHtml(value.html) }}
+          dangerouslySetInnerHTML={{ __html: html }}
         />
-      ) : null,
+      );
+    },
     howToStep: ({ value }: any) => (
       <div className="my-6 flex gap-5 rounded-2xl border border-border bg-ivoire p-5">
         <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-midnight font-sora text-sm font-bold text-white">
@@ -148,7 +163,8 @@ const portableComponents: PortableTextComponents = {
       </div>
     ),
   },
-};
+  };
+}
 
 export default async function GuidePage({ params }: { params: Promise<Params> }) {
   const { slug } = await params;
@@ -172,6 +188,18 @@ export default async function GuidePage({ params }: { params: Promise<Params> })
   const fmt = (d: Date) =>
     d.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
 
+  // Nettoyage des blocs HTML avant rendu : le résultat sert à la fois au
+  // rendu lui-même et à décider si la page doit produire son propre <h1>.
+  const sanitizedHtml = sanitizeHtmlBlocks(g.body);
+  const editorialHasH1 = hasEditorialH1(sanitizedHtml);
+  const portableComponents = buildPortableComponents(sanitizedHtml);
+
+  // Quand le contenu apporte ses propres <main> / <article>, la page rend un
+  // <div> à la place du sien : un seul de chaque dans le document, et le CSS
+  // de l'article — qui s'appuie sur ces noms d'éléments — reste valide.
+  const Main = hasEditorialMain(sanitizedHtml) ? "div" : "main";
+  const Article = hasEditorialArticle(sanitizedHtml) ? "div" : "article";
+
   const isHowTo = g.articleType === "how-to";
   const howToSteps = g.body?.filter((b: any) => b._type === "howToStep").map((s: any) => ({
     name: s.name,
@@ -183,7 +211,7 @@ export default async function GuidePage({ params }: { params: Promise<Params> })
     <>
       <Header settings={siteSettings} />
 
-      <main className="mx-auto max-w-3xl px-6 py-14 md:px-8 md:py-20">
+      <Main className="mx-auto max-w-3xl px-6 py-14 md:px-8 md:py-20">
         <nav aria-label="Fil d'Ariane" className="mb-10 flex flex-wrap items-center gap-2 font-sans text-[11px] uppercase tracking-[0.14em] text-taupe">
           <Link href="/" className="transition-colors hover:text-or">Accueil</Link>
           <span className="opacity-40">/</span>
@@ -192,16 +220,22 @@ export default async function GuidePage({ params }: { params: Promise<Params> })
           <span className="text-ink line-clamp-1">{g.title}</span>
         </nav>
 
-        <article>
+        <Article>
           <header className="mb-14">
             {g.articleType && (
               <span className="eyebrow-editorial on-cream mb-3">
                 {ARTICLE_TYPE_LABELS[g.articleType as string] || "Article"}
               </span>
             )}
-            <h1 className="display-serif on-cream mt-4 text-[2.2rem] font-normal md:text-[3.6rem]">
-              {g.title}
-            </h1>
+            {/* Le <h1> n'est rendu que si le contenu éditorial n'en porte
+                pas déjà un : deux <h1> sur une page brouillent le signal
+                principal envoyé aux moteurs. Aucun masquage CSS, aucune
+                rétrogradation automatique en <h2> — on en rend un, ou pas. */}
+            {!editorialHasH1 && (
+              <h1 className="display-serif on-cream mt-4 text-[2.2rem] font-normal md:text-[3.6rem]">
+                {g.title}
+              </h1>
+            )}
             {g.excerpt && (
               <p className="mt-6 font-serif text-[18px] italic leading-relaxed text-taupe md:text-[22px]">{g.excerpt}</p>
             )}
@@ -324,8 +358,8 @@ export default async function GuidePage({ params }: { params: Promise<Params> })
               </div>
             </section>
           )}
-        </article>
-      </main>
+        </Article>
+      </Main>
 
       <Footer settings={siteSettings} />
 
@@ -334,6 +368,9 @@ export default async function GuidePage({ params }: { params: Promise<Params> })
       <JsonLd data={breadcrumbSchema(breadcrumbs)} />
       <JsonLd
         data={articleSchema({
+          // Magazine = blog éditorial : BlogPosting est le type schema.org
+          // adapté, plus précis qu'Article pour ce format.
+          articleType: "BlogPosting",
           title: g.title,
           description: g.metaDescription || g.excerpt,
           image: g.coverImage ? urlFor(g.coverImage).width(1200).url() : undefined,
