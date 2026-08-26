@@ -120,22 +120,20 @@ function removeVagueDate(html) {
   // Nettoyage de la ponctuation devenue orpheline : séparateurs en fin
   // d'élément, parenthèses et crochets vides, espaces doublés. Sans cela une
   // mention retirée au milieu d'une phrase laisse « Ce guide () vous aide ».
-  out = out.replace(/(\s*[·—–|]\s*)(?=\s*<\/)/g, "");
-  out = out.replace(/\(\s*\)/g, "");
-  out = out.replace(/\[\s*\]/g, "");
-  out = out.replace(/\s+([.,;:!?])/g, "$1");
-
-  // PAS de passe globale « supprimer les éléments au texte vide ».
+  // AUCUN nettoyage cosmétique global. Deux passes ont été écrites puis
+  // retirées après avoir causé des dégâts sur le contenu réel :
   //
-  // Une telle passe a été écrite puis retirée : elle emportait tous les
-  // <span class="df-icon-ring"><svg>…</svg></span> de l'article — icônes des
-  // cartes et de l'encadré médical — puisque leur contenu textuel est vide
-  // par nature. Un élément sans texte n'est pas un élément vide.
+  //  · `replace(/\s+([.,;:!?])/g, "$1")` supprimait l'espace avant ?, !, :
+  //    et ; — OBLIGATOIRE en typographie française. Elle a transformé tout
+  //    l'article : « Comment laver un oreiller ? » → « oreiller? ».
+  //  · `replace(/[ \t]{2,}/g, " ")` réécrivait l'indentation de tout le
+  //    document, noyant le vrai changement dans un diff illisible.
+  //  · une passe « supprimer les éléments au texte vide » emportait tous les
+  //    <span class="df-icon-ring"><svg>…</svg></span> : une icône n'a pas de
+  //    texte par nature. Un élément sans texte n'est pas un élément vide.
   //
-  // Le seul cas à traiter est celui de l'élément porteur de la date, géré
-  // ci-dessus en le retirant EN ENTIER. Rien d'autre ne doit être touché.
-
-  out = out.replace(/[ \t]{2,}/g, " ");
+  // Le seul cas à traiter est l'élément porteur de la date, retiré EN ENTIER
+  // ci-dessus. Une transformation chirurgicale ne touche à rien d'autre.
 
   return { html: out, removals };
 }
