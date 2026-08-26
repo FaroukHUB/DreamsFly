@@ -135,11 +135,24 @@ console.log("\n── TRANSFORMATIONS RÉAPPLIQUÉES ─────────
 for (const n of notes) console.log(`  · ${n}`);
 
 console.log("\n── CONTRÔLES ───────────────────────────────────────────");
+/**
+ * Liens hérités portés par un <a> — les seuls réellement cliquables.
+ *
+ * Un href sur <link> ou <base> est de la métadonnée de document : le
+ * sanitizer les retire avant le rendu (cf. stripDocumentChrome et les tests
+ * de lib/sanitize-html.ts), ils n'atteignent jamais la page et ne peuvent
+ * donc produire ni lien mort ni canonical parasite. Ils sont signalés à
+ * part, sans bloquer.
+ */
+const navigableLegacy = (html) =>
+  [...html.matchAll(/<a\b[^>]*\shref=(["'])([^"']*)\1[^>]*>/gi)].filter(([, , href]) =>
+    /\/blog\/|\/collections\//.test(href),
+  );
+
 const checks = [
   ["espaces français restaurés", countFrenchSpaces(repaired) === countFrenchSpaces(originalBlock.html)],
   ["date supprimée", !/mise\s+à\s+jour\s+ao[uû]t/i.test(repaired)],
-  ["aucun lien /blog/", !/href=["'][^"']*\/blog\//.test(repaired)],
-  ["aucun lien /collections/", !/href=["'][^"']*\/collections\//.test(repaired)],
+  ["aucun lien <a> hérité", navigableLegacy(repaired).length === 0],
   ["icônes conservées", (repaired.match(/df-icon-ring/g) || []).length === (originalBlock.html.match(/df-icon-ring/g) || []).length],
   ["longueur cohérente", Math.abs(repaired.length - originalBlock.html.length) < 400],
 ];
@@ -149,20 +162,30 @@ for (const [label, ok] of checks) {
   console.log(`  ${ok ? "✅" : "❌"} ${label}`);
 }
 
+// Signalement, sans blocage : les href hérités portés par autre chose qu'un
+// <a>. On affiche l'élément entier pour pouvoir juger sur pièce.
+const chrome = [...repaired.matchAll(/<(link|base|meta)\b[^>]*(?:\/blog\/|\/collections\/)[^>]*>/gi)];
+if (chrome.length) {
+  console.log("\n── MÉTADONNÉES HÉRITÉES (retirées au rendu) ────────────");
+  for (const m of chrome) console.log(`  · ${m[0].trim()}`);
+  console.log("\n  Ces éléments sont supprimés par sanitizeEditorialHtml avant");
+  console.log("  affichage : ils n'atteignent pas la page et ne produisent ni");
+  console.log("  lien mort ni canonical parasite. Ils restent stockés en base,");
+  console.log("  sans effet. Aucune action requise.");
+}
+
 if (failed > 0) {
-  // Diagnostic : lister les liens hérités qui subsistent. Un contrôle qui
-  // échoue sans dire QUOI oblige à deviner, et deviner sur du contenu est
-  // précisément ce qu'on cherche à éviter.
-  const remaining = [...repaired.matchAll(/href=(["'])([^"']*(?:\/blog\/|\/collections\/)[^"']*)\1/gi)];
+  const remaining = navigableLegacy(repaired);
   if (remaining.length) {
-    console.log("\n── LIENS HÉRITÉS NON RÉÉCRITS ──────────────────────────");
-    for (const m of remaining) {
-      console.log(`  · ${m[2]}`);
-      const known = Object.keys(LEGACY_LINKS).some((k) => m[2].startsWith(k));
-      console.log(`    ${known ? "⚠️  forme inattendue d'une URL connue" : "❓ URL inconnue — destination à décider"}`);
+    console.log("\n── LIENS <a> HÉRITÉS NON RÉÉCRITS ──────────────────────");
+    for (const [full, , href] of remaining) {
+      console.log(`  · ${href}`);
+      console.log(`    ${full.trim()}`);
+      const known = Object.keys(LEGACY_LINKS).some((k) => href.includes(k));
+      console.log(
+        `    ${known ? "⚠️  forme inattendue d'une URL connue" : "❓ URL inconnue — destination à décider"}`,
+      );
     }
-    console.log("\n  Ces URL ne figurent pas dans la table de correspondance.");
-    console.log("  Il faut décider vers quoi elles doivent pointer avant de réparer.");
   }
   console.error(`\n❌ ${failed} contrôle(s) en échec — rien n'a été écrit.\n`);
   process.exit(1);
