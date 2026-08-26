@@ -53,9 +53,53 @@ const LEGACY_LINKS = {
   "/collections/oreillers": "/oreillers",
 };
 
-/** Mention de date vague à remplacer par une date exacte. */
+/**
+ * Mention de date vague à SUPPRIMER (option A).
+ *
+ * Elle n'est pas remplacée par une date exacte : app/magazine/[slug]/page.tsx
+ * rend déjà « Mis à jour le … » à partir du champ `updatedAt`. Laisser une
+ * seconde mention dans le HTML afficherait deux fois la même phrase et
+ * créerait une seconde source de vérité, susceptible de diverger du
+ * `dateModified` du BlogPosting. Une seule date visible, un seul champ.
+ */
 const VAGUE_DATE_RE = /MISE\s+À\s+JOUR\s+AOÛT\s+2026/gi;
-const EXACT_DATE = "Mis à jour le 25 août 2026";
+
+/**
+ * Retire la mention de date du HTML.
+ *
+ * Si la mention constitue à elle seule le contenu d'un élément en ligne —
+ * typiquement <span class="df-badge">MISE À JOUR AOÛT 2026</span> —, on
+ * retire l'élément entier : ne supprimer que le texte laisserait un badge
+ * vide, visible à l'écran comme un rectangle sans contenu.
+ */
+function removeVagueDate(html) {
+  const removals = [];
+
+  // 1. Élément dont la mention est le seul contenu.
+  const wrapped =
+    /<(span|em|strong|small|b|i|div|p)(\s[^>]*)?>\s*MISE\s+À\s+JOUR\s+AOÛT\s+2026\s*<\/\1\s*>/gi;
+  let out = html.replace(wrapped, (m) => {
+    removals.push({ kind: "élément entier", snippet: m });
+    return "";
+  });
+
+  // 2. Mention nue au fil du texte.
+  out = out.replace(VAGUE_DATE_RE, (m) => {
+    removals.push({ kind: "texte seul", snippet: m });
+    return "";
+  });
+
+  // Nettoyage de la ponctuation devenue orpheline : séparateurs en fin
+  // d'élément, parenthèses et crochets vides, espaces doublés. Sans cela une
+  // mention retirée au milieu d'une phrase laisse « Ce guide () vous aide ».
+  out = out.replace(/(\s*[·—–|]\s*)(?=\s*<\/)/g, "");
+  out = out.replace(/\(\s*\)/g, "");
+  out = out.replace(/\[\s*\]/g, "");
+  out = out.replace(/\s+([.,;:!?])/g, "$1");
+  out = out.replace(/[ \t]{2,}/g, " ");
+
+  return { html: out, removals };
+}
 
 /**
  * Formulations d'expertise à retirer : aucun ostéopathe n'a relu ces
@@ -68,7 +112,11 @@ const EXPERTISE_CLAIMS = [
   /validés?\s+par\s+(?:un|notre|nos)\s+(?:expert|kiné|médecin|professionnel)[^.,;]*/gi,
   /approuvés?\s+par\s+(?:des|les)\s+(?:ostéopathes?|kinés?|médecins?)/gi,
   /recommandés?\s+par\s+(?:des|les)\s+(?:ostéopathes?|kinés?|médecins?)/gi,
-  /\bSFDO\b/g,
+  // Référence introuvable : à retirer faute de publication accessible.
+  /\bSFDO\b[^.,;)]*/g,
+  // Chiffre invérifiable.
+  /\b38\s*%[^.]{0,60}cervicalgies?[^.]{0,40}/gi,
+  /cervicalgies?\s+chroniques?[^.]{0,40}38\s*%/gi,
 ];
 
 /**
@@ -78,26 +126,52 @@ const EXPERTISE_CLAIMS = [
 const SOURCE_CANDIDATES = [
   {
     label: "OEKO-TEX® STANDARD 100 — référentiel officiel",
-    url: "https://www.oeko-tex.com/en/our-standards/oeko-tex-standard-100",
+    url: "https://www.oeko-tex.com/en/our-standards/oeko-tex-standard-100/",
   },
   {
     label: "GOTS — Global Organic Textile Standard",
-    url: "https://global-standard.org/the-standard",
+    url: "https://global-standards.org/our-standards/gots",
+    // Vigilance : la recherche renvoie aussi global-standard.org (sans « s »).
+    // Le contrôle ci-dessous affiche l'URL finale après redirection ; si
+    // celle-ci ne répond pas, utiliser celle qui répond.
+    note: "vérifier l'orthographe du domaine dans la sortie",
   },
   {
     label:
-      "The Effect of Different Pillow Heights on the Parameters of Cervicothoracic Spine Segments (PMC4623167)",
+      "Effect of Different Pillow Heights on Cervicothoracic Spine Segments (PMC4623167) — 16 adultes jeunes asymptomatiques, décubitus dorsal",
     url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC4623167/",
   },
   {
     label:
-      "Pillow preferences of people with neck pain and known spinal degeneration — pilot RCT (PubMed 31489809)",
+      "Pillow preferences, spinal degeneration — essai pilote (PubMed 31489809) — pas d'amélioration globale significative",
     url: "https://pubmed.ncbi.nlm.nih.gov/31489809/",
+  },
+  {
+    label: "Radwan et al. — revue systématique, European Journal of Integrative Medicine",
+    url: "https://doi.org/10.1016/j.eujim.2020.101269",
   },
   {
     label: "INSERM — dossier Sommeil",
     url: "https://www.inserm.fr/dossier/sommeil/",
   },
+  {
+    label: "DOWNPASS — bien-être animal et traçabilité du duvet",
+    url: "https://www.downpass.com/en/animal-welfare-quality/",
+  },
+];
+
+/**
+ * Nuances à conserver à l'écrit si ces études sont citées.
+ *
+ * Le lectorat d'un guide d'achat n'est pas un lectorat scientifique : une
+ * étude sur 16 volontaires jeunes et asymptomatiques ne fonde pas une
+ * recommandation médicale, et un essai négatif ne doit pas être présenté
+ * comme une validation.
+ */
+const SOURCE_CAVEATS = [
+  "PMC4623167 : 16 adultes jeunes asymptomatiques, mesurés en décubitus dorsal uniquement. Ne pas généraliser à toutes les morphologies ni aux dormeurs sur le côté.",
+  "PubMed 31489809 : essai pilote n'ayant PAS montré d'amélioration globale significative. À citer comme tel, pas comme une preuve d'efficacité.",
+  "Aucune de ces publications ne fonde une recommandation médicale. Rester sur un registre de conseil d'achat.",
 ];
 
 // ─────────────────────────────────────────────────────────────
@@ -123,17 +197,41 @@ function context(text, index, length, pad = 90) {
   return `${start > 0 ? "…" : ""}${text.slice(start, end).replace(/\s+/g, " ")}${end < text.length ? "…" : ""}`;
 }
 
+/**
+ * Vérifie qu'une URL répond réellement.
+ *
+ * Une requête HEAD seule ne suffit pas : beaucoup de sites institutionnels
+ * et d'éditeurs scientifiques la refusent (405) ou filtrent les clients sans
+ * navigateur (403). On retente donc en GET, en suivant les redirections, et
+ * on affiche l'URL finale — un 301 vers la bonne page est un succès, mais il
+ * faut citer la destination, pas l'ancienne adresse.
+ */
 async function checkUrl(url) {
+  const headers = {
+    // Certains hôtes renvoient 403 à un client sans User-Agent reconnaissable.
+    "user-agent":
+      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126 Safari/537.36",
+    accept: "text/html,application/xhtml+xml,*/*",
+  };
+
+  const attempt = async (method) => {
+    const res = await fetch(url, { method, redirect: "follow", headers });
+    return { ok: res.ok, status: res.status, final: res.url, method };
+  };
+
   try {
-    const res = await fetch(url, { method: "HEAD", redirect: "follow" });
-    // Certains sites refusent HEAD : on retente en GET partiel.
-    if (res.status === 405 || res.status === 403) {
-      const get = await fetch(url, { method: "GET", redirect: "follow" });
-      return { ok: get.ok, status: get.status, final: get.url };
+    const head = await attempt("HEAD");
+    if (head.ok) return head;
+    // 403 / 405 / 404 sur HEAD : beaucoup de serveurs ne l'implémentent pas
+    // correctement. Le GET fait foi.
+    const get = await attempt("GET");
+    return { ...get, headStatus: head.status };
+  } catch {
+    try {
+      return await attempt("GET");
+    } catch (err) {
+      return { ok: false, status: 0, error: err.message };
     }
-    return { ok: res.ok, status: res.status, final: res.url };
-  } catch (err) {
-    return { ok: false, status: 0, error: err.message };
   }
 }
 
@@ -205,11 +303,15 @@ for (const block of doc.htmlBlocks || []) {
   let updated = original;
   const notes = [];
 
-  // Date vague → date exacte
-  const dateHits = [...original.matchAll(VAGUE_DATE_RE)];
-  if (dateHits.length) {
-    updated = updated.replace(VAGUE_DATE_RE, EXACT_DATE);
-    notes.push(`${dateHits.length} mention(s) de date vague → « ${EXACT_DATE} »`);
+  // Date vague : SUPPRIMÉE (option A). La date de mise à jour n'a qu'une
+  // seule source de vérité — le champ `updatedAt`, rendu par la page et
+  // repris en `dateModified` dans le BlogPosting.
+  const dateResult = removeVagueDate(updated);
+  if (dateResult.removals.length) {
+    updated = dateResult.html;
+    for (const r of dateResult.removals) {
+      notes.push(`mention de date supprimée (${r.kind}) : ${r.snippet.trim()}`);
+    }
   }
 
   // Liens hérités
@@ -264,9 +366,14 @@ for (const src of SOURCE_CANDIDATES) {
   const icon = r.ok ? "✅" : "❌";
   console.log(`\n  ${icon} ${r.status || "erreur"}  ${src.url}`);
   console.log(`     ${src.label}`);
-  if (r.final && r.final !== src.url) console.log(`     → redirige vers ${r.final}`);
+  if (r.method === "GET" && r.headStatus) console.log(`     (HEAD ${r.headStatus} → retenté en GET)`);
+  if (r.final && r.final !== src.url) console.log(`     → URL FINALE : ${r.final}`);
+  if (src.note) console.log(`     ⚠️  ${src.note}`);
   if (r.error) console.log(`     ${r.error}`);
 }
+
+console.log("\n  ⚠️  Nuances à respecter à l'écrit si ces études sont citées :");
+for (const c of SOURCE_CAVEATS) console.log(`     · ${c}`);
 
 console.log("\n  Sources actuellement enregistrées :");
 for (const s of doc.sources || []) {
