@@ -8,8 +8,6 @@ type IconTitleText = { icon?: string; title?: string; text?: string };
 type GuideItem = { icon?: string; title?: string; text?: string; ctaLabel?: string; ctaLink?: string; image?: any };
 type CommitmentItem = { icon?: string; title?: string; text?: string; image?: any };
 type FaqQuestion = { category?: string; question: string; answer: string };
-type GuideCardItem = { image?: any; title?: string; summary?: string; ctaLabel?: string; ctaLink?: string };
-type ArticleItem = { image?: any; category?: string; title?: string; excerpt?: string; date?: string; link?: string };
 type TestimonialItem = { photo?: any; name?: string; location?: string; rating?: number; text?: string; productBought?: string; date?: string };
 
 export const defaultWhyUs: {
@@ -133,38 +131,6 @@ export const defaultHomepageFaq: {
     { category: "sav", question: "Comment vous contacter en cas de problème ?", answer: "Par email à contact@dreamsfly.fr (réponse < 4 h en semaine), par téléphone au numéro affiché en pied de page, ou directement dans l'un de nos 3 showrooms." },
     { category: "sav", question: "Puis-je annuler ma commande avant livraison ?", answer: "Oui, sans frais, tant que la commande n'a pas été expédiée. Après expédition, retour gratuit sous 14 jours conformément au droit de rétractation. La reprise à domicile est gratuite." },
     { category: "autre", question: "Avez-vous des showrooms physiques ?", answer: "Oui, 3 showrooms en France où vous pouvez tester nos matelas et lits avant achat. Voir la page Magasins pour les adresses et horaires." },
-  ],
-};
-
-export const defaultGuidesSection: {
-  eyebrow: string;
-  title: string;
-  subtitle: string;
-  items: GuideCardItem[];
-} = {
-  eyebrow: "Nos guides",
-  title: "Décidez en connaissance de cause",
-  subtitle: "Des guides longs et illustrés pour comprendre avant d'acheter.",
-  items: [
-    { title: "Le guide complet du sommeil réparateur", summary: "Position, matelas, environnement — tout ce qui influence vos nuits.", ctaLabel: "Lire le guide", ctaLink: "/magazine/guide-sommeil-reparateur" },
-    { title: "Matelas 140×190 : lequel choisir en 2026", summary: "Notre comparatif des meilleurs matelas taille couple.", ctaLabel: "Voir le comparatif", ctaLink: "/matelas-140x190" },
-    { title: "Lit coffre : le guide 2026", summary: "Capacité, mécanisme, entretien — tout sur le lit coffre.", ctaLabel: "Lire le guide", ctaLink: "/lits-coffre" },
-  ],
-};
-
-export const defaultLatestArticles: {
-  eyebrow: string;
-  title: string;
-  subtitle: string;
-  items: ArticleItem[];
-} = {
-  eyebrow: "Notre magazine",
-  title: "Derniers articles publiés",
-  subtitle: "Conseils sommeil, guides d'achat et décryptages par nos experts.",
-  items: [
-    { category: "Conseils sommeil", title: "5 gestes pour mieux dormir dès ce soir", excerpt: "Des rituels simples validés par la recherche pour un endormissement plus rapide.", date: "2026-06-15", link: "/magazine/mieux-dormir-5-gestes" },
-    { category: "Guide d'achat", title: "Mémoire de forme ou ressorts ensachés ?", excerpt: "Le comparatif honnête pour choisir la bonne technologie selon votre profil.", date: "2026-05-28", link: "/magazine/memoire-forme-vs-ressorts" },
-    { category: "Santé", title: "Mal de dos : quel matelas privilégier ?", excerpt: "Recommandations d'ostéopathes et sélection DreamsFly adaptée.", date: "2026-05-10", link: "/magazine/matelas-mal-de-dos" },
   ],
 };
 

@@ -75,14 +75,6 @@ export const homepageQuery = groq`
       ...,
       questions[]{ _key, category, question, answer }
     },
-    guidesSection {
-      ...,
-      items[]{ _key, title, summary, ctaLabel, ctaLink, image{ ..., asset->{...} } }
-    },
-    latestArticles {
-      ...,
-      items[]{ _key, category, title, excerpt, date, link, image{ ..., asset->{...} } }
-    },
     testimonials {
       ...,
       items[]{ _key, name, location, rating, text, productBought, date, photo{ ..., asset->{...} } }

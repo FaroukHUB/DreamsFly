@@ -588,65 +588,8 @@ export const homepage = defineType({
       ],
     }),
 
-    defineField({
-      name: "guidesSection",
-      title: "📰 Nos guides (mise en avant)",
-      type: "object",
-      fields: [
-        { name: "eyebrow", type: "string", initialValue: "Nos guides" },
-        { name: "title", type: "string" },
-        { name: "subtitle", type: "text", rows: 2 },
-        {
-          name: "items",
-          type: "array",
-          of: [
-            defineArrayMember({
-              type: "object",
-              fields: [
-                { name: "image", type: "image", options: { hotspot: true }, fields: [{ name: "alt", type: "string" }] },
-                { name: "title", type: "string", title: "Titre du guide" },
-                { name: "summary", type: "text", rows: 2, title: "Résumé" },
-                { name: "ctaLabel", type: "string", initialValue: "Lire" },
-                { name: "ctaLink", type: "string" },
-              ],
-              preview: { select: { title: "title", subtitle: "summary", media: "image" } },
-            }),
-          ],
-        },
-      ],
-    }),
-
-    defineField({
-      name: "latestArticles",
-      title: "📰 Derniers articles (blog / magazine)",
-      type: "object",
-      fields: [
-        { name: "eyebrow", type: "string", initialValue: "Notre magazine" },
-        { name: "title", type: "string" },
-        { name: "subtitle", type: "text", rows: 2 },
-        {
-          name: "items",
-          type: "array",
-          of: [
-            defineArrayMember({
-              type: "object",
-              fields: [
-                { name: "image", type: "image", options: { hotspot: true }, fields: [{ name: "alt", type: "string" }] },
-                { name: "category", type: "string", title: "Rubrique (ex. « Conseils sommeil »)" },
-                { name: "title", type: "string", title: "Titre article" },
-                { name: "excerpt", type: "text", rows: 2, title: "Extrait" },
-                { name: "date", type: "date", title: "Date de publication" },
-                { name: "link", type: "string", title: "Lien vers l'article" },
-              ],
-              preview: {
-                select: { title: "title", subtitle: "category", media: "image" },
-              },
-            }),
-          ],
-        },
-      ],
-    }),
-
+    
+    
     defineField({
       name: "testimonials",
       title: "⭐ Avis clients",

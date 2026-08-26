@@ -1,6 +1,5 @@
 import { sanityClient } from "@/lib/sanity/client";
 import { homepageQuery, siteSettingsQuery } from "@/lib/sanity/queries";
-import { latestGuidesForHomeQuery } from "@/lib/sanity/guide-queries";
 import { Hero } from "@/components/hero";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
@@ -15,7 +14,6 @@ import { Advantages } from "@/components/home/advantages";
 import { WhyUs } from "@/components/home/why-us";
 import { BuyingGuide } from "@/components/home/buying-guide";
 import { HomepageFaq } from "@/components/home/homepage-faq";
-import { LatestArticles } from "@/components/home/latest-articles";
 import { Testimonials } from "@/components/home/testimonials";
 import { buildMetadata } from "@/lib/seo/metadata";
 import {
@@ -47,28 +45,14 @@ async function safeFetch<T>(query: string): Promise<T | null> {
 }
 
 export default async function HomePage() {
-  const [homepage, siteSettings, latestGuides] = await Promise.all([
+  const [homepage, siteSettings] = await Promise.all([
     safeFetch<any>(homepageQuery),
     safeFetch<any>(siteSettingsQuery),
-    safeFetch<any[]>(latestGuidesForHomeQuery),
   ]);
 
   const faqQuestions = homepage?.homepageFaq?.questions?.length
     ? homepage.homepageFaq.questions
     : defaultHomepageFaq.questions;
-
-  // Mappe les vrais articles Sanity au format attendu par LatestArticles
-  const latestArticlesItems =
-    latestGuides && latestGuides.length > 0
-      ? latestGuides.map((g: any) => ({
-          category: g.articleType || "Article",
-          title: g.title,
-          excerpt: g.excerpt,
-          date: g.publishedAt,
-          link: `/magazine/${g.slug}`,
-          image: g.coverImage,
-        }))
-      : homepage?.latestArticles?.items;
 
   return (
     <>
@@ -107,8 +91,10 @@ export default async function HomePage() {
           }}
         />
 
-        {/* 11. Derniers articles magazine — priorité aux VRAIS docs Sanity 'guide' */}
-        <LatestArticles data={{ ...homepage?.latestArticles, items: latestArticlesItems }} />
+        {/* Section « Derniers articles » retirée : elle affichait les guides
+            les plus récents, c'est-à-dire exactement ceux que « Guide d'achat »
+            met déjà en avant quelques centaines de pixels plus haut. Deux fois
+            le même contenu sur la même page. */}
 
         {/* 12. FAQ SEO 20+ questions — NEW */}
         <HomepageFaq data={homepage?.homepageFaq} />
