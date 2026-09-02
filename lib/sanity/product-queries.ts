@@ -1,8 +1,28 @@
 import { groq } from "next-sanity";
 
-/** Récupère une fiche produit complète par slug (tous types). */
+/**
+ * RÉSOLUTION PAR SLUG — pourquoi ces quatre requêtes renvoient un TABLEAU
+ *
+ * Elles acceptent le slug actuel d'un produit ET ses anciens slugs, saisis à
+ * la main dans le champ « Anciens slugs » de la fiche. Deux documents peuvent
+ * donc légitimement répondre : celui dont c'est le slug actuel, et un autre
+ * qui a conservé cette valeur comme ancienne adresse.
+ *
+ * Un `[0]` sur un résultat non ordonné choisirait au hasard, et servirait
+ * parfois la fiche périmée. Le tri est donc fait côté TypeScript par
+ * `resolveProductBySlug` (lib/product-slug.ts), qui donne toujours la
+ * priorité à la correspondance exacte sur le slug actuel.
+ *
+ * `$slug in previousSlugs` est sans danger quand le champ est absent : GROQ
+ * renvoie faux plutôt que de lever une erreur. Les fiches créées avant
+ * l'introduction du champ continuent donc de se résoudre normalement.
+ *
+ * `previousSlugs` remonte via le `...` de la projection.
+ */
+
+/** Récupère les fiches produit complètes correspondant à un slug (tous types). */
 export const productBySlugFullQuery = groq`
-  *[_type == "product" && slug.current == $slug][0]{
+  *[_type == "product" && (slug.current == $slug || $slug in previousSlugs)]{
     ...,
     "slug": slug.current,
     lifestyleImage{ ..., asset->{...} },
@@ -97,9 +117,9 @@ export const allLitSlugsQuery = groq`
   }
 `;
 
-/** Fiche complète d'un lit par slug. */
+/** Fiches d'un lit correspondant à un slug — actuel ou ancien. */
 export const litBySlugQuery = groq`
-  *[_type == "product" && productType == "lit" && slug.current == $slug][0]{
+  *[_type == "product" && productType == "lit" && (slug.current == $slug || $slug in previousSlugs)]{
     ...,
     "slug": slug.current,
     lifestyleImage{ ..., asset->{...} },
@@ -148,9 +168,9 @@ export const allSommierSlugsQuery = groq`
   }
 `;
 
-/** Fiche complète d'un sommier par slug. */
+/** Fiches d'un sommier correspondant à un slug — actuel ou ancien. */
 export const sommierBySlugQuery = groq`
-  *[_type == "product" && productType == "sommier" && slug.current == $slug][0]{
+  *[_type == "product" && productType == "sommier" && (slug.current == $slug || $slug in previousSlugs)]{
     ...,
     "slug": slug.current,
     lifestyleImage{ ..., asset->{...} },
@@ -196,8 +216,9 @@ export const allOreillerSlugsQuery = groq`
   }
 `;
 
+/** Fiches d'un oreiller correspondant à un slug — actuel ou ancien. */
 export const oreillerBySlugQuery = groq`
-  *[_type == "product" && productType == "oreiller" && slug.current == $slug][0]{
+  *[_type == "product" && productType == "oreiller" && (slug.current == $slug || $slug in previousSlugs)]{
     ...,
     "slug": slug.current,
     lifestyleImage{ ..., asset->{...} },

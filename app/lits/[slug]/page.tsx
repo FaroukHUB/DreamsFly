@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { sanityClient } from "@/lib/sanity/client";
@@ -10,6 +10,7 @@ import { Footer } from "@/components/footer";
 import { ProductBuyBox } from "@/components/product/buy-box";
 import { StickyMobileCTA } from "@/components/product/sticky-mobile-cta";
 import { ProductPageSections } from "@/components/product/product-page-sections";
+import { productUrlFor, resolveProductBySlug } from "@/lib/product-slug";
 import { buildMetadata } from "@/lib/seo/metadata";
 import {
   JsonLd,
@@ -38,8 +39,10 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { slug } = await params;
   if (!sanityClient) return buildMetadata({ path: `/lits/${slug}` });
-  const product = await sanityClient.fetch<any>(litBySlugQuery, { slug }).catch(() => null);
-  if (!product) return buildMetadata({ path: `/lits/${slug}`, noindex: true });
+  const matches = await sanityClient.fetch<any[]>(litBySlugQuery, { slug }).catch(() => null);
+  const resolved = resolveProductBySlug(matches, slug);
+  if (!resolved) return buildMetadata({ path: `/lits/${slug}`, noindex: true });
+  const product = resolved.product;
 
   const image = product.images?.[0] ? urlFor(product.images[0]).width(1200).height(630).url() : undefined;
 
@@ -48,7 +51,7 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
     description:
       product.seo?.metaDescription ||
       `${product.title}. ${product.tagline || ""} Livraison à domicile · Paiement en plusieurs fois.`,
-    path: `/lits/${slug}`,
+    path: `/lits/${resolved.canonicalSlug}`,
     image,
     type: "product",
   });
@@ -58,17 +61,25 @@ export default async function LitPage({ params }: { params: Promise<Params> }) {
   const { slug } = await params;
   if (!sanityClient) notFound();
 
-  const [product, siteSettings] = await Promise.all([
-    sanityClient.fetch<any>(litBySlugQuery, { slug }).catch(() => null),
+  const [matches, siteSettings] = await Promise.all([
+    sanityClient.fetch<any[]>(litBySlugQuery, { slug }).catch(() => null),
     sanityClient.fetch<any>(siteSettingsQuery).catch(() => null),
   ]);
 
-  if (!product) notFound();
+  const resolved = resolveProductBySlug(matches, slug);
+  if (!resolved) notFound();
+
+  // Ancien slug : 308 vers le slug actuel, dans la même catégorie.
+  // Une seule redirection, jamais de chaîne — la destination est
+  // toujours le slug canonique, jamais un intermédiaire.
+  if (resolved.shouldRedirect) permanentRedirect(productUrlFor("/lits", resolved.canonicalSlug));
+
+  const product = resolved.product;
 
   const breadcrumbs = [
     { name: "Accueil", url: "/" },
     { name: "Lits", url: "/lits" },
-    { name: product.name, url: `/lits/${slug}` },
+    { name: product.name, url: `/lits/${resolved.canonicalSlug}` },
   ];
 
   const validPrices = (product.variants?.map((v: any) => v.price).filter(Boolean) || []);
@@ -154,7 +165,7 @@ export default async function LitPage({ params }: { params: Promise<Params> }) {
           image: product.images?.map((img: any) => urlFor(img).width(1200).url()).slice(0, 5),
           sku: product.sku,
           brand: "DreamsFly",
-          url: `/lits/${slug}`,
+          url: `/lits/${resolved.canonicalSlug}`,
           price: minPrice || 0,
           priceCurrency: "EUR",
           compareAtPrice: maxComparePrice > minPrice ? maxComparePrice : undefined,

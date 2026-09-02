@@ -58,7 +58,126 @@ export const product = defineType({
       type: "slug",
       options: { source: "title", maxLength: 96 },
       group: "main",
-      validation: (r) => r.required(),
+      validation: (r) => [
+        r.required(),
+        /**
+         * Garde-fou consultatif — LECTURE SEULE, aucune écriture.
+         *
+         * Compare le slug du brouillon à celui du document déjà publié. Si
+         * le slug a changé et que l'ancienne valeur n'a pas été recopiée
+         * dans « Anciens slugs », l'ancienne adresse renverra une 404 dès
+         * la publication.
+         *
+         * Volontairement en AVERTISSEMENT et non en erreur : un blocage
+         * empêcherait de publier si cette logique se trompait sur un cas
+         * limite. Un avertissement qu'on peut ignorer vaut mieux qu'un
+         * Studio bloqué.
+         */
+        r.warning().custom(async (value, context) => {
+          const draftSlug = (value as { current?: string } | undefined)?.current?.trim();
+          if (!draftSlug) return true;
+
+          const id = context.document?._id;
+          if (typeof id !== "string") return true;
+
+          // Le document publié porte le même identifiant sans le préfixe
+          // « drafts. ». Sur une création, il n'existe pas encore.
+          const publishedId = id.replace(/^drafts\./, "");
+          if (publishedId === id) return true; // déjà en cours d'édition hors brouillon
+
+          let published: { slug?: { current?: string } } | null = null;
+          try {
+            published = await context
+              .getClient({ apiVersion: "2024-01-01" })
+              .fetch(`*[_id == $id][0]{ slug }`, { id: publishedId });
+          } catch {
+            // Réseau indisponible : on n'alerte pas à tort.
+            return true;
+          }
+
+          const publishedSlug = published?.slug?.current?.trim();
+          if (!publishedSlug || publishedSlug === draftSlug) return true;
+
+          const previous = context.document?.previousSlugs;
+          const recorded =
+            Array.isArray(previous) &&
+            previous.some((entry) => typeof entry === "string" && entry.trim() === publishedSlug);
+          if (recorded) return true;
+
+          return `L'adresse publiée est « ${publishedSlug} ». Elle n'est pas dans « Anciens slugs » : après publication, l'ancienne adresse renverra une erreur 404. Copiez « ${publishedSlug} » dans « Anciens slugs » avant de publier.`;
+        }),
+      ],
+    }),
+
+    /**
+     * ANCIENS SLUGS — saisis à la main, jamais par du code.
+     *
+     * Aucune écriture automatique n'alimente ni ne vide ce champ : c'est une
+     * règle du projet, pas une limitation technique. La conservation de
+     * l'ancienne valeur est un geste éditorial explicite, visible et
+     * relisible dans la fiche.
+     *
+     * Lecture côté site : lib/product-slug.ts et les quatre routes produit.
+     */
+    defineField({
+      name: "previousSlugs",
+      title: "Anciens slugs",
+      type: "array",
+      group: "main",
+      of: [defineArrayMember({ type: "string" })],
+      description:
+        "Avant de modifier le slug actuel, copiez son ancienne valeur ici. Cela permet de rediriger automatiquement l'ancienne adresse vers la nouvelle et d'éviter une erreur 404.",
+      validation: (r) => [
+        // Bloquant : doublons dans la liste.
+        r.unique().error("Cet ancien slug figure déjà dans la liste."),
+
+        // Bloquant : valeur vide, ou identique au slug actuel.
+        r.custom((value, context) => {
+          const list = value as unknown[] | undefined;
+          if (!Array.isArray(list) || !list.length) return true;
+
+          const currentSlug = (
+            context.document?.slug as { current?: string } | undefined
+          )?.current?.trim();
+
+          for (const entry of list) {
+            if (typeof entry !== "string" || !entry.trim()) {
+              return "Un ancien slug est vide. Supprimez la ligne ou renseignez-la.";
+            }
+            if (currentSlug && entry.trim() === currentSlug) {
+              return `« ${entry.trim()} » est le slug actuel. « Anciens slugs » ne doit contenir que des adresses qui ne sont plus utilisées.`;
+            }
+          }
+          return true;
+        }),
+
+        // Consultatif : formes qui trahissent un copier-coller d'URL complète
+        // plutôt que du seul slug.
+        r.warning().custom((value) => {
+          const list = value as unknown[] | undefined;
+          if (!Array.isArray(list) || !list.length) return true;
+
+          for (const entry of list) {
+            if (typeof entry !== "string") continue;
+            const raw = entry.trim();
+            if (!raw) continue;
+
+            if (/^https?:/i.test(raw) || raw.includes("://") || /dreamsfly\.fr/i.test(raw)) {
+              return `« ${raw} » ressemble à une adresse complète. Ne gardez que le slug, par exemple « lit-coffre-coco-velours-beige ».`;
+            }
+            if (raw.includes("/")) {
+              return `« ${raw} » contient une barre oblique. Ne gardez que la dernière partie de l'adresse, sans « /lits/ » ni « /matelas/ ».`;
+            }
+            if (/[A-Z]/.test(raw)) {
+              return `« ${raw} » contient une majuscule. Les slugs sont toujours en minuscules.`;
+            }
+            if (/\s/.test(raw) || raw !== entry) {
+              return `« ${entry} » contient un espace. Un slug s'écrit avec des tirets, sans espace.`;
+            }
+          }
+          return true;
+        }),
+      ],
     }),
     defineField({
       name: "sku",
