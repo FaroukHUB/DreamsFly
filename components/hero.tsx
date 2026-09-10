@@ -76,7 +76,7 @@ export function Hero({
       {effectiveSlides.length > 1 ? (
         <HeroSlider slides={effectiveSlides} />
       ) : (
-        <div className="relative min-h-[560px] overflow-hidden bg-noir md:min-h-[560px] md:rounded-3xl">
+        <div className="df-hero-shell relative min-h-[560px] overflow-hidden bg-noir md:min-h-[560px] md:rounded-3xl">
           <HeroSlideMedia slide={effectiveSlides[0]} priority />
           <HeroSlideOverlay slide={effectiveSlides[0]} />
         </div>
@@ -140,7 +140,7 @@ export function HeroSlideOverlay({ slide }: { slide: HeroSlideData }) {
   const ctaSecondary = resolveCta(slide.ctaSecondary, DEFAULT_CTA_SECONDARY);
 
   return (
-    <div className="relative z-10 flex h-full min-h-[520px] flex-col justify-end p-6 text-white md:min-h-[520px] md:p-14 lg:p-16">
+    <div className="df-hero-overlay relative z-10 flex h-full min-h-[520px] flex-col justify-end p-6 text-white md:min-h-[520px] md:p-14 lg:p-16">
       {/* Vignette sombre pour lisibilité de la typo blanche sur toutes photos */}
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-transparent md:bg-gradient-to-tr md:from-black/70 md:via-black/20 md:to-transparent" aria-hidden="true" />
 
@@ -235,11 +235,11 @@ function HeroSecondary({ data }: { data: HeroSecondaryData }) {
 function HeroFallback() {
   return (
     <section className="mx-auto mt-0 max-w-site px-0 md:mt-6 md:px-8">
-      <div className="relative min-h-[560px] overflow-hidden bg-noir md:min-h-[560px] md:rounded-3xl">
+      <div className="df-hero-shell relative min-h-[560px] overflow-hidden bg-noir md:min-h-[560px] md:rounded-3xl">
         <video src="/videos/hero-matelas.mp4" poster="/videos/hero-matelas-poster.jpg" autoPlay muted loop playsInline preload="metadata"
           className="absolute inset-0 h-full w-full object-cover opacity-95" aria-hidden="true" />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-transparent md:bg-gradient-to-tr md:from-black/70 md:via-black/20 md:to-transparent" />
-        <div className="relative z-10 flex h-full min-h-[560px] flex-col justify-end p-6 text-white md:p-14 lg:p-16">
+        <div className="df-hero-overlay relative z-10 flex h-full min-h-[560px] flex-col justify-end p-6 text-white md:p-14 lg:p-16">
           <span className="eyebrow-editorial text-or/90 mb-4">Literie premium · confection européenne</span>
           <h1 className="display-serif mb-6 max-w-3xl text-[2.6rem] md:text-[5.6rem] lg:text-[6.8rem]">
             Là où la nuit<br />
