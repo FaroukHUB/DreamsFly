@@ -20,6 +20,7 @@ export const guideBySlugQuery = groq`
     reviewer->{ name, role, isPlaceholder },
     relatedProducts[]->{
       _id, name, "slug": slug.current, tagline,
+      productType,
       "image": images[0],
       "minPrice": variants[0].price
     },

@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { sanityClient } from "@/lib/sanity/client";
 import { urlFor } from "@/lib/sanity/image";
+import { productSpecLine } from "@/lib/product-card";
 
 /**
  * Sélection hiérarchique :
@@ -18,6 +19,7 @@ const featuredMatelasQuery = `
     "image": images[0],
     "minPrice": variants[0].price,
     "compareAtPrice": variants[0].compareAtPrice,
+    "variants": variants[]{ size },
     badges
   }
 `;
@@ -29,6 +31,7 @@ const fallbackMatelasQuery = `
     "image": images[0],
     "minPrice": variants[0].price,
     "compareAtPrice": variants[0].compareAtPrice,
+    "variants": variants[]{ size },
     badges
   }
 `;
@@ -45,6 +48,7 @@ type Product = {
   image?: any;
   minPrice?: number;
   compareAtPrice?: number;
+  variants?: { size?: string }[];
   badges?: string[];
 };
 
@@ -97,11 +101,15 @@ function ProductCard({ product: p }: { product: Product }) {
     p.compareAtPrice && p.minPrice
       ? Math.round(((p.compareAtPrice - p.minPrice) / p.compareAtPrice) * 100)
       : null;
+  const specLine = productSpecLine(p as any);
 
   return (
     <Link
       href={`/matelas/${p.slug}`}
-      className="group relative flex flex-col overflow-hidden rounded-[20px] bg-ivoire transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_30px_60px_-20px_rgba(11,11,15,0.25)]"
+      // `focus-visible` : la carte entière est un lien, la navigation au
+      // clavier doit donc montrer où elle se trouve. Sans anneau de focus,
+      // un utilisateur au clavier traverse la grille à l'aveugle.
+      className="group relative flex flex-col overflow-hidden rounded-[20px] bg-ivoire transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_30px_60px_-20px_rgba(11,11,15,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-noir focus-visible:ring-offset-2"
     >
       {/* Image full-bleed */}
       <div className="relative aspect-[4/3] overflow-hidden bg-creme">
@@ -137,6 +145,9 @@ function ProductCard({ product: p }: { product: Product }) {
         <h3 className="mt-2 line-clamp-2 font-serif text-[16px] font-normal leading-snug text-noir md:text-[17px]">
           {p.tagline || p.title}
         </h3>
+        {specLine && (
+          <p className="mt-2 font-sans text-[12.5px] leading-snug text-taupe">{specLine}</p>
+        )}
         <div className="mt-4 flex items-baseline gap-2.5">
           {p.compareAtPrice && p.compareAtPrice > (p.minPrice || 0) ? (
             <>
@@ -157,6 +168,23 @@ function ProductCard({ product: p }: { product: Product }) {
             </>
           )}
         </div>
+
+        {/*
+          Action visible. La carte entière restait cliquable sans que rien ne
+          l'annonce : sur mobile en particulier, rien n'indiquait qu'il fallait
+          toucher l'image pour ouvrir la fiche. `aria-hidden` parce que le lien
+          parent porte déjà le nom du produit — l'annoncer deux fois alourdit
+          la lecture au lecteur d'écran sans rien apporter.
+        */}
+        <span
+          aria-hidden="true"
+          className="mt-4 inline-flex items-center gap-2 self-start border-b border-noir/25 pb-1 font-sans text-[11px] font-medium uppercase tracking-[0.14em] text-noir transition-all group-hover:gap-3 group-hover:border-or group-hover:text-or"
+        >
+          Voir le produit
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+            <path d="M5 12h14M13 6l6 6-6 6" />
+          </svg>
+        </span>
       </div>
     </Link>
   );

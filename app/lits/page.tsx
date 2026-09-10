@@ -10,6 +10,8 @@ import { SeoCrossLinks } from "@/components/seo-cross-links";
 import { Sections } from "@/components/landing/blocks";
 import { EditorialPageHeader } from "@/components/editorial-page-header";
 import { fetchPageHeros, pickHeroImageUrl } from "@/lib/sanity/page-heros";
+import { productSpecLine } from "@/lib/product-card";
+import { QuizBanner } from "@/components/quiz-banner";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { JsonLd, breadcrumbSchema, organizationSchema, faqSchema } from "@/lib/seo/jsonld";
 import { urlFor } from "@/lib/sanity/image";
@@ -218,7 +220,7 @@ export default async function LitsPillar({ searchParams }: { searchParams: Searc
                       <Link
                         key={p._id}
                         href={`/lits/${p.slug}`}
-                        className="group flex flex-col overflow-hidden rounded-[20px] bg-ivoire transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_24px_50px_-20px_rgba(11,11,15,0.2)]"
+                        className="group flex flex-col overflow-hidden rounded-[20px] bg-ivoire transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_24px_50px_-20px_rgba(11,11,15,0.2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-noir focus-visible:ring-offset-2"
                       >
                         <div className="relative aspect-[4/3] overflow-hidden bg-creme">
                           {p.image && (
@@ -242,6 +244,9 @@ export default async function LitsPillar({ searchParams }: { searchParams: Searc
                         <div className="flex flex-col p-5 md:p-6">
                           <div className="font-sans text-[11px] font-medium uppercase tracking-[0.16em] text-taupe">{p.name}</div>
                           <h3 className="mt-2 line-clamp-2 font-serif text-[16px] font-normal leading-snug text-noir md:text-[17px]">{p.tagline || p.title}</h3>
+                          {productSpecLine(p) && (
+                            <p className="mt-2 font-sans text-[12.5px] leading-snug text-taupe">{productSpecLine(p)}</p>
+                          )}
                           <div className="mt-4 flex items-baseline gap-2.5">
                             <span className="font-sans text-[11px] uppercase tracking-[0.14em] text-taupe">Dès</span>
                             <span className={`font-serif text-[1.35rem] font-semibold ${p.compareAtPrice && p.compareAtPrice > p.minPrice ? "text-discount" : "text-noir"}`}>{p.minPrice}€</span>
@@ -249,6 +254,13 @@ export default async function LitsPillar({ searchParams }: { searchParams: Searc
                               <span className="font-sans text-[13px] text-taupe line-through">{p.compareAtPrice}€</span>
                             )}
                           </div>
+                          {/* Action visible : la carte est un lien entier, rien
+                              ne l'annonçait. `aria-hidden` — le lien parent
+                              porte déjà le nom du produit. */}
+                          <span aria-hidden="true" className="mt-4 inline-flex items-center gap-2 self-start border-b border-noir/25 pb-1 font-sans text-[11px] font-medium uppercase tracking-[0.14em] text-noir transition-all group-hover:gap-3 group-hover:border-or group-hover:text-or">
+                            Voir le produit
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+                          </span>
                         </div>
                       </Link>
                     );
@@ -273,6 +285,12 @@ export default async function LitsPillar({ searchParams }: { searchParams: Searc
             <Sections sections={pillar.sections} />
           </div>
         )}
+        <QuizBanner
+          question={"Vous hésitez sur le lit à choisir ?"}
+          lead={"Taille, coffre de rangement, matière : quelques questions pour cibler les lits faits pour votre chambre."}
+          label={"Faire le quiz lit"}
+        />
+
       </main>
 
       <SeoCrossLinks

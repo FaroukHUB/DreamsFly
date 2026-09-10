@@ -14,6 +14,7 @@ import { guideBySlugQuery, allGuideSlugsQuery } from "@/lib/sanity/guide-queries
 import { siteSettingsQuery } from "@/lib/sanity/queries";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
+import { productPathFor } from "@/lib/product-card";
 import { buildMetadata } from "@/lib/seo/metadata";
 import {
   JsonLd,
@@ -345,6 +346,76 @@ export default async function GuidePage({ params }: { params: Promise<Params> })
                 )}
               </div>
             </footer>
+          )}
+
+          {/*
+            Produits liés.
+
+            Le champ `relatedProducts` était chargé par la requête GROQ depuis
+            toujours (lib/sanity/guide-queries.ts) et sélectionnable dans le
+            Studio — mais il n'était rendu nulle part. Un rédacteur pouvait
+            rattacher trois matelas à un guide, publier, et ne rien voir
+            apparaître. Tout lien guide → produit était donc impossible sans
+            écrire l'ancre à la main dans le corps de l'article.
+
+            Le bloc reste invisible tant que le champ est vide : aucun guide
+            n'est modifié par ce simple câblage.
+          */}
+          {g.relatedProducts?.length > 0 && (
+            <section className="mt-16 border-t border-border pt-10">
+              <h2 className="mb-2 font-sora text-2xl font-semibold tracking-tight">
+                Les produits dont parle ce guide
+              </h2>
+              <p className="mb-6 text-[14.5px] text-pierre">
+                Sélectionnés dans notre catalogue par rapport au sujet de l'article.
+              </p>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {g.relatedProducts.map((p: any) => (
+                  <Link
+                    key={p._id}
+                    href={productPathFor(p)}
+                    className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-ivoire transition-all hover:-translate-y-1 hover:border-midnight focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-midnight focus-visible:ring-offset-2"
+                  >
+                    {p.image && (
+                      <div className="relative aspect-[4/3] overflow-hidden bg-creme">
+                        <Image
+                          src={urlFor(p.image).width(600).quality(85).url()}
+                          alt={p.image?.alt || p.name}
+                          fill
+                          sizes="(max-width: 640px) 100vw, 33vw"
+                          className="object-cover transition-transform duration-700 group-hover:scale-105"
+                        />
+                      </div>
+                    )}
+                    <div className="flex flex-1 flex-col p-5">
+                      <div className="font-sans text-[11px] font-medium uppercase tracking-[0.16em] text-taupe">
+                        {p.name}
+                      </div>
+                      {p.tagline && (
+                        <h3 className="mt-1.5 line-clamp-2 font-serif text-[15.5px] font-normal leading-snug text-ink">
+                          {p.tagline}
+                        </h3>
+                      )}
+                      {typeof p.minPrice === "number" && (
+                        <div className="mt-3 flex items-baseline gap-2">
+                          <span className="font-sans text-[11px] uppercase tracking-[0.14em] text-taupe">Dès</span>
+                          <span className="font-serif text-[1.2rem] font-semibold text-ink">{p.minPrice}€</span>
+                        </div>
+                      )}
+                      <span
+                        aria-hidden="true"
+                        className="mt-4 inline-flex items-center gap-2 self-start border-b border-ink/25 pb-1 font-sans text-[11px] font-medium uppercase tracking-[0.14em] text-ink transition-all group-hover:gap-3 group-hover:border-midnight group-hover:text-midnight"
+                      >
+                        Voir le produit
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                          <path d="M5 12h14M13 6l6 6-6 6" />
+                        </svg>
+                      </span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </section>
           )}
 
           {/* Articles liés */}
