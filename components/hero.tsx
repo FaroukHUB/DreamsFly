@@ -5,6 +5,33 @@ import { HeroSlider } from "@/components/hero-slider";
 
 type CTA = { label?: string; link?: string };
 
+/**
+ * VALEURS DE REPLI DU HERO
+ *
+ * Le hero rendait un titre, un sous-titre et deux boutons — mais tous
+ * venaient de Sanity, et ces champs n'étaient pas remplis. En production,
+ * la page d'accueil affichait donc « Dormez. Envolez-vous. » seul, sans une
+ * phrase expliquant ce qui est vendu et sans le moindre bouton : le
+ * conteneur des CTA sortait vide dans le HTML.
+ *
+ * Ces valeurs comblent ce silence. Elles ne s'appliquent QUE si le champ
+ * correspondant est vide : dès que la rédaction remplit le Studio, c'est
+ * son texte qui s'affiche. Rien n'est écrit dans Sanity.
+ *
+ * Le sous-titre nomme les quatre familles de produits, ce qu'aucun slogan
+ * ne peut faire — ni pour un visiteur, ni pour un moteur de recherche.
+ */
+const DEFAULT_SUBTITLE =
+  "Matelas, lits, sommiers et oreillers en confection européenne, pensés pour votre confort de sommeil.";
+
+const DEFAULT_CTA_PRIMARY: CTA = { label: "Découvrir les matelas", link: "/matelas" };
+const DEFAULT_CTA_SECONDARY: CTA = { label: "Trouver un showroom", link: "/magasins" };
+
+/** Un CTA n'est exploitable que si son libellé ET son lien sont renseignés. */
+function resolveCta(cta: CTA | undefined, fallback: CTA): CTA {
+  return cta?.link && cta?.label ? cta : fallback;
+}
+
 export type HeroSlideData = {
   type: "video" | "image" | "promo";
   videoFile?: { asset?: { url?: string } };
@@ -109,6 +136,9 @@ function HeroPromo({ slide }: { slide: HeroSlideData }) {
 }
 
 export function HeroSlideOverlay({ slide }: { slide: HeroSlideData }) {
+  const ctaPrimary = resolveCta(slide.ctaPrimary, DEFAULT_CTA_PRIMARY);
+  const ctaSecondary = resolveCta(slide.ctaSecondary, DEFAULT_CTA_SECONDARY);
+
   return (
     <div className="relative z-10 flex h-full min-h-[520px] flex-col justify-end p-6 text-white md:min-h-[520px] md:p-14 lg:p-16">
       {/* Vignette sombre pour lisibilité de la typo blanche sur toutes photos */}
@@ -120,7 +150,7 @@ export function HeroSlideOverlay({ slide }: { slide: HeroSlideData }) {
             {slide.promoBadge}
           </span>
         ) : (
-          <span className="eyebrow-editorial text-or/90 mb-4">Édition automne · manufacture</span>
+          <span className="eyebrow-editorial text-or/90 mb-4">Literie premium · confection européenne</span>
         )}
 
         {slide.title && (
@@ -133,30 +163,24 @@ export function HeroSlideOverlay({ slide }: { slide: HeroSlideData }) {
           </h1>
         )}
 
-        {slide.subtitle && (
-          <p className="mb-8 max-w-md font-sans text-[15px] leading-relaxed text-white/80 md:text-base">
-            {slide.subtitle}
-          </p>
-        )}
+        <p className="mb-8 max-w-md font-sans text-[15px] leading-relaxed text-white/80 md:text-base">
+          {slide.subtitle || DEFAULT_SUBTITLE}
+        </p>
 
         <div className="flex flex-wrap items-center gap-4 md:gap-6">
-          {slide.ctaPrimary?.link && slide.ctaPrimary.label && (
-            <Link
-              href={slide.ctaPrimary.link}
-              className="group inline-flex items-center gap-3 rounded-pill bg-ivoire px-7 py-3.5 font-sans text-sm font-semibold text-noir transition-all hover:bg-or hover:text-noir md:text-base"
-            >
-              {slide.ctaPrimary.label}
-              <ArrowRight />
-            </Link>
-          )}
-          {slide.ctaSecondary?.link && slide.ctaSecondary.label && (
-            <Link
-              href={slide.ctaSecondary.link}
-              className="inline-flex items-center gap-2 border-b border-white/40 pb-1 font-sans text-sm font-medium uppercase tracking-[0.14em] text-white transition-colors hover:border-or hover:text-or"
-            >
-              {slide.ctaSecondary.label}
-            </Link>
-          )}
+          <Link
+            href={ctaPrimary.link as string}
+            className="group inline-flex items-center gap-3 rounded-pill bg-ivoire px-7 py-3.5 font-sans text-sm font-semibold text-noir transition-all hover:bg-or hover:text-noir focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-noir md:text-base"
+          >
+            {ctaPrimary.label}
+            <ArrowRight />
+          </Link>
+          <Link
+            href={ctaSecondary.link as string}
+            className="inline-flex items-center gap-2 border-b border-white/40 pb-1 font-sans text-sm font-medium uppercase tracking-[0.14em] text-white transition-colors hover:border-or hover:text-or focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-noir"
+          >
+            {ctaSecondary.label}
+          </Link>
         </div>
 
         {slide.trustNote && (
@@ -216,18 +240,23 @@ function HeroFallback() {
           className="absolute inset-0 h-full w-full object-cover opacity-95" aria-hidden="true" />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-transparent md:bg-gradient-to-tr md:from-black/70 md:via-black/20 md:to-transparent" />
         <div className="relative z-10 flex h-full min-h-[560px] flex-col justify-end p-6 text-white md:p-14 lg:p-16">
-          <span className="eyebrow-editorial text-or/90 mb-4">Édition automne · manufacture</span>
+          <span className="eyebrow-editorial text-or/90 mb-4">Literie premium · confection européenne</span>
           <h1 className="display-serif mb-6 max-w-3xl text-[2.6rem] md:text-[5.6rem] lg:text-[6.8rem]">
             Là où la nuit<br />
             <em>prend son envol.</em>
           </h1>
           <p className="mb-8 max-w-md font-sans text-[15px] leading-relaxed text-white/80 md:text-base">
-            Le matelas conçu pour votre voyage intérieur.
+            {DEFAULT_SUBTITLE}
           </p>
-          <Link href="/matelas" className="inline-flex w-fit items-center gap-3 rounded-pill bg-ivoire px-7 py-3.5 font-sans text-sm font-semibold text-noir transition-all hover:bg-or md:text-base">
-            Découvrir nos matelas
-            <ArrowRight />
-          </Link>
+          <div className="flex flex-wrap items-center gap-4 md:gap-6">
+            <Link href={DEFAULT_CTA_PRIMARY.link as string} className="inline-flex w-fit items-center gap-3 rounded-pill bg-ivoire px-7 py-3.5 font-sans text-sm font-semibold text-noir transition-all hover:bg-or focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-noir md:text-base">
+              {DEFAULT_CTA_PRIMARY.label}
+              <ArrowRight />
+            </Link>
+            <Link href={DEFAULT_CTA_SECONDARY.link as string} className="inline-flex items-center gap-2 border-b border-white/40 pb-1 font-sans text-sm font-medium uppercase tracking-[0.14em] text-white transition-colors hover:border-or hover:text-or focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-noir">
+              {DEFAULT_CTA_SECONDARY.label}
+            </Link>
+          </div>
         </div>
       </div>
     </section>
