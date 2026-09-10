@@ -23,13 +23,13 @@ export function Footer({ settings }: { settings?: any }) {
       <div className="border-b border-white/10">
         <div className="mx-auto max-w-site px-6 py-16 md:px-8 md:py-24 grid gap-10 md:grid-cols-[1.4fr_1fr] md:items-end">
           <div>
-            <span className="eyebrow-editorial mb-4">Manufacture de literie française · depuis 2013</span>
+            <span className="eyebrow-editorial mb-4">Literie premium · confection européenne</span>
             <h2 className="display-serif mt-4 text-[2rem] font-normal text-ivoire md:text-[3.4rem]">
               Dormir mieux, <em>vivre plus</em>.
             </h2>
           </div>
           <p className="max-w-md font-sans text-[15px] leading-relaxed text-ivoire/60 md:text-base">
-            Bois de forêts françaises. Coton biologique certifié GOTS. Ressorts ensachés assemblés à la main. Chaque nuit, une exigence tenue.
+            Des modèles sélectionnés un par un, en confection européenne. Essai en showroom, livraison à domicile, garantie 2 ans. Chaque nuit, une exigence tenue.
           </p>
         </div>
       </div>
@@ -149,7 +149,7 @@ export function Footer({ settings }: { settings?: any }) {
       <div className="mx-auto mt-16 max-w-site border-t border-white/10 px-6 pb-10 pt-8 md:px-8">
         <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
           <div className="font-sans text-[11px] uppercase tracking-[0.14em] text-ivoire/40">
-            © {new Date().getFullYear()} DreamsFly · Manufacture française
+            © {new Date().getFullYear()} DreamsFly · Confection européenne
           </div>
           <ul className="flex flex-wrap gap-x-5 gap-y-1 font-sans text-[12px] text-ivoire/50">
             <li><Link href="/mentions-legales" className="hover:text-or">Mentions légales</Link></li>

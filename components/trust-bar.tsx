@@ -15,7 +15,7 @@ export function TrustBar({ googleRating, labels, press }: TrustBarProps = {}) {
       ? labels
       : [
           { label: "OEKO-TEX®", sublabel: "Standard 100" },
-          { label: "Confection française", sublabel: "Ateliers européens" },
+          { label: "Confection européenne", sublabel: "Ateliers audités" },
           { label: "Garantie 2 ans", sublabel: "Service après-vente" },
         ];
 

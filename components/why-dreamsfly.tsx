@@ -21,7 +21,7 @@ export function WhyDreamsFly() {
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <Reason
             number="01"
-            title="Confection française dans nos ateliers"
+            title="Confection européenne"
             text="Tous nos matelas sont assemblés en Europe par des artisans literie experts. Chaque couche est contrôlée, mesurée, validée avant d'arriver chez vous."
           />
           <Reason

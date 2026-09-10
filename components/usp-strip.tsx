@@ -76,7 +76,9 @@ export function UspStrip({
 
 // USPs réelles du groupe
 const DEFAULT_USPS: UspItem[] = [
-  { icon: "users", title: "+ 5 000 clients satisfaits", subtitle: "★ 4,9/5 sur Google" },
+  // Chiffre de clients et note Google retirés : la fiche Google est celle de
+  // Trust Industrie. Remplacés par un service réel et vérifiable.
+  { icon: "users", title: "Conseil personnalisé", subtitle: "Par téléphone ou en showroom" },
   { icon: "lock", title: "Paiement 100 % sécurisé", subtitle: "Via Alma · Stripe · CB" },
   { icon: "store", title: "3 magasins physiques", subtitle: "Visitez nos showrooms" },
   { icon: "truck", title: "Livraison à domicile", subtitle: "Partout en France métropolitaine" },

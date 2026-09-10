@@ -366,7 +366,7 @@ export function ProductBuyBox({
           <ReassuranceItem icon="🚚" title="Livraison à domicile" subtitle="Partout en France · montée à l'étage" />
           <ReassuranceItem icon="🏬" title="3 magasins physiques" subtitle="Venez tester en boutique" />
           <ReassuranceItem icon="🔒" title="Paiement 100 % sécurisé" subtitle="Alma · Stripe · CB" />
-          <ReassuranceItem icon="🛡️" title="Garantie 2 ans" subtitle="Confection française" />
+          <ReassuranceItem icon="🛡️" title="Garantie 2 ans" subtitle="Confection européenne" />
         </ul>
       </div>
     </div>

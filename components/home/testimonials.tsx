@@ -64,7 +64,10 @@ export function Testimonials({ data }: { data?: Data }) {
           <h2 className="display-serif on-cream mt-5 text-[2.4rem] font-normal md:text-[4rem]">{d.title}</h2>
           {d.subtitle && <p className="mt-6 font-serif text-[17px] italic leading-relaxed text-taupe md:text-[19px]">{d.subtitle}</p>}
 
-          {/* Note globale style Google */}
+          {/* Note globale style Google — uniquement si une note réelle est
+              renseignée. Sans elle, le bloc disparaît au lieu d'afficher
+              « 0,0 · 0 avis ». */}
+          {d.averageRating > 0 && d.totalReviews > 0 && (
           <div className="mt-8 inline-flex items-center gap-3 rounded-full border border-ink/15 bg-ivoire px-6 py-3">
             <GoogleG size={20} />
             <div className="flex items-center gap-2">
@@ -75,6 +78,7 @@ export function Testimonials({ data }: { data?: Data }) {
               </span>
             </div>
           </div>
+          )}
         </div>
 
         {d.items.length > 0 && <TestimonialsSlider items={d.items} />}

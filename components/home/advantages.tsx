@@ -4,10 +4,12 @@ type Advantage = { icon?: string; title?: string; subtitle?: string };
 
 const DEFAULT_ADVANTAGES: Advantage[] = [
   { icon: "truck", title: "Livraison France", subtitle: "Partout en France métropolitaine" },
-  { icon: "shield", title: "Garantie 2 ans", subtitle: "Confection française" },
+  { icon: "shield", title: "Garantie 2 ans", subtitle: "Confection européenne" },
   { icon: "lock", title: "Paiement sécurisé", subtitle: "Alma · Stripe · CB" },
   { icon: "store", title: "3 showrooms", subtitle: "Testez avant d'acheter" },
-  { icon: "star", title: "+ 5 000 clients", subtitle: "★ 4,9/5 sur Google" },
+  // Chiffre client et note Google retirés : la fiche Google est celle de
+  // Trust Industrie, pas celle de DreamsFly.
+  { icon: "star", title: "Essai en showroom", subtitle: "Testez avant d'acheter" },
   { icon: "leaf", title: "Tissus OEKO-TEX", subtitle: "Hypoallergéniques" },
 ];
 

@@ -145,14 +145,23 @@ export const defaultTestimonials: {
   items: TestimonialItem[];
 } = {
   eyebrow: "Ils nous font confiance",
-  title: "1 167 avis ★ 4,9 / 5 en moyenne",
-  subtitle: "Ce que nos clients disent après leur achat — extraits vérifiés Google.",
-  averageRating: 4.9,
-  totalReviews: 1167,
-  moreReviewsUrl:
-    "https://www.google.com/search?sca_esv=26fe8ce32570a73a&sxsrf=APpeQnuRcAkp9r5hktDd23vEapZKaK7wrg:1784041005716&si=APenkKm7iecQ4G6P-TsbSMFKIQtv3EFIqRAFw-i8uEbk55Z-_zzlHRevGzIzhQwhU2OVmYt0tbteQE4Nl1bY8lFwmY0ZnfbeI86Zbebb2s2NtbnzXkWPTgR9aBkwPbNsdNlhUXOjYXgqCOV9hOV_AynW8hbdxIt_PrZsJANOz8ND4vif4jlfHVOBjrEpb455kFf6Xjm9UHAI&q=Magasin+de+meubles+-+Canap%C3%A9+-+Matelas+%7C+TRUST+INDUSTRIE+Avis",
-  moreReviewsLabel: "Voir tous les avis Google",
-  // Aucun avis par défaut — à remplir depuis Sanity avec de vrais avis Google
+  title: "Ce que disent nos clients",
+  subtitle: "Les retours recueillis après achat et en showroom.",
+  // Note et nombre d'avis à zéro : le bloc de note globale ne s'affiche plus.
+  //
+  // La valeur précédente — 4,9/5 sur 1 167 avis — et le lien « Voir tous les
+  // avis Google » renvoyaient vers la fiche Google de TRUST INDUSTRIE.
+  // DreamsFly en est une marque, mais ces avis portent sur l'enseigne de
+  // meubles, pas sur la literie DreamsFly : les afficher ici revenait à
+  // s'attribuer la réputation d'une autre entité.
+  //
+  // À rétablir le jour où DreamsFly aura sa propre fiche : il suffira de
+  // renseigner ces trois champs dans le Studio.
+  averageRating: 0,
+  totalReviews: 0,
+  moreReviewsUrl: "",
+  moreReviewsLabel: "Voir tous les avis",
+  // Aucun avis par défaut — à remplir depuis Sanity avec de vrais avis
   items: [],
 };
 

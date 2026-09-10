@@ -43,11 +43,12 @@ export function LandingHero({
 
           {/* Mini trust strip */}
           <div className="mt-8 flex flex-wrap items-center gap-4 border-t border-border/60 pt-6">
-            <div className="flex items-center gap-2">
-              <span className="text-or text-base">★★★★★</span>
-              <strong className="font-sora text-base font-bold text-ink">4,9 / 5</strong>
-              <span className="text-sm text-pierre">— + de 5 000 avis</span>
-            </div>
+            {/* La note et le nombre d'avis ont été retirés : la fiche Google
+                et les avis appartiennent à Trust Industrie, pas à DreamsFly.
+                Les afficher ici attribuait à une marque la réputation d'une
+                autre entité. À rétablir le jour où DreamsFly aura ses propres
+                avis vérifiables. */}
+            <span className="text-sm font-medium text-pierre">Essai en showroom</span>
             <span aria-hidden className="text-brume">·</span>
             <span className="text-sm font-medium text-pierre">Livraison France</span>
             <span aria-hidden className="text-brume">·</span>
