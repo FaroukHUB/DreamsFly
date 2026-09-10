@@ -48,7 +48,12 @@ export default async function ContactPage() {
 
       <main className="mx-auto max-w-site px-6 py-14 md:px-10 md:py-20">
 
-        <div className="grid gap-10 lg:grid-cols-[1fr_1.2fr]">
+        {/* `min-w-0` sur les enfants : une piste de grille vaut par défaut
+            `minmax(auto, 1fr)`, et ce `auto` est la largeur MINIMALE du
+            contenu. Le <select> du formulaire impose la sienne d'après son
+            option la plus longue — la grille entière débordait donc de
+            l'écran à 320 px. */}
+        <div className="grid gap-10 [&>*]:min-w-0 lg:grid-cols-[1fr_1.2fr]">
           {/* Canaux directs */}
           <aside className="space-y-4">
             <ContactCard
@@ -111,10 +116,15 @@ function ContactCard({ icon, title, subtitle, cta, ctaLabel }: any) {
       <span className="inline-flex h-12 w-12 flex-none items-center justify-center rounded-full border border-ink/15 text-noir transition-all group-hover:border-noir group-hover:bg-noir group-hover:text-or">
         <LineIcon name={iconNameForEmoji(icon)} size={20} strokeWidth={1.3} />
       </span>
-      <div className="flex-1">
+      {/* `min-w-0` : par défaut un enfant flex refuse de descendre sous la
+          largeur de son contenu insécable. Le libellé le plus long est une
+          adresse e-mail — un seul mot, impossible à couper — qui imposait
+          donc 324 px à la carte dans un écran de 320. `break-words` autorise
+          la coupure quand il ne reste pas la place. */}
+      <div className="min-w-0 flex-1">
         <div className="font-sans text-[11px] uppercase tracking-[0.14em] text-taupe">{subtitle}</div>
         <div className="mt-1 display-serif on-cream text-[1.15rem] font-normal md:text-[1.25rem]">{title}</div>
-        <div className="mt-1 font-sans text-[13px] font-medium uppercase tracking-[0.14em] text-noir group-hover:text-or">{ctaLabel} →</div>
+        <div className="mt-1 break-words font-sans text-[13px] font-medium uppercase tracking-[0.14em] text-noir group-hover:text-or">{ctaLabel} →</div>
       </div>
     </a>
   );

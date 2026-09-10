@@ -313,6 +313,15 @@
    Le sur-titre s'efface et le titre se réduit — le temps du bandeau, et
    sur ces écrans seulement. Le sous-titre et les deux boutons restent
    intacts : ce sont eux qui portent la compréhension et l'action. */
+/* La bulle de chat (z-190) passe au-dessus du bandeau (z-180) et
+   recouvrait « Tout accepter » sur écran court. Elle se soulève de la
+   hauteur du bandeau tant qu'il est affiché, puis retrouve sa place.
+   Baisser son z-index aurait été pire : elle serait passée SOUS le
+   bandeau, donc inatteignable. */
+html[data-cookie-banner="visible"] .df-chat-launcher {
+  bottom: calc(1.5rem + var(--df-cookie-banner-h, 0px));
+}
+
 /* Écran très court (≈ 568 px) : le hero ne rentre pas, bandeau ou pas.
    L'en-tête prend 100 px, il en reste 470 pour un contenu de 390 px plus
    ses marges. La compaction devient permanente sous cette hauteur — c'est

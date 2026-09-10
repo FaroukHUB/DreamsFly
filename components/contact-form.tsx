@@ -127,11 +127,13 @@ function SelectField({ name, label, options, required }: any) {
   return (
     <label className="flex flex-col gap-1.5">
       <span className="text-sm font-semibold text-ink">{label}{required && " *"}</span>
+      {/* `w-full min-w-0` : sans quoi le select réclame la largeur de son
+          option la plus longue et refuse de rétrécir. */}
       <select
         name={name}
         required={required}
         defaultValue=""
-        className="rounded-xl border border-border bg-ivoire px-4 py-3 text-sm text-ink focus:border-midnight focus:outline-none focus:ring-2 focus:ring-midnight/20"
+        className="w-full min-w-0 rounded-xl border border-border bg-ivoire px-4 py-3 text-sm text-ink focus:border-midnight focus:outline-none focus:ring-2 focus:ring-midnight/20"
       >
         <option value="" disabled>Choisir un sujet</option>
         {options.map((o: string) => <option key={o} value={o}>{o}</option>)}

@@ -162,7 +162,7 @@ export function ChatWidget() {
         <button
           onClick={() => setOpen(true)}
           aria-label="Ouvrir le conseiller sommeil"
-          className="group fixed bottom-6 right-6 z-[190] flex h-16 w-16 items-center justify-center rounded-full bg-noir text-or shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] transition-all hover:scale-105 hover:bg-ink md:bottom-8 md:right-8"
+          className="df-chat-launcher group fixed bottom-6 right-6 z-[190] flex h-16 w-16 items-center justify-center rounded-full bg-noir text-or shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] transition-all hover:scale-105 hover:bg-ink md:bottom-8 md:right-8"
         >
           <span className="pointer-events-none absolute inset-0 rounded-full border border-or/40 transition-all group-hover:scale-110" aria-hidden="true" />
           <span className="pointer-events-none absolute -inset-2 rounded-full border border-or/20 opacity-0 transition-all group-hover:opacity-100" aria-hidden="true" />
