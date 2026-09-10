@@ -75,3 +75,16 @@ export const allComparisonsQuery = groq`
 export const allComparisonSlugsQuery = groq`
   *[_type == "comparison" && defined(publishedAt) && publishedAt <= now()]{ "slug": slug.current }
 `;
+
+/**
+ * Comptes publiés — servent à décider si un hub mérite d'être indexé.
+ * Un `count()` évite de rapatrier les documents pour n'en lire que le
+ * nombre, dans `generateMetadata` qui s'exécute à chaque revalidation.
+ */
+export const publishedComparisonsCountQuery = groq`
+  count(*[_type == "comparison" && defined(publishedAt) && publishedAt <= now()])
+`;
+
+export const publishedGlossaryCountQuery = groq`
+  count(*[_type == "glossary" && defined(publishedAt) && publishedAt <= now()])
+`;

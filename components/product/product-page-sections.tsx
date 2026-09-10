@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   ProductComposition,
   ProductSpecs,
@@ -31,6 +32,18 @@ import {
  * Séquence harmonisée — alterne cartes / listes / images / tableau / accordéon.
  * Chaque section a un fond ou une densité différente pour éviter la monotonie.
  */
+/**
+ * Guide du Magazine correspondant à chaque type de produit. Table explicite
+ * plutôt que déduction : un rapprochement approximatif enverrait le lecteur
+ * d'une fiche d'oreiller vers le guide du matelas.
+ */
+const GUIDE_BY_TYPE: Record<string, { href: string; label: string }> = {
+  matelas: { href: "/magazine/guide-choisir-matelas", label: "lisez notre guide du matelas" },
+  lit: { href: "/magazine/guide-choisir-lit", label: "lisez notre guide du lit" },
+  sommier: { href: "/magazine/guide-choisir-sommier", label: "lisez notre guide du sommier" },
+  oreiller: { href: "/magazine/guide-choisir-oreiller", label: "lisez notre guide de l'oreiller" },
+};
+
 export function ProductPageSections({
   product,
   basePath,
@@ -53,6 +66,7 @@ export function ProductPageSections({
     ? product.warrantyOverride
     : defaultWarranty(productType, product);
   const delivery = product.deliveryOverride?.price ? product.deliveryOverride : defaultDelivery;
+  const guideLink = GUIDE_BY_TYPE[productType] || null;
 
   return (
     <>
@@ -148,6 +162,35 @@ export function ProductPageSections({
       )}
 
       {/* 13. CTA secondaire final */}
+      {/*
+        Retour vers l'éditorial. Les fiches produit ne renvoyaient vers aucun
+        guide : un visiteur qui hésite devait revenir en arrière et retrouver
+        le Magazine par le menu. Le lien est déduit du type de produit, donc
+        toujours pertinent, et la ligne reste discrète — c'est une porte de
+        sortie utile, pas un appel à l'action concurrent du bouton d'achat.
+      */}
+      {guideLink && (
+        <div className="mt-14 border-t border-border pt-8 md:mt-16">
+          <p className="font-sans text-[14.5px] text-pierre">
+            Vous hésitez encore ?{" "}
+            <Link
+              href={guideLink.href}
+              className="border-b border-ink/30 font-medium text-ink transition-colors hover:border-or hover:text-or"
+            >
+              {guideLink.label}
+            </Link>{" "}
+            ou{" "}
+            <Link
+              href="/magasins"
+              className="border-b border-ink/30 font-medium text-ink transition-colors hover:border-or hover:text-or"
+            >
+              venez l'essayer en showroom
+            </Link>
+            .
+          </p>
+        </div>
+      )}
+
       {extraCta?.title && (
         <div className="mt-14 md:mt-16">
           <ProductExtraCta cta={extraCta} />

@@ -10,7 +10,8 @@ import { SeoCrossLinks } from "@/components/seo-cross-links";
 import { Sections } from "@/components/landing/blocks";
 import { EditorialPageHeader } from "@/components/editorial-page-header";
 import { fetchPageHeros, pickHeroImageUrl } from "@/lib/sanity/page-heros";
-import { productSpecLine } from "@/lib/product-card";
+import { productImageAlt, productSpecLine } from "@/lib/product-card";
+import { CategoryIntro } from "@/components/category/category-intro";
 import { QuizBanner } from "@/components/quiz-banner";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { JsonLd, breadcrumbSchema, organizationSchema, faqSchema } from "@/lib/seo/jsonld";
@@ -242,7 +243,7 @@ export default async function MatelasPillar({ searchParams }: { searchParams: Se
                         {p.image && (
                           <Image
                             src={urlFor(p.image).width(800).url()}
-                            alt={p.name}
+                            alt={productImageAlt(p)}
                             fill
                             sizes="(max-width:1024px) 50vw, 33vw"
                             className="object-cover transition-transform duration-[900ms] group-hover:scale-105"
@@ -292,6 +293,12 @@ export default async function MatelasPillar({ searchParams }: { searchParams: Se
             </div>
           </div>
         </section>
+
+        <CategoryIntro
+          productType="matelas"
+          hasEditorialSections={Boolean(pillar?.sections?.length)}
+          guide={{ href: "/magazine/guide-choisir-matelas", label: "Lire le guide complet du matelas" }}
+        />
 
         <QuizBanner
           question={"Vous ne savez pas quel matelas choisir ?"}

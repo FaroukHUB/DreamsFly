@@ -257,3 +257,74 @@ export function categoryComparison(pt: ProductType): Comparison | null {
       return null;
   }
 }
+
+// ─────────────────────────────────────────────────────────────
+// INTRODUCTION LONGUE — sous la grille de produits
+// ─────────────────────────────────────────────────────────────
+
+/**
+ * Texte d'orientation d'achat par catégorie, affiché sous la grille quand
+ * le champ « Contenu long SEO » de Sanity est vide.
+ *
+ * POURQUOI CE TEXTE EXISTE
+ * Les pages catégorie n'avaient qu'une phrase de chapeau. Pour un moteur de
+ * recherche, une grille de produits sans texte ne dit rien du sujet traité ;
+ * pour un visiteur qui découvre la literie, elle ne dit pas davantage
+ * comment choisir.
+ *
+ * CE QU'IL NE CONTIENT PAS
+ * Aucune affirmation sur DreamsFly — ni origine, ni certification, ni
+ * chiffre de vente. Uniquement des repères techniques généraux, vrais quel
+ * que soit le vendeur : ce qu'est un ressort ensaché, ce que change une
+ * densité, comment se choisit une dimension. Les seules mentions
+ * commerciales sont celles déjà vérifiées ailleurs dans le projet — essai
+ * en showroom, garantie 2 ans, confection européenne.
+ *
+ * Il s'efface dès que la rédaction remplit « Contenu long SEO ».
+ */
+export function categoryIntro(pt: ProductType): { title: string; paragraphs: string[] } | null {
+  switch (pt) {
+    case "matelas":
+      return {
+        title: "Comment choisir son matelas ?",
+        paragraphs: [
+          "Le choix d'un matelas se joue sur trois paramètres qui se combinent : la technologie de suspension, la fermeté ressentie et la dimension. Aucun des trois ne se déduit des deux autres, et c'est ce qui rend la comparaison difficile quand on ne regarde que le prix.",
+          "Les ressorts ensachés travaillent indépendamment les uns des autres : chacun s'enfonce sous la zone qu'il porte, ce qui limite la transmission des mouvements entre deux dormeurs et laisse circuler l'air. La mousse à mémoire de forme épouse au contraire les zones saillantes — épaules, hanches — et répartit l'appui sur une surface plus large ; on la choisit quand on ressent des points de pression marqués. La mousse haute résilience offre un soutien plus tonique et un rapport qualité-prix favorable. Les modèles hybrides associent un cœur à ressorts et un accueil en mémoire de forme.",
+          "La fermeté, elle, est un ressenti, pas une mesure absolue : un matelas mi-ferme paraîtra ferme à une personne légère et souple à une personne corpulente. C'est pourquoi une même référence convient rarement à tout le monde, et pourquoi l'essai allongé reste le seul test fiable.",
+          "Côté dimensions, le 140 × 190 cm reste le format le plus courant pour deux personnes, le 160 × 200 cm apportant vingt centimètres de largeur et dix de longueur — une différence nette quand on dort à deux ou qu'on mesure plus d'1,80 m. En une place, le 90 × 190 cm est le standard.",
+        ],
+      };
+    case "sommier":
+      return {
+        title: "Comment choisir son sommier ?",
+        paragraphs: [
+          "Le sommier porte une part importante du soutien ressenti : un modèle affaissé annule le confort d'un matelas neuf, quel qu'en soit le prix. C'est la raison pour laquelle on recommande de renouveler les deux ensemble.",
+          "Le sommier à lattes apparentes laisse circuler l'air sous le matelas et convient à la plupart des couchages. Le nombre de lattes détermine la finesse du soutien : en dessous d'une quinzaine, l'appui devient irrégulier ; au-delà d'une vingtaine, il se répartit plus uniformément. Des lattes réglables permettent d'ajuster la fermeté au niveau du bassin ou des épaules.",
+          "Le sommier tapissier, recouvert d'un coutil, offre un soutien plus homogène et un rendu plus habillé, mais ventile moins qu'un modèle à lattes apparentes. Le sommier à ressorts, plus rare aujourd'hui, s'associe traditionnellement à un matelas à ressorts.",
+          "La règle d'association la plus utile : un matelas en mousse à mémoire de forme ou en latex demande un support régulier — lattes rapprochées ou tapissier — sous peine de marquer. Un matelas à ressorts s'accommode de lattes plus espacées. Enfin, la dimension du sommier doit être strictement celle du matelas : quelques centimètres d'écart suffisent à créer un porte-à-faux sur les bords.",
+        ],
+      };
+    case "lit":
+      return {
+        title: "Comment choisir son lit ?",
+        paragraphs: [
+          "Un lit se choisit d'abord sur la dimension, ensuite sur la structure, enfin sur la matière. L'ordre compte : une matière séduisante ne rattrape pas un format inadapté à la pièce.",
+          "Comptez au minimum soixante centimètres de dégagement sur les côtés que vous empruntez, et vérifiez la hauteur totale — cadre plus sommier plus matelas — car elle détermine le confort d'assise au bord du lit. Un lit coffre demande en plus de l'espace libre devant ou sur le côté pour ouvrir le mécanisme.",
+          "La structure détermine ce qui est inclus. Certains modèles intègrent le sommier, d'autres non ; la tête de lit peut être fournie ou vendue séparément. Ces éléments changent la comparaison des prix bien plus que la matière du revêtement, et méritent d'être vérifiés fiche par fiche.",
+          "Côté revêtement, le velours donne une profondeur de couleur et un toucher chaleureux, le tissu tramé un rendu plus sobre et une surface facile à entretenir, le lin un aspect naturel légèrement irrégulier, le capitonnage une allure classique. Tous se nettoient à l'aspirateur brosse douce ; les creux d'un capitonnage demandent un peu plus d'attention.",
+        ],
+      };
+    case "oreiller":
+      return {
+        title: "Comment choisir son oreiller ?",
+        paragraphs: [
+          "L'oreiller se choisit sur un seul repère : garder la tête dans le prolongement de la colonne. Trop épais, il pousse la nuque vers le haut ; trop plat, il la laisse fléchir. Ce qui rend le bon choix personnel, c'est que l'épaisseur nécessaire dépend de la position de sommeil et de la largeur des épaules.",
+          "Sur le dos, un oreiller plutôt fin — de l'ordre de dix à douze centimètres — suffit à combler le creux de la nuque. Sur le côté, il faut davantage d'épaisseur, quatorze à seize centimètres, pour compenser la distance entre l'épaule et la tête. Sur le ventre, un oreiller très fin, voire aucun, évite de cambrer le cou.",
+          "Le garnissage détermine ensuite la sensation. Le duvet donne un accueil souple, léger, que l'on peut modeler à la main. La mémoire de forme épouse la nuque et conserve sa position toute la nuit — un soutien plus constant, mais moins modulable. Le latex naturel offre une résilience tonique et une bonne aération. Les fibres synthétiques restent le choix le plus simple à entretenir.",
+          "Un oreiller se renouvelle plus souvent qu'un matelas : le garnissage se tasse, et un modèle qui ne reprend plus sa forme quand on le plie en deux a fait son temps.",
+        ],
+      };
+    default:
+      return null;
+  }
+}

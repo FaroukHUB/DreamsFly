@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { sanityClient } from "@/lib/sanity/client";
-import { allGlossaryTermsQuery } from "@/lib/sanity/extra-queries";
+import { allGlossaryTermsQuery, publishedGlossaryCountQuery } from "@/lib/sanity/extra-queries";
 import { siteSettingsQuery } from "@/lib/sanity/queries";
 import { Header } from "@/components/header";
 import { EditorialPageHeader } from "@/components/editorial-page-header";
@@ -11,12 +11,34 @@ import { JsonLd, breadcrumbSchema, organizationSchema } from "@/lib/seo/jsonld";
 
 export const revalidate = 600;
 
-export const metadata: Metadata = buildMetadata({
-  title: "Glossaire de la literie — Tout le vocabulaire du sommeil",
-  description:
-    "Mémoire de forme, ressorts ensachés, densité, latex, indépendance de couchage : toutes les définitions des termes literie expliquées simplement.",
-  path: "/glossaire",
-});
+/**
+ * `noindex` tant qu'aucun terme n'est publié.
+ *
+ * La page affiche alors un titre, un chapô et une phrase d'attente — une
+ * trentaine de mots. Ce n'est pas une page vide, mais c'est une page en
+ * attente de contenu, et Google la classe en contenu insuffisant.
+ *
+ * `follow` est conservé : les liens internes continuent de circuler, et la
+ * page reste crawlable — indispensable pour que le retrait du `noindex`
+ * soit constaté le jour où les termes arrivent.
+ *
+ * La retirer du sitemap n'aurait rien changé : elle est liée depuis le pied
+ * de page, donc découverte de toute façon. Le sitemap suggère, il ne
+ * contrôle pas l'indexation.
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  const count = sanityClient
+    ? await sanityClient.fetch<number>(publishedGlossaryCountQuery).catch(() => 0)
+    : 0;
+
+  return buildMetadata({
+    title: "Glossaire de la literie — Tout le vocabulaire du sommeil",
+    description:
+      "Mémoire de forme, ressorts ensachés, densité, latex, indépendance de couchage : toutes les définitions des termes literie expliquées simplement.",
+    path: "/glossaire",
+    noindex: !count,
+  });
+}
 
 export default async function GlossaireHub() {
   const [terms, siteSettings] = await Promise.all([

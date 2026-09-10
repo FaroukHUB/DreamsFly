@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { sanityClient } from "@/lib/sanity/client";
-import { allComparisonsQuery } from "@/lib/sanity/extra-queries";
+import { allComparisonsQuery, publishedComparisonsCountQuery } from "@/lib/sanity/extra-queries";
 import { siteSettingsQuery } from "@/lib/sanity/queries";
 import { Header } from "@/components/header";
 import { EditorialPageHeader } from "@/components/editorial-page-header";
@@ -11,12 +11,34 @@ import { JsonLd, breadcrumbSchema, organizationSchema } from "@/lib/seo/jsonld";
 
 export const revalidate = 600;
 
-export const metadata: Metadata = buildMetadata({
-  title: "Comparatifs matelas — DreamsFly face aux concurrents",
-  description:
-    "Comparatifs honnêtes entre DreamsFly et les autres marques françaises de matelas en ligne. Tests, technologies, prix, garanties.",
-  path: "/comparatifs",
-});
+/**
+ * `noindex` tant qu'aucun comparatif n'est publié.
+ *
+ * La page affiche alors un titre, un chapô et une phrase d'attente — une
+ * trentaine de mots. Ce n'est pas une page vide, mais c'est une page en
+ * attente de contenu, et Google la classe en contenu insuffisant.
+ *
+ * `follow` est conservé : les liens internes continuent de circuler, et la
+ * page reste crawlable — indispensable pour que le retrait du `noindex`
+ * soit constaté le jour où les comparatifs arrivent.
+ *
+ * La retirer du sitemap n'aurait rien changé : elle est liée depuis le pied
+ * de page, donc découverte de toute façon. Le sitemap suggère, il ne
+ * contrôle pas l'indexation.
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  const count = sanityClient
+    ? await sanityClient.fetch<number>(publishedComparisonsCountQuery).catch(() => 0)
+    : 0;
+
+  return buildMetadata({
+    title: "Comparatifs matelas — DreamsFly face aux concurrents",
+    description:
+      "Comparatifs honnêtes entre DreamsFly et les autres marques françaises de matelas en ligne. Tests, technologies, prix, garanties.",
+    path: "/comparatifs",
+    noindex: !count,
+  });
+}
 
 export default async function ComparatifsHub() {
   const [items, siteSettings] = await Promise.all([
@@ -36,7 +58,7 @@ export default async function ComparatifsHub() {
         breadcrumbs={breadcrumbs}
         eyebrow="Confrontation"
         title="Comparatifs matelas"
-        lead="DreamsFly face aux autres marques. Analyse honnête, critère par critère. Pas de bullshit marketing — juste les faits."
+        lead="DreamsFly face aux autres marques, critère par critère : technologies, fermetés, garanties et prix. Sans raccourci."
       />
       <main className="mx-auto max-w-site px-6 py-14 md:px-10 md:py-20">
 

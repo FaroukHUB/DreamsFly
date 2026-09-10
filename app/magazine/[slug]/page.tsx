@@ -14,6 +14,7 @@ import { guideBySlugQuery, allGuideSlugsQuery } from "@/lib/sanity/guide-queries
 import { siteSettingsQuery } from "@/lib/sanity/queries";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
+import { guideCtaFor } from "@/lib/guide-links";
 import { productPathFor } from "@/lib/product-card";
 import { buildMetadata } from "@/lib/seo/metadata";
 import {
@@ -191,6 +192,7 @@ export default async function GuidePage({ params }: { params: Promise<Params> })
 
   // Nettoyage des blocs HTML avant rendu : le résultat sert à la fois au
   // rendu lui-même et à décider si la page doit produire son propre <h1>.
+  const guideCta = guideCtaFor(g.slug || slug);
   const sanitizedHtml = sanitizeHtmlBlocks(g.body);
   const editorialHasH1 = hasEditorialH1(sanitizedHtml);
   const portableComponents = buildPortableComponents(sanitizedHtml);
@@ -346,6 +348,45 @@ export default async function GuidePage({ params }: { params: Promise<Params> })
                 )}
               </div>
             </footer>
+          )}
+
+          {/*
+            Passerelle vers le catalogue.
+
+            Le gabarit ne contenait aucun lien vers les pages catégorie : on
+            pouvait lire un guide en entier sans jamais croiser un chemin
+            vers la rubrique correspondante. Le bloc n'apparaît que pour les
+            guides dont le slug est explicitement rattaché à une catégorie —
+            deviner d'après le titre produirait de mauvais rapprochements.
+          */}
+          {guideCta && (
+            <section className="mt-16 rounded-[28px] bg-noir px-6 py-10 text-ivoire md:px-12 md:py-12">
+              <h2 className="display-serif text-[1.6rem] font-normal md:text-[2.1rem]">
+                {guideCta.title}
+              </h2>
+              <p className="mt-3 max-w-2xl font-sans text-[15px] leading-relaxed text-ivoire/70 md:text-base">
+                {guideCta.text}
+              </p>
+              <div className="mt-7 flex flex-wrap items-center gap-4 md:gap-6">
+                <Link
+                  href={guideCta.href}
+                  className="inline-flex items-center gap-3 rounded-pill bg-ivoire px-7 py-3.5 font-sans text-sm font-semibold text-noir transition-all hover:bg-or hover:-translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-noir"
+                >
+                  {guideCta.label}
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+                    <path d="M5 12h14M13 6l6 6-6 6" />
+                  </svg>
+                </Link>
+                {guideCta.secondary && (
+                  <Link
+                    href={guideCta.secondary.href}
+                    className="inline-flex items-center gap-2 border-b border-white/40 pb-1 font-sans text-sm font-medium uppercase tracking-[0.14em] text-white transition-colors hover:border-or hover:text-or focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-noir"
+                  >
+                    {guideCta.secondary.label}
+                  </Link>
+                )}
+              </div>
+            </section>
           )}
 
           {/*

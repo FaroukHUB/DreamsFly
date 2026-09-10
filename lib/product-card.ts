@@ -49,6 +49,25 @@ export function productPathFor(
   return `${base}/${product?.slug || ""}`;
 }
 
+/**
+ * Texte alternatif d'une photo produit.
+ *
+ * Les cartes affichaient `alt={p.name}` — soit « BARCELONE », un nom de
+ * ville qui ne décrit rien pour un lecteur d'écran ni pour la recherche
+ * d'images. L'ordre de préférence : l'alt saisi dans Sanity, sinon le titre
+ * complet du produit, qui est descriptif par construction.
+ */
+export function productImageAlt(
+  product: { image?: { alt?: string | null } | null; title?: string | null; name?: string | null } | null | undefined,
+): string {
+  const explicit = product?.image?.alt;
+  if (typeof explicit === "string" && explicit.trim()) return explicit.trim();
+  const title = product?.title;
+  if (typeof title === "string" && title.trim()) return title.trim();
+  const name = product?.name;
+  return typeof name === "string" && name.trim() ? name.trim() : "Produit DreamsFly";
+}
+
 export type ProductCardInput = {
   productType?: string | null;
   // Matelas
