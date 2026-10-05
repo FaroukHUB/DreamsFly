@@ -1,0 +1,554 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- NOTE — Tout ce <head> est RETIRÉ avant affichage par le nettoyage HTML du
+       site : html, head, meta, link et script sont supprimés, seul <style>
+       survit. Les métadonnées réelles viennent des champs Sanity « metaTitle »
+       et « metaDescription » ; le JSON-LD (BlogPosting, BreadcrumbList,
+       FAQPage) est généré par le gabarit de page. Conservé ici uniquement pour
+       que le fichier reste lisible et valide hors du CMS. -->
+  <title>Comment choisir son sommier ? Guide complet | DreamsFly</title>
+  <meta name="description" content="Comment choisir son sommier ? Comparez lattes, tapissier, ressorts, coffre et relevable, puis vérifiez la compatibilité avec votre matelas.">
+  <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+  <link rel="canonical" href="https://dreamsfly.fr/magazine/guide-choisir-sommier">
+
+  <meta property="og:locale" content="fr_FR">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Comment choisir son sommier ? Lattes, tapissier, ressorts, coffre">
+  <meta property="og:description" content="Le guide objectif pour choisir le support adapté à votre matelas, votre confort, votre chambre et vos contraintes de rangement.">
+  <meta property="og:url" content="https://dreamsfly.fr/magazine/guide-choisir-sommier">
+  <meta property="og:site_name" content="DreamsFly">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1784318519037-7ee0b1668e95?auto=format&amp;fit=crop&amp;w=1600&amp;q=85">
+  <meta property="og:image:alt" content="Chambre contemporaine avec un lit aux tons chauds">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+
+  <style>
+    /* DREAMSFLY — GUIDE SOMMIER. Toutes les classes et animations sont préfixées df-. */
+    .df-guide {
+      --df-page: #F4EFE7;
+      --df-ivory: #FFFFFF;
+      --df-cream: #F0E9DC;
+      --df-black: #0B0B0F;
+      --df-black-soft: #17130F;
+      --df-ink: #0F172A;
+      --df-gold: #C8A876;
+      --df-gold-dark: #A8884E;
+      --df-taupe: #8B7355;
+      --df-muted: #5E6470;
+      --df-border: rgba(15, 23, 42, .11);
+      --df-shadow: 0 30px 60px -20px rgba(11, 11, 15, .25);
+      background: var(--df-page);
+      color: var(--df-ink);
+      font-family: "Plus Jakarta Sans", sans-serif;
+      font-size: 16px;
+      line-height: 1.7;
+      overflow: hidden;
+    }
+
+    .df-guide *, .df-guide *::before, .df-guide *::after { box-sizing: border-box; }
+    .df-guide img { display: block; max-width: 100%; }
+    .df-guide a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: .2em; }
+    .df-guide a:hover { color: var(--df-gold-dark); }
+    .df-guide a:focus-visible, .df-guide summary:focus-visible { outline: 3px solid rgba(200, 168, 118, .72); outline-offset: 4px; border-radius: 6px; }
+    .df-shell { width: min(100% - 32px, 1360px); margin-inline: auto; }
+    .df-narrow { width: min(100% - 32px, 930px); margin-inline: auto; }
+
+    .df-hero {
+      position: relative; min-height: clamp(660px, 84vh, 880px); display: grid; align-items: end;
+      isolation: isolate; background: var(--df-black); color: var(--df-ivory);
+    }
+    .df-hero-media, .df-hero-media::after { position: absolute; inset: 0; }
+    .df-hero-media { z-index: -2; margin: 0; }
+    .df-hero-media img { width: 100%; height: 100%; object-fit: cover; object-position: center; }
+    .df-hero-media::after {
+      content: "";
+      background: radial-gradient(circle at 72% 36%, rgba(200,168,118,.35), transparent 43%),
+        linear-gradient(180deg, rgba(11,11,15,.24) 0%, rgba(11,11,15,.56) 53%, rgba(11,11,15,.96) 100%);
+    }
+    .df-hero-content { width: min(100%, 1120px); padding: clamp(130px, 18vh, 210px) 0 clamp(62px, 10vh, 108px); }
+    .df-eyebrow {
+      display: inline-flex; align-items: center; gap: 12px; margin: 0 0 22px; color: var(--df-gold);
+      font-size: .68rem; font-weight: 700; letter-spacing: .19em; line-height: 1.4; text-transform: uppercase;
+    }
+    .df-eyebrow::before { content: ""; width: 38px; height: 1px; flex: 0 0 auto; background: currentColor; }
+    .df-hero h1, .df-title, .df-card-title, .df-quote, .df-cta-title, .df-faq-title { font-family: "Cormorant Garamond", serif; letter-spacing: -.025em; }
+    .df-hero h1 { max-width: 1120px; margin: 0; color: var(--df-ivory); font-size: clamp(2.65rem, 5.9vw, 5.2rem); font-weight: 600; line-height: .98; text-wrap: balance; }
+    .df-hero h1 em, .df-title em, .df-cta-title em, .df-faq-title em { color: var(--df-gold); font-weight: inherit; }
+    .df-hero-lead { max-width: 810px; margin: 28px 0 0; color: rgba(255,255,255,.84); font-size: clamp(1rem, 1.6vw, 1.18rem); line-height: 1.75; }
+    .df-meta { display: flex; flex-wrap: wrap; gap: 14px 28px; margin-top: 34px; color: rgba(255,255,255,.66); font-size: .72rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; }
+    .df-meta span { display: inline-flex; align-items: center; gap: 9px; }
+    .df-diamond { color: var(--df-gold); font-size: .68em; line-height: 1; }
+
+    .df-marquee { overflow: hidden; border-top: 1px solid rgba(255,255,255,.1); background: var(--df-black); color: rgba(255,255,255,.74); }
+    .df-marquee-track { display: flex; width: max-content; animation: df-marquee 31s linear infinite; }
+    .df-marquee-group { display: flex; gap: 36px; align-items: center; padding: 17px 18px; white-space: nowrap; }
+    .df-marquee-item { display: inline-flex; align-items: center; gap: 13px; font-size: .66rem; font-weight: 700; letter-spacing: .17em; text-transform: uppercase; }
+    @keyframes df-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    .df-intro { padding: clamp(72px, 10vw, 124px) 0 54px; }
+    .df-intro-grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(280px, .65fr); gap: clamp(42px, 7vw, 100px); align-items: start; }
+    .df-intro-copy { margin: 0; color: #2D3442; font-size: clamp(1.05rem, 1.7vw, 1.25rem); line-height: 1.85; }
+    .df-dropcap::first-letter { float: left; margin: .03em .12em 0 0; color: var(--df-gold-dark); font-family: "Cormorant Garamond", serif; font-size: 5.2rem; font-weight: 600; line-height: .72; }
+    .df-evidence { padding: clamp(26px, 4vw, 38px); border: 1px solid var(--df-border); border-radius: 24px; background: var(--df-ivory); box-shadow: 0 22px 50px -38px rgba(11,11,15,.45); }
+    .df-evidence-number { display: block; color: var(--df-gold-dark); font-family: "Cormorant Garamond", serif; font-size: clamp(3.2rem, 6vw, 5rem); font-weight: 600; line-height: .82; }
+    .df-evidence-label { display: block; margin-top: 18px; color: var(--df-ink); font-size: .74rem; font-weight: 700; letter-spacing: .14em; line-height: 1.55; text-transform: uppercase; }
+    .df-evidence p { margin: 16px 0 0; color: var(--df-muted); font-size: .83rem; line-height: 1.7; }
+
+    .df-toc { padding: 0 0 clamp(70px, 9vw, 112px); }
+    .df-toc-box { display: grid; grid-template-columns: 200px 1fr; gap: 30px 50px; padding: 28px clamp(24px, 4vw, 44px); border-top: 1px solid var(--df-border); border-bottom: 1px solid var(--df-border); }
+    .df-toc-title { margin: 0; color: var(--df-taupe); font-size: .7rem; font-weight: 700; letter-spacing: .17em; text-transform: uppercase; }
+    .df-toc-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 28px; margin: 0; padding: 0; list-style: none; counter-reset: df-toc; }
+    .df-toc-list li { counter-increment: df-toc; }
+    .df-toc-list a { display: grid; grid-template-columns: 28px 1fr; gap: 8px; text-decoration: none; font-size: .88rem; font-weight: 600; }
+    .df-toc-list a::before { content: "0" counter(df-toc); color: var(--df-gold-dark); font-family: "Cormorant Garamond", serif; font-size: 1rem; }
+
+    .df-section { padding: clamp(78px, 10vw, 132px) 0; }
+    .df-section-cream { background: var(--df-cream); }
+    .df-section-dark { background: var(--df-black); color: var(--df-ivory); }
+    .df-section-head { display: grid; grid-template-columns: 105px minmax(0, 880px); gap: 0 24px; margin-bottom: clamp(44px, 6vw, 72px); }
+    .df-section-index { padding-top: 13px; color: var(--df-gold-dark); font-size: .67rem; font-weight: 700; letter-spacing: .17em; text-transform: uppercase; }
+    .df-title { margin: 0; font-size: clamp(2.35rem, 4.5vw, 4rem); font-weight: 600; line-height: 1.02; text-wrap: balance; }
+    .df-section-lead { grid-column: 2; max-width: 800px; margin: 22px 0 0; color: var(--df-muted); font-size: 1rem; line-height: 1.85; }
+    .df-section-dark .df-section-lead { color: rgba(255,255,255,.7); }
+
+    .df-function-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .df-function-card { padding: clamp(26px, 3vw, 36px); border: 1px solid var(--df-border); border-radius: 22px; background: rgba(255,255,255,.56); }
+    .df-icon-ring { width: 52px; height: 52px; display: grid; place-items: center; border: 1px solid rgba(168,136,78,.48); border-radius: 50%; color: var(--df-gold-dark); }
+    .df-icon-ring svg { width: 23px; height: 23px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.4; }
+    .df-card-title { margin: 24px 0 10px; font-size: 1.65rem; font-weight: 600; line-height: 1.1; }
+    .df-function-card p { margin: 0; color: var(--df-muted); font-size: .89rem; }
+
+    .df-types { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+    .df-type-card { position: relative; min-height: 330px; padding: clamp(29px, 4vw, 44px); overflow: hidden; border: 1px solid rgba(255,255,255,.11); border-radius: 24px; background: var(--df-black-soft); transition: transform .35s ease, box-shadow .35s ease, border-color .35s ease; }
+    .df-type-card:hover { transform: translateY(-5px); border-color: rgba(200,168,118,.45); box-shadow: var(--df-shadow); }
+    .df-type-label { color: var(--df-gold); font-size: .64rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+    .df-type-card h3 { margin: 20px 0 13px; font-family: "Cormorant Garamond", serif; font-size: clamp(1.85rem, 3vw, 2.5rem); font-weight: 600; line-height: 1; }
+    .df-type-card p { margin: 0; color: rgba(255,255,255,.68); font-size: .88rem; }
+    .df-type-best { margin-top: 22px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,.1); color: rgba(255,255,255,.85); font-size: .77rem; }
+    .df-type-best strong { color: var(--df-gold); font-size: .62rem; letter-spacing: .13em; text-transform: uppercase; }
+
+    .df-slats { display: grid; grid-template-columns: minmax(0, .88fr) minmax(360px, 1.12fr); gap: clamp(40px, 7vw, 100px); align-items: center; }
+    .df-slats-image { position: relative; min-height: 540px; overflow: hidden; border-radius: 24px; background: var(--df-black-soft); }
+    .df-slats-image img { width: 100%; height: 100%; min-height: 540px; object-fit: cover; }
+    .df-slats-image::after { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 70% 24%, rgba(200,168,118,.22), transparent 42%); pointer-events: none; }
+    .df-credit { position: absolute; z-index: 2; right: 14px; bottom: 12px; padding: 7px 10px; border-radius: 999px; background: rgba(11,11,15,.72); color: rgba(255,255,255,.78); font-size: .57rem; letter-spacing: .08em; text-transform: uppercase; backdrop-filter: blur(8px); }
+    .df-credit a { color: inherit; }
+    .df-detail-list { display: grid; gap: 28px; }
+    .df-detail { display: grid; grid-template-columns: 58px 1fr; gap: 18px; padding-bottom: 28px; border-bottom: 1px solid var(--df-border); }
+    .df-detail:last-child { padding-bottom: 0; border-bottom: 0; }
+    .df-detail-num { display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid rgba(168,136,78,.52); border-radius: 50%; color: var(--df-gold-dark); font-family: "Cormorant Garamond", serif; font-size: 1.15rem; font-weight: 600; }
+    .df-detail h3 { margin: 0 0 7px; font-family: "Cormorant Garamond", serif; font-size: 1.75rem; line-height: 1.08; }
+    .df-detail p { margin: 0; color: var(--df-muted); font-size: .91rem; }
+    .df-detail-tip { display: inline-block; margin-top: 10px; color: var(--df-taupe); font-size: .68rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+    .df-callout { margin-top: 42px; padding: 24px 26px; border-left: 2px solid var(--df-gold); background: rgba(255,255,255,.62); color: #353A45; }
+    .df-callout strong { display: block; margin-bottom: 5px; color: var(--df-ink); font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; }
+    .df-callout p { margin: 0; }
+    .df-callout + .df-callout { margin-top: 18px; }
+
+    .df-table-wrap { overflow-x: auto; border: 1px solid var(--df-border); border-radius: 22px; background: var(--df-ivory); }
+    .df-table { width: 100%; min-width: 830px; border-collapse: collapse; }
+    .df-table th, .df-table td { padding: 19px 21px; border-bottom: 1px solid var(--df-border); text-align: left; vertical-align: top; }
+    .df-table tr:last-child td { border-bottom: 0; }
+    .df-table th { background: var(--df-black); color: rgba(255,255,255,.74); font-size: .66rem; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; }
+    .df-table td { color: #38404D; font-size: .87rem; }
+    .df-table td:first-child { color: var(--df-black-soft); font-weight: 700; }
+    .df-status { display: inline-flex; padding: 5px 9px; border-radius: 999px; font-size: .59rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+    .df-status-good { background: rgba(16,185,129,.12); color: #087A57; }
+    .df-status-check { background: rgba(200,168,118,.2); color: #745A2F; }
+    .df-table-note { margin: 16px 0 0; color: var(--df-muted); font-size: .78rem; }
+
+    .df-photo-break { position: relative; min-height: clamp(500px, 65vw, 760px); display: grid; align-items: end; isolation: isolate; background: var(--df-black); color: white; }
+    .df-photo-break img { position: absolute; z-index: -2; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .df-photo-break::after { content: ""; position: absolute; z-index: -1; inset: 0; background: linear-gradient(90deg, rgba(11,11,15,.91) 0%, rgba(11,11,15,.56) 53%, rgba(11,11,15,.2) 100%), radial-gradient(circle at 76% 35%, rgba(200,168,118,.29), transparent 39%); }
+    .df-photo-copy { max-width: 740px; padding: clamp(72px, 10vw, 120px) 0; }
+    .df-quote { margin: 0; font-size: clamp(2.2rem, 5vw, 4.5rem); font-weight: 500; line-height: 1.02; text-wrap: balance; }
+    .df-quote em { color: var(--df-gold); }
+    .df-photo-copy p { max-width: 650px; margin: 24px 0 0; color: rgba(255,255,255,.75); }
+
+    .df-check-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .df-check-card { padding: 29px; border: 1px solid var(--df-border); border-radius: 22px; background: var(--df-ivory); }
+    .df-check-label { display: inline-flex; align-items: center; gap: 8px; color: var(--df-gold-dark); font-size: .63rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+    .df-check-card h3 { margin: 18px 0 8px; font-family: "Cormorant Garamond", serif; font-size: 1.55rem; line-height: 1.08; }
+    .df-check-card p { margin: 0; color: var(--df-muted); font-size: .84rem; }
+
+    .df-lifecycle { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .df-lifecycle-card { padding: clamp(30px, 4vw, 48px); border-radius: 24px; }
+    .df-lifecycle-card:first-child { background: var(--df-ivory); border: 1px solid var(--df-border); }
+    .df-lifecycle-card:last-child { background: var(--df-black); color: var(--df-ivory); }
+    .df-lifecycle-card h3 { margin: 0 0 22px; font-family: "Cormorant Garamond", serif; font-size: 2rem; line-height: 1; }
+    .df-list { display: grid; gap: 15px; margin: 0; padding: 0; list-style: none; }
+    .df-list li { position: relative; padding-left: 25px; color: var(--df-muted); font-size: .9rem; }
+    .df-list li::before { content: "◆"; position: absolute; left: 0; top: .12em; color: var(--df-gold); font-size: .52rem; }
+    .df-lifecycle-card:last-child .df-list li { color: rgba(255,255,255,.72); }
+
+    .df-errors { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; counter-reset: df-errors; }
+    .df-error { counter-increment: df-errors; padding: 30px; border-top: 1px solid rgba(255,255,255,.16); }
+    .df-error::before { content: "0" counter(df-errors); color: var(--df-gold); font-family: "Cormorant Garamond", serif; font-size: 2.2rem; }
+    .df-error h3 { margin: 14px 0 9px; font-family: "Cormorant Garamond", serif; font-size: 1.65rem; line-height: 1.1; }
+    .df-error p { margin: 0; color: rgba(255,255,255,.66); font-size: .86rem; }
+
+    .df-related { padding: 74px 0; border-top: 1px solid var(--df-border); }
+    .df-related h2 { margin: 0 0 26px; font-family: "Cormorant Garamond", serif; font-size: 2rem; }
+    .df-related-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .df-related-link { display: flex; justify-content: space-between; gap: 18px; align-items: center; padding: 22px 24px; border: 1px solid var(--df-border); border-radius: 18px; background: rgba(255,255,255,.58); text-decoration: none; transition: background .3s ease, transform .3s ease; }
+    .df-related-link:hover { transform: translateY(-3px); background: var(--df-ivory); color: var(--df-ink); }
+    .df-related-link span:first-child { font-weight: 700; }
+    .df-related-arrow { color: var(--df-gold-dark); font-size: 1.3rem; }
+
+    .df-cta { padding: clamp(80px, 11vw, 138px) 0; background: var(--df-cream); }
+    .df-cta-box { position: relative; overflow: hidden; padding: clamp(46px, 8vw, 92px); border-radius: 28px; background: var(--df-black); color: var(--df-ivory); }
+    .df-cta-box::before { content: ""; position: absolute; width: 520px; height: 520px; right: -180px; top: -230px; border: 1px solid rgba(200,168,118,.27); border-radius: 50%; box-shadow: 0 0 0 90px rgba(200,168,118,.035), 0 0 0 180px rgba(200,168,118,.025); }
+    .df-cta-content { position: relative; max-width: 880px; }
+    .df-cta-title { margin: 0; font-size: clamp(2.4rem, 5vw, 4.6rem); font-weight: 600; line-height: 1; text-wrap: balance; }
+    .df-cta-content p { max-width: 680px; margin: 23px 0 0; color: rgba(255,255,255,.7); }
+    .df-buttons { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 31px; }
+    .df-button { display: inline-flex; min-height: 49px; align-items: center; justify-content: center; padding: 13px 21px; border: 1px solid var(--df-gold); border-radius: 999px; background: var(--df-gold); color: var(--df-black) !important; font-size: .66rem; font-weight: 700; letter-spacing: .13em; text-decoration: none; text-transform: uppercase; transition: transform .25s ease, background .25s ease; }
+    .df-button:hover { transform: translateY(-2px); background: #D4B98F; }
+    .df-button-ghost { border-color: rgba(255,255,255,.26); background: transparent; color: var(--df-ivory) !important; }
+    .df-button-ghost:hover { background: rgba(255,255,255,.08); }
+
+    .df-faq { padding: clamp(80px, 10vw, 126px) 0; }
+    .df-faq-head { max-width: 780px; margin-bottom: 44px; }
+    .df-faq-title { margin: 0; font-size: clamp(2.4rem, 5vw, 4rem); font-weight: 600; line-height: 1; }
+    .df-faq-list { border-top: 1px solid var(--df-border); }
+    .df-faq-item { border-bottom: 1px solid var(--df-border); }
+    .df-faq-item summary { display: flex; justify-content: space-between; gap: 24px; padding: 24px 0; cursor: pointer; color: var(--df-black-soft); font-family: "Cormorant Garamond", serif; font-size: clamp(1.28rem, 2.5vw, 1.65rem); font-weight: 600; list-style: none; }
+    .df-faq-item summary::-webkit-details-marker { display: none; }
+    .df-faq-item summary::after { content: "+"; flex: 0 0 auto; color: var(--df-gold-dark); font-family: "Plus Jakarta Sans", sans-serif; font-size: 1.1rem; font-weight: 400; }
+    .df-faq-item[open] summary::after { content: "−"; }
+    .df-faq-answer { max-width: 820px; padding: 0 0 26px; color: var(--df-muted); font-size: .92rem; }
+    .df-faq-answer p { margin: 0; }
+
+    .df-sources { padding: 58px 0 72px; border-top: 1px solid var(--df-border); color: var(--df-muted); }
+    .df-sources h2 { margin: 0 0 22px; color: var(--df-ink); font-family: "Cormorant Garamond", serif; font-size: 1.8rem; }
+    .df-sources ol { display: grid; gap: 10px; margin: 0; padding-left: 20px; font-size: .76rem; }
+    .df-sources-note { margin: 24px 0 0; font-size: .73rem; font-style: italic; }
+
+    @media (max-width: 980px) {
+      .df-intro-grid, .df-slats { grid-template-columns: 1fr; }
+      .df-section-head { grid-template-columns: 70px 1fr; }
+      .df-function-grid, .df-check-grid, .df-errors { grid-template-columns: 1fr 1fr; }
+      .df-related-grid { grid-template-columns: 1fr; }
+      .df-slats-image, .df-slats-image img { min-height: 440px; }
+    }
+    @media (max-width: 720px) {
+      .df-shell, .df-narrow { width: min(100% - 24px, 1360px); }
+      .df-hero { min-height: 720px; }
+      .df-toc-box { grid-template-columns: 1fr; }
+      .df-toc-list, .df-types, .df-lifecycle { grid-template-columns: 1fr; }
+      .df-section-head { grid-template-columns: 1fr; }
+      .df-section-index { padding: 0 0 14px; }
+      .df-section-lead { grid-column: 1; }
+      .df-function-grid, .df-check-grid, .df-errors { grid-template-columns: 1fr; }
+      .df-photo-break::after { background: linear-gradient(180deg, rgba(11,11,15,.34) 0%, rgba(11,11,15,.93) 100%), radial-gradient(circle at 75% 24%, rgba(200,168,118,.25), transparent 38%); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .df-marquee-track { animation: none; }
+      .df-type-card, .df-related-link, .df-button { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="df-guide">
+    <article>
+      <header class="df-hero">
+        <figure class="df-hero-media">
+          <img src="https://images.unsplash.com/photo-1784318519037-7ee0b1668e95?auto=format&amp;fit=crop&amp;w=1920&amp;q=88" srcset="https://images.unsplash.com/photo-1784318519037-7ee0b1668e95?auto=format&amp;fit=crop&amp;w=960&amp;q=82 960w, https://images.unsplash.com/photo-1784318519037-7ee0b1668e95?auto=format&amp;fit=crop&amp;w=1440&amp;q=85 1440w, https://images.unsplash.com/photo-1784318519037-7ee0b1668e95?auto=format&amp;fit=crop&amp;w=1920&amp;q=88 1920w" sizes="100vw" width="1920" height="1280" alt="Chambre contemporaine avec lit et sommier tapissier aux tons chauds" fetchpriority="high">
+          <figcaption class="df-credit">Photo : <a href="https://unsplash.com/photos/modern-bedroom-with-bed-pillows-and-warm-brown-wall-9MbWyxGzvD0" rel="nofollow noopener" target="_blank">Clay Banks / Unsplash</a></figcaption>
+        </figure>
+        <div class="df-shell">
+          <div class="df-hero-content">
+            <p class="df-eyebrow">Guide literie · Choix du support</p>
+            <h1>Comment choisir son sommier ? Lattes, tapissier, ressorts, <em>coffre</em></h1>
+            <p class="df-hero-lead">Le sommier n’est pas un simple socle décoratif. Il stabilise le matelas, modifie sa sensation, participe à son aération et doit supporter durablement le poids du couchage et des dormeurs.</p>
+            <div class="df-meta">
+              <span><b class="df-diamond" aria-hidden="true">◆</b> Mise à jour octobre 2026</span>
+              <span><b class="df-diamond" aria-hidden="true">◆</b> 16 min de lecture</span>
+              <span><b class="df-diamond" aria-hidden="true">◆</b> Guide DreamsFly</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="df-marquee" aria-label="Critères essentiels pour choisir un sommier">
+        <div class="df-marquee-track">
+          <div class="df-marquee-group">
+            <span class="df-marquee-item"><b class="df-diamond" aria-hidden="true">◆</b> Compatibilité matelas</span>
+            <span class="df-marquee-item"><b class="df-diamond" aria-hidden="true">◆</b> Soutien régulier</span>
+            <span class="df-marquee-item"><b class="df-diamond" aria-hidden="true">◆</b> Ventilation</span>
+            <span class="df-marquee-item"><b class="df-diamond" aria-hidden="true">◆</b> Charge maximale</span>
+            <span class="df-marquee-item"><b class="df-diamond" aria-hidden="true">◆</b> Silence</span>
+            <span class="df-marquee-item"><b class="df-diamond" aria-hidden="true">◆</b> Rangement</span>
+          </div>
+          <div class="df-marquee-group" aria-hidden="true">
+            <span class="df-marquee-item"><b class="df-diamond">◆</b> Compatibilité matelas</span>
+            <span class="df-marquee-item"><b class="df-diamond">◆</b> Soutien régulier</span>
+            <span class="df-marquee-item"><b class="df-diamond">◆</b> Ventilation</span>
+            <span class="df-marquee-item"><b class="df-diamond">◆</b> Charge maximale</span>
+            <span class="df-marquee-item"><b class="df-diamond">◆</b> Silence</span>
+            <span class="df-marquee-item"><b class="df-diamond">◆</b> Rangement</span>
+          </div>
+        </div>
+      </div>
+
+      <section class="df-intro">
+        <div class="df-shell df-intro-grid">
+          <p class="df-intro-copy df-dropcap">Un matelas performant posé sur un support affaissé, trop espacé ou mécaniquement incompatible ne travaillera pas comme prévu. À l’inverse, le bon sommier ne transforme pas un mauvais matelas en palace : il crée une base stable, homogène et ventilée qui permet au couchage d’exprimer ses qualités sans déformation prématurée.</p>
+          <aside class="df-evidence" aria-label="Repère technique">
+            <span class="df-evidence-number">1 + 1</span>
+            <span class="df-evidence-label">un matelas et un support conçus comme un système</span>
+            <p>La norme NF EN 1957 encadre des méthodes d’essai et des critères d’évaluation fonctionnelle pour les lits et matelas. Elle ne valide pas un pourcentage universel de confort ni une durée de vie identique pour tous les sommiers.</p>
+          </aside>
+        </div>
+      </section>
+
+      <nav class="df-toc" aria-label="Sommaire de l’article">
+        <div class="df-narrow df-toc-box">
+          <p class="df-toc-title">Dans ce guide</p>
+          <ol class="df-toc-list">
+            <li><a href="#df-role">Le rôle du sommier</a></li>
+            <li><a href="#df-types">Les quatre types principaux</a></li>
+            <li><a href="#df-lattes">Bien choisir les lattes</a></li>
+            <li><a href="#df-tapissier">Choisir un sommier tapissier</a></li>
+            <li><a href="#df-compatibilite">Compatibilité avec le matelas</a></li>
+            <li><a href="#df-reglage">Curseurs, manuel ou électrique</a></li>
+            <li><a href="#df-details">Dimensions, pieds et coffre</a></li>
+            <li><a href="#df-remplacer">Remplacement et entretien</a></li>
+            <li><a href="#df-faq">Questions fréquentes</a></li>
+          </ol>
+        </div>
+      </nav>
+
+      <section class="df-section df-section-cream" id="df-role">
+        <div class="df-shell">
+          <header class="df-section-head">
+            <span class="df-section-index">01 — Fonction</span>
+            <h2 class="df-title">Ce que le sommier change réellement dans votre <em>lit</em></h2>
+            <p class="df-section-lead">Son influence est concrète, mais elle ne se résume pas au chiffre marketing de « 40 % du confort », qui ne repose pas sur une mesure universelle publiée.</p>
+          </header>
+          <div class="df-function-grid">
+            <article class="df-function-card"><span class="df-icon-ring" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 17h16M6 17V9h12v8M8 9V6h8v3"/></svg></span><h3 class="df-card-title">La stabilité</h3><p>Le support répartit les charges et maintient le matelas à plat. Un creux central, une traverse faible ou des lattes cassées peuvent créer un soutien irrégulier.</p></article>
+            <article class="df-function-card"><span class="df-icon-ring" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 16c2-4 12-4 14 0M7 12c2-3 8-3 10 0M10 8c1-1 3-1 4 0"/></svg></span><h3 class="df-card-title">L’aération</h3><p>Une structure ouverte facilite les échanges d’air sous le matelas. Cette respiration compte particulièrement dans une chambre humide ou avec des dormeurs qui transpirent.</p></article>
+            <article class="df-function-card"><span class="df-icon-ring" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 15c4-2 10-2 14 0v4H5zM7 11h10M8 7h8"/></svg></span><h3 class="df-card-title">La sensation</h3><p>Des lattes souples ajoutent de la réponse ; une plateforme plus rigide stabilise davantage. Le sommier peut nuancer l’accueil, sans modifier la technologie du matelas.</p></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="df-section df-section-dark" id="df-types">
+        <div class="df-shell">
+          <header class="df-section-head">
+            <span class="df-section-index">02 — Comparatif</span>
+            <h2 class="df-title">Lattes, tapissier, ressorts ou coffre : quatre usages <em>distincts</em></h2>
+            <p class="df-section-lead">Le nom commercial ne révèle pas toujours ce qui se cache sous le tissu. Avant d’acheter, demandez la construction interne, la charge maximale, l’espacement du support et la compatibilité écrite.</p>
+          </header>
+          <div class="df-types">
+            <article class="df-type-card"><span class="df-type-label">Aéré &amp; polyvalent</span><h3>Sommier à lattes</h3><p>Les lattes peuvent être souples — souvent bombées et montées sur embouts — ou rigides. La structure ouverte favorise la circulation de l’air. La sensation dépend du nombre, de la largeur, de l’espacement, de la matière et de la présence éventuelle de curseurs de fermeté.</p><div class="df-type-best"><strong>Idéal si</strong><br>vous recherchez ventilation, lisibilité de construction et large choix de réglages.</div></article>
+            <article class="df-type-card"><span class="df-type-label">Fini &amp; silencieux</span><h3>Sommier tapissier</h3><p>« Tapissier » signifie d’abord que la structure est habillée de tissu. Sous le coutil peuvent se trouver des lattes, une surface plus ferme ou des ressorts. Il protège le matelas des frottements et offre une finition nette, mais la ventilation dépend de sa construction réelle.</p><div class="df-type-best"><strong>Idéal si</strong><br>vous privilégiez la finition, le silence et un ensemble de literie coordonné.</div></article>
+            <article class="df-type-card"><span class="df-type-label">Souple &amp; dynamique</span><h3>Sommier à ressorts</h3><p>Il ajoute une suspension et une sensation plus rebondie. Historiquement associé aux matelas à ressorts, il doit être sélectionné comme un ensemble cohérent : un support trop souple peut modifier la fermeté perçue et la stabilité des bords.</p><div class="df-type-best"><strong>Idéal si</strong><br>vous aimez une réponse dynamique et choisissez un matelas explicitement compatible.</div></article>
+            <article class="df-type-card"><span class="df-type-label">Rangement &amp; volume</span><h3>Sommier coffre</h3><p>Le couchage se relève pour libérer un volume de rangement. Vérifiez les vérins, les charnières, la retenue en position ouverte, la poignée, la charge du plateau, l’aération et l’accès quotidien. Le mécanisme compte autant que le revêtement.</p><div class="df-type-best"><strong>Idéal si</strong><br>chaque mètre carré est précieux et que le coffre reste facile à manipuler.</div></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="df-section" id="df-lattes">
+        <div class="df-shell">
+          <header class="df-section-head">
+            <span class="df-section-index">03 — Lattes</span>
+            <h2 class="df-title">Le bon sommier à lattes se juge dans les <em>détails</em></h2>
+            <p class="df-section-lead">Compter les lattes ne suffit pas. Une latte large et rigide n’a pas le même comportement qu’une latte étroite, flexible et montée sur suspension.</p>
+          </header>
+          <div class="df-slats">
+            <figure class="df-slats-image">
+              <img src="https://images.pexels.com/photos/17219683/pexels-photo-17219683.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1200" srcset="https://images.pexels.com/photos/17219683/pexels-photo-17219683.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=700 700w, https://images.pexels.com/photos/17219683/pexels-photo-17219683.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1200 1200w" sizes="(max-width: 980px) 100vw, 47vw" width="1200" height="1500" alt="Cadre de lit en bois avec structure à lattes" loading="lazy">
+              <figcaption class="df-credit">Photo : <a href="https://www.pexels.com/photo/a-bed-with-wooden-slats-and-a-wooden-headboard-17219683/" rel="nofollow noopener" target="_blank">Niels / Pexels</a></figcaption>
+            </figure>
+            <div class="df-detail-list">
+              <article class="df-detail"><span class="df-detail-num">01</span><div><h3>Lattes souples</h3><p>Elles fléchissent sous la charge et peuvent accompagner les mouvements du matelas. Les embouts et suspensions réduisent les contraintes, à condition que la structure soit robuste et sans jeu excessif.</p><span class="df-detail-tip">À regarder : flexion, embouts, réglage lombaire</span></div></article>
+              <article class="df-detail"><span class="df-detail-num">02</span><div><h3>Lattes rigides</h3><p>Elles créent une base plus stable et généralement plus ferme. Leur compatibilité dépend surtout de l’espacement : un vide trop important peut laisser une mousse souple s’enfoncer entre les lattes.</p><span class="df-detail-tip">À regarder : largeur et vide réel</span></div></article>
+              <article class="df-detail"><span class="df-detail-num">03</span><div><h3>Combien de lattes faut-il ?</h3><p>Il n’existe pas de nombre universel, et une fiche produit qui met « 28 lattes » en avant ne dit rien de leur largeur ni de leur espacement. Deux sommiers au même comptage peuvent couvrir des surfaces très différentes. Raisonnez en vide libre entre deux lattes, pas en quantité.</p><span class="df-detail-tip">À calculer : vide réel plutôt que comptage</span></div></article>
+              <article class="df-detail"><span class="df-detail-num">04</span><div><h3>Double couchage</h3><p>Sur les grandes largeurs, contrôlez la traverse centrale, les pieds de renfort et la répartition des lattes. Une bonne périphérie ne compense pas un centre sous-dimensionné.</p><span class="df-detail-tip">À regarder : renfort médian et charge totale</span></div></article>
+              <article class="df-detail"><span class="df-detail-num">05</span><div><h3>Espacement</h3><p>Il n’existe pas de règle universelle de 4 cm dans la NF EN 1957. Respectez la valeur maximale imposée par le fabricant du matelas : elle peut conditionner le soutien et la garantie.</p><span class="df-detail-tip">À regarder : notice du matelas</span></div></article>
+            </div>
+          </div>
+          <div class="df-callout"><strong>Le test simple</strong><p>Retirez le matelas, appuyez successivement sur plusieurs zones et observez : les lattes doivent répondre de façon régulière, les embouts rester en place et la traverse centrale ne pas bouger. Mesurez ensuite l’espace libre entre deux lattes — pas seulement leur nombre.</p></div>
+        </div>
+      </section>
+
+      <section class="df-section" id="df-tapissier">
+        <div class="df-shell">
+          <header class="df-section-head">
+            <span class="df-section-index">04 — Tapissier</span>
+            <h2 class="df-title">Comment choisir un sommier <em>tapissier</em> ?</h2>
+            <p class="df-section-lead">C’est le type le plus demandé et le plus mal compris. « Tapissier » ne décrit pas une technologie de soutien : le mot désigne une structure habillée de tissu. Deux modèles identiques de l’extérieur peuvent cacher des constructions radicalement différentes.</p>
+          </header>
+          <div class="df-detail-list">
+            <article class="df-detail"><span class="df-detail-num">01</span><div><h3>Demandez ce qu’il y a sous le coutil</h3><p>Lattes, plateau plus rigide ou ressorts : la réponse change le soutien, la ventilation et la compatibilité avec votre matelas. Une fiche produit qui ne le précise pas vous laisse acheter à l’aveugle.</p><span class="df-detail-tip">À demander : construction interne détaillée</span></div></article>
+            <article class="df-detail"><span class="df-detail-num">02</span><div><h3>Vérifiez la ventilation réelle</h3><p>Le coutil ferme en partie la structure. Certaines conceptions prévoient des ouvertures ou un plateau ajouré, d’autres non. Ce point pèse davantage dans une chambre humide ou sous un matelas en mousse, qui retient plus la chaleur qu’un modèle à ressorts.</p><span class="df-detail-tip">À regarder : ouvertures, aérations, matière du plateau</span></div></article>
+            <article class="df-detail"><span class="df-detail-num">03</span><div><h3>Jugez la finition comme un meuble</h3><p>Le tapissier se voit : coutures, tension du tissu, angles, finition des pieds. C’est aussi ce qui protège le matelas des frottements, et ce qui vieillira sous vos yeux pendant une décennie.</p><span class="df-detail-tip">À regarder : tension du tissu, angles, résistance à l’abrasion</span></div></article>
+            <article class="df-detail"><span class="df-detail-num">04</span><div><h3>Contrôlez la charge et le renfort</h3><p>Le tissu masque aussi la traverse centrale et les pieds intermédiaires. Sur une grande largeur, demandez la charge admissible et vérifiez que le renfort médian repose réellement au sol.</p><span class="df-detail-tip">À demander : charge par place ou pour l’ensemble</span></div></article>
+          </div>
+          <div class="df-callout"><strong>Tapissier ou lattes apparentes ?</strong><p>Le tapissier offre une finition nette, un bon silence, et protège le matelas des frottements. Les lattes apparentes se laissent inspecter, ventilent généralement mieux et autorisent parfois un réglage de fermeté. Aucun des deux n’est supérieur dans l’absolu : la question utile est de savoir ce que votre matelas exige comme régularité de support et comme circulation d’air.</p></div>
+        </div>
+      </section>
+
+      <section class="df-section df-section-cream" id="df-compatibilite">
+        <div class="df-shell">
+          <header class="df-section-head">
+            <span class="df-section-index">05 — Association</span>
+            <h2 class="df-title">Quel sommier pour quel matelas ? La matrice de <em>compatibilité</em></h2>
+            <p class="df-section-lead">Le tableau donne une direction d’essai. La notice du matelas et les conditions de garantie restent prioritaires, car deux produits d’une même famille peuvent avoir des constructions différentes.</p>
+          </header>
+          <div class="df-table-wrap">
+            <table class="df-table">
+              <thead><tr><th>Matelas</th><th>Lattes</th><th>Tapissier</th><th>Ressorts</th><th>À contrôler</th></tr></thead>
+              <tbody>
+                <tr><td>Mémoire de forme</td><td><span class="df-status df-status-good">Souvent adapté</span><br>Lattes rapprochées, base régulière</td><td><span class="df-status df-status-good">Souvent adapté</span><br>Surface plane et respirante</td><td><span class="df-status df-status-check">À vérifier</span><br>Le support ne doit pas être trop souple</td><td>Écart maximal, aération, garantie</td></tr>
+                <tr><td>Latex</td><td><span class="df-status df-status-good">Très courant</span><br>Bonne circulation d’air</td><td><span class="df-status df-status-check">Selon structure</span><br>Préférer une conception ventilée</td><td><span class="df-status df-status-check">À vérifier</span></td><td>Espacement, ventilation, poids du matelas</td></tr>
+                <tr><td>Ressorts ensachés</td><td><span class="df-status df-status-check">Selon fabricant</span><br>Lattes assez nombreuses et rapprochées</td><td><span class="df-status df-status-good">Très courant</span></td><td><span class="df-status df-status-good">Association traditionnelle</span><br>Si l’ensemble est conçu ainsi</td><td>Support périphérique, renfort central</td></tr>
+                <tr><td>Hybride</td><td><span class="df-status df-status-good">Souvent adapté</span></td><td><span class="df-status df-status-good">Souvent adapté</span></td><td><span class="df-status df-status-check">Selon construction</span></td><td>Technologie du cœur, charge, flexibilité</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="df-table-note">Méfiez-vous des interdictions absolues : elles simplifient trop. Par exemple, certaines bases à lattes conviennent aux ressorts ensachés et certains matelas à ressorts sont conçus pour être articulés. Seule la compatibilité documentée tranche.</p>
+        </div>
+      </section>
+
+      <section class="df-photo-break">
+        <img src="https://images.unsplash.com/photo-1746549833988-52dad8f2c17a?auto=format&amp;fit=crop&amp;w=1920&amp;q=86" srcset="https://images.unsplash.com/photo-1746549833988-52dad8f2c17a?auto=format&amp;fit=crop&amp;w=960&amp;q=82 960w, https://images.unsplash.com/photo-1746549833988-52dad8f2c17a?auto=format&amp;fit=crop&amp;w=1440&amp;q=84 1440w, https://images.unsplash.com/photo-1746549833988-52dad8f2c17a?auto=format&amp;fit=crop&amp;w=1920&amp;q=86 1920w" sizes="100vw" width="1920" height="1280" alt="Chambre élégante avec lit tapissier et ambiance lumineuse chaude" loading="lazy">
+        <div class="df-shell"><div class="df-photo-copy"><p class="df-eyebrow">Sommier électrique ou relevable</p><blockquote class="df-quote">Le confort de position exige un matelas réellement <em>flexible.</em></blockquote><p>Une base articulée peut faciliter la lecture, le passage assis-debout ou certaines positions de repos. Pour le reflux nocturne, des autorités médicales évoquent l’élévation de la tête et du haut du dos ; ce conseil ne remplace pas une prise en charge médicale. Choisissez uniquement un matelas explicitement compatible avec les articulations, respectez le rayon de courbure et ne coincez jamais câbles, literie ou objets dans le mécanisme.</p></div></div>
+        <span class="df-credit">Photo : <a href="https://unsplash.com/photos/a-cozy-bedroom-with-a-stylish-bed-k4W3mEnbkI0" rel="nofollow noopener" target="_blank">iKshana Productions / Unsplash</a></span>
+      </section>
+
+      <section class="df-section" id="df-reglage">
+        <div class="df-shell">
+          <header class="df-section-head">
+            <span class="df-section-index">06 — Réglages</span>
+            <h2 class="df-title">Curseurs, manuel ou électrique : trois réglages à ne pas <em>confondre</em></h2>
+            <p class="df-section-lead">Les trois sont vendus sous l’étiquette « sommier réglable », mais ils ne règlent pas la même chose. L’un ajuste la fermeté une fois pour toutes, les deux autres modifient l’inclinaison au quotidien.</p>
+          </header>
+          <div class="df-function-grid">
+            <article class="df-function-card"><span class="df-icon-ring" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 8h16M4 16h16M9 6v4M15 14v4"/></svg></span><h3 class="df-card-title">Curseurs de fermeté</h3><p>Des cavaliers coulissants posés sur quelques lattes, souvent au niveau du bassin ou des épaules. Ils rigidifient la zone en limitant la flexion. Le sommier reste plat : aucun relevage. C’est un réglage que l’on fait à l’installation, puis que l’on oublie.</p></article>
+            <article class="df-function-card"><span class="df-icon-ring" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 17h18M5 17V9l7-4 7 4v8M9 17v-4h6v4"/></svg></span><h3 class="df-card-title">Relevage manuel</h3><p>Une crémaillère ou un vérin relève la partie tête, parfois les pieds. Il faut se lever pour changer de position, mais le mécanisme ne dépend d’aucune alimentation et comporte peu de pièces susceptibles de défaillir.</p></article>
+            <article class="df-function-card"><span class="df-icon-ring" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 16h16M6 16v-5l6-3 6 3v5M10 20h4M12 16v4"/></svg></span><h3 class="df-card-title">Relevage électrique</h3><p>Un ou deux moteurs pilotés à la télécommande articulent tête et pieds indépendamment. C’est la solution la plus souple d’usage, au prix d’un branchement, d’un poids supérieur et d’un mécanisme à entretenir.</p></article>
+          </div>
+          <div class="df-callout"><strong>Les deux vérifications avant d’acheter une base articulée</strong><p>D’abord le matelas : il doit être explicitement conçu et garanti pour suivre l’articulation. Beaucoup de matelas à ressorts classiques ne le sont pas, et forcer la courbure les abîme. Ensuite le cadre de lit : de nombreuses structures, en particulier les lits coffre, ne laissent pas la place au débattement du mécanisme.</p></div>
+          <div class="df-callout"><strong>Sur les classements de « meilleurs sommiers réglables »</strong><p>Il n’existe pas de palmarès officiel ni de mesure publiée permettant de désigner les modèles ajustables les plus populaires ou les plus recommandés. Les listes que l’on trouve en ligne reflètent le plus souvent des partenariats commerciaux. Les critères vérifiables restent les mêmes : compatibilité écrite du matelas, charge admissible, nombre de moteurs, garantie du mécanisme et accès au service après-vente.</p></div>
+        </div>
+      </section>
+
+      <section class="df-section" id="df-details">
+        <div class="df-shell">
+          <header class="df-section-head">
+            <span class="df-section-index">07 — Contrôle</span>
+            <h2 class="df-title">Les critères silencieux qui évitent les mauvaises <em>surprises</em></h2>
+            <p class="df-section-lead">Un bon sommier doit entrer dans la chambre, supporter l’ensemble, rester stable et être utilisable au quotidien. Ce sont des détails très concrets — et nettement moins poétiques qu’une photo d’hôtel.</p>
+          </header>
+          <div class="df-check-grid">
+            <article class="df-check-card"><span class="df-check-label"><b class="df-diamond" aria-hidden="true">◆</b> Dimensions</span><h3>Mesurez trois fois</h3><p>Contrôlez largeur, longueur, profondeur du cadre de lit, hauteur disponible et passage dans les escaliers. Pour un coffre, ajoutez le débattement nécessaire à l’ouverture.</p></article>
+            <article class="df-check-card"><span class="df-check-label"><b class="df-diamond" aria-hidden="true">◆</b> Charge</span><h3>Tout compter</h3><p>La charge admissible doit intégrer le matelas, les dormeurs et les sollicitations quotidiennes. Vérifiez si elle est donnée par place ou pour l’ensemble.</p></article>
+            <article class="df-check-card"><span class="df-check-label"><b class="df-diamond" aria-hidden="true">◆</b> Centre</span><h3>Renfort médian</h3><p>Pour les grandes largeurs, privilégiez une traverse centrale solide avec pieds réglables reposant réellement sur le sol.</p></article>
+            <article class="df-check-card"><span class="df-check-label"><b class="df-diamond" aria-hidden="true">◆</b> Hauteur</span><h3>Assise naturelle</h3><p>Choisissez la hauteur totale matelas compris : assis au bord, les pieds doivent toucher le sol et le lever rester confortable. Il n’existe pas de hauteur idéale pour tous.</p></article>
+            <article class="df-check-card"><span class="df-check-label"><b class="df-diamond" aria-hidden="true">◆</b> Pieds</span><h3>Stabilité d’abord</h3><p>Contrôlez diamètre, filetage, nombre, patins et compatibilité avec le sol. Des pieds hauts facilitent le nettoyage, mais augmentent les contraintes latérales.</p></article>
+            <article class="df-check-card"><span class="df-check-label"><b class="df-diamond" aria-hidden="true">◆</b> Coffre</span><h3>Mécanisme sécurisé</h3><p>Essayez l’ouverture avec le poids du matelas prévu. Vérifiez retenue en position haute, accès aux poignées, ventilation et absence de zones de pincement accessibles.</p></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="df-section df-section-cream" id="df-remplacer">
+        <div class="df-shell">
+          <header class="df-section-head">
+            <span class="df-section-index">08 — Longévité</span>
+            <h2 class="df-title">Quand changer son sommier — et comment le faire <em>durer</em></h2>
+            <p class="df-section-lead">Dix ans est un repère commercial fréquent, pas une date de péremption. Un sommier robuste et bien entretenu peut rester fonctionnel plus longtemps ; un modèle déformé doit être remplacé bien avant.</p>
+          </header>
+          <div class="df-lifecycle">
+            <article class="df-lifecycle-card"><h3>Les signes de remplacement</h3><ul class="df-list"><li>Le cadre ou la traverse centrale présente une déformation visible.</li><li>Une ou plusieurs lattes sont fendues, sorties de leur embout ou nettement plus souples.</li><li>La surface s’affaisse au centre et le matelas ne repose plus à plat.</li><li>Des grincements persistent après contrôle raisonnable des fixations.</li><li>Le mécanisme d’un coffre ou d’une base relevable ne tient plus correctement en position.</li><li>Le support ne respecte pas les exigences du nouveau matelas.</li></ul></article>
+            <article class="df-lifecycle-card"><h3>L’entretien juste</h3><ul class="df-list"><li>Aspirez délicatement le tissu et les zones accessibles selon les recommandations du fabricant.</li><li>Aérez régulièrement la chambre et laissez circuler l’air sous le lit.</li><li>Contrôlez les pieds, la traverse et les fixations visibles sans serrage excessif.</li><li>Évitez l’humidité prolongée et ne posez pas un coffre directement contre une source de chaleur.</li><li>Ne retournez ni ne faites pivoter le sommier sauf instruction explicite du fabricant.</li><li>Sur une base motorisée, gardez câbles et mécanismes libres de tout objet.</li></ul></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="df-section df-section-dark">
+        <div class="df-shell">
+          <header class="df-section-head">
+            <span class="df-section-index">09 — À éviter</span>
+            <h2 class="df-title">Les erreurs qui coûtent un bon <em>matelas</em></h2>
+          </header>
+          <div class="df-errors">
+            <article class="df-error"><h3>Garder un support creusé</h3><p>Un matelas neuf épouse aussi les défauts de ce qui le porte. Avant la livraison, contrôlez le sommier vide, au centre comme sur les bords.</p></article>
+            <article class="df-error"><h3>Acheter seulement au nombre de lattes</h3><p>La largeur, l’espacement, la flexibilité et les renforts valent davantage qu’un chiffre isolé imprimé en grand sur une fiche produit.</p></article>
+            <article class="df-error"><h3>Ignorer la garantie</h3><p>Un espacement ou un support non conforme peut réduire les performances et compliquer une prise en charge. Demandez les exigences par écrit.</p></article>
+            <article class="df-error"><h3>Confondre tapissier et plein</h3><p>Le tissu cache la construction. Deux sommiers visuellement identiques peuvent renfermer des lattes, des ressorts ou un plateau très différent.</p></article>
+            <article class="df-error"><h3>Négliger la charge totale</h3><p>Le poids du matelas compte aussi. Un latex épais ou un hybride généreux peut peser lourd avant même que les dormeurs ne s’allongent.</p></article>
+            <article class="df-error"><h3>Forcer un sommier relevable</h3><p>Un matelas non prévu pour se courber résiste au moteur, fatigue le mécanisme et peut se dégrader. Ici, l’improvisation coûte cher.</p></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="df-related">
+        <div class="df-shell">
+          <h2>Construire un ensemble de literie cohérent</h2>
+          <div class="df-related-grid">
+            <a class="df-related-link" href="/magazine/guide-choisir-matelas"><span>Comment choisir son matelas ?</span><span class="df-related-arrow" aria-hidden="true">→</span></a>
+            <a class="df-related-link" href="/magazine/matelas-mal-de-dos"><span>Quel matelas quand on a le dos sensible ?</span><span class="df-related-arrow" aria-hidden="true">→</span></a>
+            <a class="df-related-link" href="/magazine/guide-choisir-oreiller"><span>Comment choisir son oreiller ?</span><span class="df-related-arrow" aria-hidden="true">→</span></a>
+          </div>
+        </div>
+      </section>
+
+      <section class="df-cta">
+        <div class="df-shell">
+          <div class="df-cta-box">
+            <div class="df-cta-content"><p class="df-eyebrow">La méthode DreamsFly</p><h2 class="df-cta-title">Associez votre matelas au support qui lui rend <em>justice</em></h2><p>Technologie du matelas, gabarit, sensation recherchée, rangement et hauteur de couchage : nos conseillers vérifient l’ensemble, pas seulement l’apparence du sommier.</p><div class="df-buttons"><a class="df-button" href="/quiz">Faire le quiz literie</a><a class="df-button df-button-ghost" href="/magasins">Essayer en magasin</a><a class="df-button df-button-ghost" href="/sommiers">Voir les sommiers</a></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION FAQ — À SUPPRIMER si vous remplissez le champ « FAQ » de
+           Sanity (recommandé). Le gabarit de page affiche alors ces questions
+           ET génère le balisage FAQPage que Google peut reprendre dans ses
+           résultats. Le <script> JSON-LD placé dans un bloc HTML est supprimé
+           au nettoyage : tel quel, cette FAQ s'affiche mais ne produit aucune
+           donnée structurée. Garder les deux ferait doublon à l'écran. -->
+      <section class="df-faq" id="df-faq">
+        <div class="df-narrow">
+          <header class="df-faq-head"><p class="df-eyebrow">FAQ · Choix du sommier</p><h2 class="df-faq-title">Les réponses à vos questions <em>essentielles</em></h2></header>
+          <div class="df-faq-list">
+            <details class="df-faq-item"><summary>Quel sommier choisir pour un matelas à mémoire de forme ?</summary><div class="df-faq-answer"><p>Un sommier à lattes rapprochées ou un sommier tapissier offrant une surface régulière convient généralement. Contrôlez l’espacement maximal autorisé, la ventilation et les conditions de garantie du matelas.</p></div></details>
+            <details class="df-faq-item"><summary>Quel sommier choisir pour un matelas à ressorts ensachés ?</summary><div class="df-faq-answer"><p>Un sommier tapissier, un sommier à ressorts assorti ou certaines bases à lattes peuvent convenir. Les lattes doivent être assez nombreuses et rapprochées, avec un bon soutien central. La recommandation écrite du fabricant reste déterminante.</p></div></details>
+            <details class="df-faq-item"><summary>Quelle différence entre un sommier à lattes et un sommier tapissier ?</summary><div class="df-faq-answer"><p>Le sommier à lattes laisse généralement sa structure visible et facilite l’inspection ainsi que la circulation de l’air. Le terme tapissier désigne un sommier recouvert de tissu : il peut cacher des lattes, une surface plus rigide ou des ressorts.</p></div></details>
+            <details class="df-faq-item"><summary>Comment choisir un sommier tapissier ?</summary><div class="df-faq-answer"><p>Demandez d’abord ce que le coutil recouvre — lattes, plateau rigide ou ressorts — car c’est cela qui détermine le soutien et la ventilation. Vérifiez ensuite la charge admissible, le renfort central et la qualité de finition du tissu, qui protège le matelas des frottements.</p></div></details>
+            <details class="df-faq-item"><summary>Combien de lattes faut-il pour un bon sommier ?</summary><div class="df-faq-answer"><p>Il n’existe pas de nombre universel valable pour toutes les largeurs et tous les matelas. Examinez surtout l’espace libre entre les lattes, leur largeur, leur flexibilité et le renfort central. Respectez l’écart maximal indiqué par le fabricant du matelas.</p></div></details>
+            <details class="df-faq-item"><summary>Quelle différence entre des lattes à curseurs et un sommier de relaxation ?</summary><div class="df-faq-answer"><p>Les curseurs ajustent la fermeté sur quelques lattes, généralement au niveau du bassin : le sommier reste plat et le réglage se fait une fois pour toutes. Un sommier de relaxation, manuel ou électrique, modifie l’inclinaison de la tête et des pieds, et se règle au quotidien.</p></div></details>
+            <details class="df-faq-item"><summary>Sommier relevable manuel ou électrique : lequel choisir ?</summary><div class="df-faq-answer"><p>Le manuel ne dépend d’aucune alimentation et comporte peu de pièces susceptibles de défaillir, mais impose de se lever pour changer de position. L’électrique articule tête et pieds à la télécommande, au prix d’un branchement et d’un mécanisme à entretenir. Dans les deux cas, le matelas doit être explicitement garanti pour suivre l’articulation.</p></div></details>
+            <details class="df-faq-item"><summary>Un sommier coffre ventile-t-il suffisamment le matelas ?</summary><div class="df-faq-answer"><p>Cela dépend de sa construction. Un plateau très fermé échange moins d’air qu’une base ouverte. Recherchez des lattes ou des ouvertures prévues, n’obstruez pas la ventilation et aérez régulièrement la chambre.</p></div></details>
+            <details class="df-faq-item"><summary>Peut-on poser un matelas à ressorts sur un sommier électrique ?</summary><div class="df-faq-answer"><p>Uniquement si le modèle est explicitement conçu pour une base articulée. Certains ressorts ensachés adaptés existent, mais de nombreux matelas à ressorts classiques ne tolèrent pas la courbure répétée. Ne forcez jamais un produit non compatible.</p></div></details>
+            <details class="df-faq-item"><summary>Quand faut-il changer son sommier ?</summary><div class="df-faq-answer"><p>Changez-le lorsque des lattes ou fixations sont endommagées, que le cadre s’affaisse, que la surface n’est plus plane ou que le mécanisme devient dangereux. Un âge de dix ans invite à l’inspection, mais ne constitue pas à lui seul un diagnostic d’usure.</p></div></details>
+            <details class="df-faq-item"><summary>Faut-il changer le sommier en même temps que le matelas ?</summary><div class="df-faq-answer"><p>Pas systématiquement. Inspectez le support vide et vérifiez sa compatibilité avec le nouveau matelas. S’il est plan, stable, silencieux, correctement dimensionné et conforme aux exigences du fabricant, il peut être conservé.</p></div></details>
+          </div>
+        </div>
+      </section>
+
+      <footer class="df-sources">
+        <div class="df-narrow">
+          <h2>Sources et méthode éditoriale</h2>
+          <ol>
+            <li><a href="https://www.boutique.afnor.org/fr-fr/norme/nf-en-1957/meubles-a-usage-domestique-lits-et-matelas-methodes-dessai-pour-la-determin/fa040889/17558">AFNOR, NF EN 1957</a>, « Meubles — Lits et matelas — Méthodes d’essai pour la détermination des caractéristiques fonctionnelles et critères d’évaluation ».</li>
+            <li><a href="https://norminfo.afnor.org/norme/nf-en-1725/meubles-lits-exigences-de-securite-solite-et-durabilite/197562">AFNOR, NF EN 1725</a>, exigences de sécurité, de résistance et de durabilité applicables aux lits et à leurs composants selon le périmètre de la norme.</li>
+            <li><a href="https://www.niddk.nih.gov/health-information/digestive-diseases/acid-reflux-ger-gerd-adults/treatment">National Institute of Diabetes and Digestive and Kidney Diseases</a>, recommandations générales relatives à l’élévation de la tête et du haut du dos en cas de reflux nocturne.</li>
+            <li><a href="https://quefairedemesdechets.ademe.fr/categories/meubles/">ADEME</a>, recommandations de prolongation de la durée d’usage, de réparation, de don et de traitement responsable des meubles.</li>
+          </ol>
+          <p class="df-sources-note">La statistique « 40 % du confort », l’écart universel de 4 cm, les durées fixes de 10, 12 ou 15 ans et les classements de « meilleurs sommiers » n’ont pas été retenus comme faits normatifs : ils ne sont pas établis par les sources officielles citées. Les notices et garanties des fabricants du matelas et du sommier priment toujours.</p>
+        </div>
+      </footer>
+    </article>
+  </main>
+</body>
+</html>
