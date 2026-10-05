@@ -17,6 +17,7 @@ import {
   faqSchema,
   breadcrumbSchema,
   organizationSchema,
+  organizationFromSettings,
 } from "@/lib/seo/jsonld";
 import { urlFor } from "@/lib/sanity/image";
 
@@ -341,7 +342,7 @@ export default async function MemoryFoamLanding() {
       />
       <Footer settings={siteSettings} />
 
-      <JsonLd data={organizationSchema({ name: "DreamsFly" })} />
+      <JsonLd data={organizationSchema(organizationFromSettings(siteSettings))} />
       <JsonLd data={breadcrumbSchema(breadcrumbs)} />
       <JsonLd
         data={articleSchema({

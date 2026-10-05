@@ -15,6 +15,7 @@ import {
   faqSchema,
   breadcrumbSchema,
   organizationSchema,
+  organizationFromSettings,
   howToSchema,
 } from "@/lib/seo/jsonld";
 import { urlFor } from "@/lib/sanity/image";
@@ -514,7 +515,7 @@ export default async function LitCoffreGuide() {
       <Footer settings={siteSettings} />
 
       {/* JSON-LD stack */}
-      <JsonLd data={organizationSchema({ name: "DreamsFly" })} />
+      <JsonLd data={organizationSchema(organizationFromSettings(siteSettings))} />
       <JsonLd data={breadcrumbSchema(breadcrumbs)} />
       <JsonLd
         data={articleSchema({

@@ -16,6 +16,7 @@ import {
   breadcrumbSchema,
   definedTermSchema,
   organizationSchema,
+  organizationFromSettings,
 } from "@/lib/seo/jsonld";
 
 export const revalidate = 600;
@@ -133,7 +134,7 @@ export default async function GlossaryTermPage({ params }: { params: Promise<Par
       </main>
       <Footer settings={siteSettings} />
 
-      <JsonLd data={organizationSchema({ name: "DreamsFly" })} />
+      <JsonLd data={organizationSchema(organizationFromSettings(siteSettings))} />
       <JsonLd data={breadcrumbSchema(breadcrumbs)} />
       <JsonLd data={definedTermSchema(t.term, t.shortDefinition)} />
     </>

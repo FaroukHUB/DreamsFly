@@ -18,6 +18,7 @@ import {
   breadcrumbSchema,
   localBusinessSchema,
   organizationSchema,
+  organizationFromSettings,
 } from "@/lib/seo/jsonld";
 import { urlFor } from "@/lib/sanity/image";
 
@@ -206,7 +207,7 @@ export default async function ShowroomPage({ params }: { params: Promise<Params>
       </main>
       <Footer settings={siteSettings} />
 
-      <JsonLd data={organizationSchema({ name: "DreamsFly" })} />
+      <JsonLd data={organizationSchema(organizationFromSettings(siteSettings))} />
       <JsonLd data={breadcrumbSchema(breadcrumbs)} />
       <JsonLd
         data={localBusinessSchema({

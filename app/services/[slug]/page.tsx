@@ -7,7 +7,7 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { StaticPageContent } from "@/components/static-page-renderer";
 import { buildMetadata } from "@/lib/seo/metadata";
-import { JsonLd, breadcrumbSchema, organizationSchema } from "@/lib/seo/jsonld";
+import { JsonLd, breadcrumbSchema, organizationSchema, organizationFromSettings } from "@/lib/seo/jsonld";
 
 export const revalidate = 300;
 type Params = { slug: string };
@@ -45,7 +45,7 @@ export default async function ServicesPage({ params }: { params: Promise<Params>
       <Header settings={siteSettings} />
       <StaticPageContent page={page} breadcrumbs={breadcrumbs} />
       <Footer settings={siteSettings} />
-      <JsonLd data={organizationSchema({ name: "DreamsFly" })} />
+      <JsonLd data={organizationSchema(organizationFromSettings(siteSettings))} />
       <JsonLd data={breadcrumbSchema(breadcrumbs)} />
     </>
   );

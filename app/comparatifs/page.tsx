@@ -7,7 +7,7 @@ import { Header } from "@/components/header";
 import { EditorialPageHeader } from "@/components/editorial-page-header";
 import { Footer } from "@/components/footer";
 import { buildMetadata } from "@/lib/seo/metadata";
-import { JsonLd, breadcrumbSchema, organizationSchema } from "@/lib/seo/jsonld";
+import { JsonLd, breadcrumbSchema, organizationSchema, organizationFromSettings } from "@/lib/seo/jsonld";
 
 export const revalidate = 600;
 
@@ -88,7 +88,7 @@ export default async function ComparatifsHub() {
       </main>
       <Footer settings={siteSettings} />
 
-      <JsonLd data={organizationSchema({ name: "DreamsFly" })} />
+      <JsonLd data={organizationSchema(organizationFromSettings(siteSettings))} />
       <JsonLd data={breadcrumbSchema(breadcrumbs)} />
     </>
   );

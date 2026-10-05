@@ -16,6 +16,7 @@ import {
   breadcrumbSchema,
   articleSchema,
   organizationSchema,
+  organizationFromSettings,
 } from "@/lib/seo/jsonld";
 
 export const revalidate = 600;
@@ -159,7 +160,7 @@ export default async function ComparisonPage({ params }: { params: Promise<Param
       </main>
       <Footer settings={siteSettings} />
 
-      <JsonLd data={organizationSchema({ name: "DreamsFly" })} />
+      <JsonLd data={organizationSchema(organizationFromSettings(siteSettings))} />
       <JsonLd data={breadcrumbSchema(breadcrumbs)} />
       <JsonLd
         data={articleSchema({

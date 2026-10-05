@@ -6,7 +6,7 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { EditorialPageHeader } from "@/components/editorial-page-header";
 import { buildMetadata } from "@/lib/seo/metadata";
-import { JsonLd, breadcrumbSchema, organizationSchema } from "@/lib/seo/jsonld";
+import { JsonLd, breadcrumbSchema, organizationSchema, organizationFromSettings } from "@/lib/seo/jsonld";
 import { groq } from "next-sanity";
 
 export const revalidate = 3600; // 1 heure
@@ -246,7 +246,7 @@ export default async function PlanDuSite() {
       </main>
 
       <Footer settings={siteSettings} />
-      <JsonLd data={organizationSchema({ name: "DreamsFly" })} />
+      <JsonLd data={organizationSchema(organizationFromSettings(siteSettings))} />
       <JsonLd data={breadcrumbSchema(breadcrumbs)} />
     </>
   );

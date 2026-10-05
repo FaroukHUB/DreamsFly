@@ -8,7 +8,7 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { EditorialPageHeader } from "@/components/editorial-page-header";
 import { buildMetadata } from "@/lib/seo/metadata";
-import { JsonLd, breadcrumbSchema, organizationSchema } from "@/lib/seo/jsonld";
+import { JsonLd, breadcrumbSchema, organizationSchema, organizationFromSettings } from "@/lib/seo/jsonld";
 import { urlFor } from "@/lib/sanity/image";
 
 export const revalidate = 300;
@@ -139,7 +139,7 @@ export default async function MagazineHub() {
       </main>
       <Footer settings={siteSettings} />
 
-      <JsonLd data={organizationSchema({ name: "DreamsFly" })} />
+      <JsonLd data={organizationSchema(organizationFromSettings(siteSettings))} />
       <JsonLd data={breadcrumbSchema(breadcrumbs)} />
     </>
   );

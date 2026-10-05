@@ -17,6 +17,7 @@ import {
   productSchema,
   breadcrumbSchema,
   organizationSchema,
+  organizationFromSettings,
   faqSchema,
 } from "@/lib/seo/jsonld";
 import { defaultFaq } from "@/lib/product-defaults";
@@ -149,7 +150,7 @@ export default async function LitPage({ params }: { params: Promise<Params> }) {
         compareAtPrice={maxComparePrice > minPrice ? maxComparePrice : undefined}
       />
 
-      <JsonLd data={organizationSchema({ name: "DreamsFly" })} />
+      <JsonLd data={organizationSchema(organizationFromSettings(siteSettings))} />
       <JsonLd data={breadcrumbSchema(breadcrumbs)} />
       <JsonLd
         data={faqSchema(

@@ -24,6 +24,7 @@ import {
   faqSchema,
   howToSchema,
   organizationSchema,
+  organizationFromSettings,
 } from "@/lib/seo/jsonld";
 import { urlFor } from "@/lib/sanity/image";
 
@@ -485,7 +486,7 @@ export default async function GuidePage({ params }: { params: Promise<Params> })
       <Footer settings={siteSettings} />
 
       {/* JSON-LD */}
-      <JsonLd data={organizationSchema({ name: "DreamsFly" })} />
+      <JsonLd data={organizationSchema(organizationFromSettings(siteSettings))} />
       <JsonLd data={breadcrumbSchema(breadcrumbs)} />
       <JsonLd
         data={articleSchema({

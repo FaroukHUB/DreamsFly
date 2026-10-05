@@ -23,6 +23,7 @@ import {
   breadcrumbSchema,
   articleSchema,
   organizationSchema,
+  organizationFromSettings,
 } from "@/lib/seo/jsonld";
 
 const RESERVED = new Set([
@@ -229,7 +230,7 @@ export default async function LandingPageRoute({ params }: { params: Promise<Par
 
       <Footer settings={siteSettings} />
 
-      <JsonLd data={organizationSchema({ name: "DreamsFly" })} />
+      <JsonLd data={organizationSchema(organizationFromSettings(siteSettings))} />
       <JsonLd data={breadcrumbSchema(breadcrumbs)} />
       <JsonLd
         data={articleSchema({

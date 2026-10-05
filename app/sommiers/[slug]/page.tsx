@@ -17,6 +17,7 @@ import {
   productSchema,
   breadcrumbSchema,
   organizationSchema,
+  organizationFromSettings,
   faqSchema,
 } from "@/lib/seo/jsonld";
 import { urlFor } from "@/lib/sanity/image";
@@ -148,7 +149,7 @@ export default async function SommierPage({ params }: { params: Promise<Params> 
         compareAtPrice={maxComparePrice > minPrice ? maxComparePrice : undefined}
       />
 
-      <JsonLd data={organizationSchema({ name: "DreamsFly" })} />
+      <JsonLd data={organizationSchema(organizationFromSettings(siteSettings))} />
       <JsonLd data={breadcrumbSchema(breadcrumbs)} />
       <JsonLd
         data={faqSchema(

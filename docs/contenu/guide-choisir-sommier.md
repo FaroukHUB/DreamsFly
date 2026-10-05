@@ -9,6 +9,8 @@
 
 Cette page a produit **37 impressions sur 123** en six jours — près d'un tiers de toute votre visibilité — à une position moyenne de 76,6, c'est-à-dire en huitième page. Google a identifié le sujet mais ne juge pas encore la page assez solide pour la remonter.
 
+L'export du 5 octobre confirme et amplifie le diagnostic : la page est passée de 37 à **396 impressions** — c'est désormais la première du site, devant la page d'accueil (184) — à une position moyenne de 65,3, et toujours **zéro clic**.
+
 Les requêtes qui la déclenchent sont des **questions à réponse courte** : « combien de lattes pour un bon sommier », « lattes souples ou rigides », « comment choisir un sommier tapissier ». Chaque H2 ci-dessous reprend une de ces formulations, et la première ou les deux premières phrases y répondent directement. C'est ce qui rend un passage éligible aux extraits enrichis.
 
 Aucune affirmation sur DreamsFly, aucune certification, aucun chiffre de vente. Uniquement des repères techniques vrais quel que soit le vendeur.
@@ -90,6 +92,22 @@ Des lattes souples — plus fines, plus cintrées — fléchissent davantage sou
 Des lattes rigides fléchissent peu et maintiennent un plan de couchage plus plat. Elles conviennent aux personnes corpulentes, à celles qui ont la sensation de s'enfoncer, et aux matelas déjà très souples qui ont besoin d'être soutenus par-dessous.
 
 Beaucoup de sommiers combinent les deux : des lattes plus souples au niveau des épaules, plus fermes au niveau du bassin. Les modèles à **curseurs réglables** permettent d'affiner ce réglage soi-même, zone par zone — utile quand deux personnes de gabarits différents partagent le lit.
+
+---
+
+## H2 — Sommier manuel, réglable ou de relaxation ?
+
+**Un sommier fixe suffit à la majorité des usages ; un sommier réglable se justifie quand on lit, travaille ou regarde la télévision au lit, ou quand on recherche une position surélevée.**
+
+Le **sommier fixe** offre un plan de couchage constant. C'est le choix par défaut, le plus simple et le plus durable puisqu'il ne comporte aucun mécanisme.
+
+Le **sommier à lattes réglables par curseurs** reste un sommier fixe : les curseurs ne modifient pas l'inclinaison, ils ajustent la fermeté sur quelques lattes, généralement au niveau du bassin. C'est un réglage que l'on fait une fois, pas au quotidien.
+
+Le **sommier de relaxation manuel** se relève à la main, par crémaillère ou vérin, le plus souvent au niveau de la tête. Il demande de se lever pour changer de position, mais ne dépend d'aucune alimentation et comporte peu de pièces susceptibles de tomber en panne.
+
+Le **sommier de relaxation électrique** se pilote à la télécommande, tête et pieds indépendamment. Il offre le plus de positions, au prix d'un moteur, d'un branchement et d'un poids plus élevé.
+
+Deux points à vérifier avant de choisir un modèle articulé : **le matelas doit être compatible**, c'est-à-dire suffisamment souple pour suivre l'articulation — un matelas à ressorts rigide ne se plie pas ; et **le cadre de lit doit l'accepter**, car beaucoup de structures ne laissent pas la place au débattement.
 
 ---
 
@@ -199,6 +217,12 @@ C'est recommandé. Un sommier affaissé absorbe le travail du matelas neuf et l'
 
 **Lattes souples ou rigides ?**
 Les lattes souples accompagnent le corps et conviennent aux personnes légères ou sensibles aux points d'appui. Les lattes rigides maintiennent un plan plus plat et conviennent aux personnes corpulentes ou à celles qui ont la sensation de s'enfoncer. Les curseurs réglables permettent d'affiner zone par zone.
+
+**Faut-il un sommier réglable ou un sommier fixe ?**
+Un sommier fixe convient à la majorité des usages. Un modèle de relaxation — manuel ou électrique — se justifie si vous lisez ou regardez la télévision au lit, ou si vous recherchez une position surélevée. Vérifiez alors que le matelas est assez souple pour suivre l'articulation et que le cadre de lit laisse la place au débattement.
+
+**Quelle différence entre des lattes à curseurs et un sommier de relaxation ?**
+Les curseurs ajustent la fermeté sur quelques lattes, généralement au niveau du bassin : c'est un réglage que l'on fait une fois. Un sommier de relaxation modifie l'inclinaison de la tête et des pieds, et se règle au quotidien.
 
 **Quelle taille de sommier pour un matelas 140 × 190 ?**
 Exactement 140 × 190 cm. Un écart de quelques centimètres crée un porte-à-faux sur les bords, qui s'affaissent prématurément.

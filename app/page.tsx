@@ -19,6 +19,7 @@ import { buildMetadata } from "@/lib/seo/metadata";
 import {
   JsonLd,
   organizationSchema,
+  organizationFromSettings,
   websiteSchema,
   faqSchema,
 } from "@/lib/seo/jsonld";
@@ -28,7 +29,19 @@ import type { Metadata } from "next";
 export const revalidate = 60;
 
 export const metadata: Metadata = buildMetadata({
-  title: "Matelas & literie premium fabriqués en Europe",
+  // La marque EN TÊTE, et non en suffixe.
+  //
+  // `title.template` de app/layout.tsx ne s'applique pas à ce fichier :
+  // page.tsx et layout.tsx appartiennent au même segment de route, et Next
+  // documente que le template ne descend que vers les segments enfants. La
+  // page d'accueil sortait donc sans « DreamsFly » dans sa balise <title>,
+  // alors que toutes les autres l'avaient.
+  //
+  // Elle est placée devant parce que 44 % des impressions de l'export
+  // Search Console du 5 octobre viennent de requêtes visant l'enseigne Fly,
+  // pour zéro clic. Un titre qui s'ouvre sur « DreamsFly » est le signal de
+  // désambiguïsation le plus visible dont dispose la page.
+  title: "DreamsFly — Matelas & literie premium en confection européenne",
   description:
     "DreamsFly : matelas, lits coffre, sommiers et oreillers premium fabriqués en Europe. Essai en showroom, livraison à l'étage, paiement en 3× ou 4× sans frais.",
   path: "/",
@@ -105,7 +118,7 @@ export default async function HomePage() {
       </main>
       <Footer settings={siteSettings} />
 
-      <JsonLd data={organizationSchema({ name: "DreamsFly" })} />
+      <JsonLd data={organizationSchema(organizationFromSettings(siteSettings))} />
       <JsonLd data={websiteSchema()} />
       <JsonLd data={faqSchema(faqQuestions.map((q: any) => ({ question: q.question, answer: q.answer })))} />
     </>

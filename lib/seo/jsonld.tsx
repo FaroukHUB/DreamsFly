@@ -23,8 +23,48 @@ export function JsonLd({ data }: { data: Thing | Thing[] | null }) {
 // Generators
 // ─────────────────────────────────────────
 
+/**
+ * Construit les options d'`organizationSchema` à partir des réglages du
+ * site, sans rien inventer.
+ *
+ * POURQUOI CE DÉTOUR
+ * Vingt pages appelaient `organizationSchema({ name: "DreamsFly" })` — le
+ * nom, et rien d'autre. L'entité publiée à Google se résumait donc à un
+ * nom contenant « Fly » et à une URL. Or l'export Search Console du
+ * 5 octobre montre que 44 % des impressions viennent de requêtes visant
+ * l'enseigne Fly ou « dream », pour zéro clic : Google confond les deux
+ * entités, et rien dans le balisage ne l'aide à les distinguer.
+ *
+ * `sameAs` est le mécanisme prévu pour cela — il raccroche une entité à
+ * ses profils connus. Les URL viennent des réglages Sanity, déjà affichées
+ * dans le pied de page : aucune n'est inventée ici, et un champ vide
+ * n'émet rien plutôt qu'une valeur approximative.
+ */
+export function organizationFromSettings(settings: any) {
+  const socials = settings?.socials || {};
+  const contact = settings?.contact || {};
+
+  const sameAs = [socials.instagram, socials.facebook, socials.tiktok, socials.youtube]
+    .filter((u: unknown): u is string => typeof u === "string" && /^https?:\/\//i.test(u.trim()))
+    .map((u: string) => u.trim());
+
+  const clean = (v: unknown) => (typeof v === "string" && v.trim() ? v.trim() : undefined);
+
+  return {
+    name: "DreamsFly",
+    // Décrit l'activité : c'est ce qui sépare une marque de literie d'une
+    // enseigne d'ameublement généraliste portant un nom voisin.
+    description:
+      "DreamsFly est une marque de literie premium : matelas, lits, sommiers et oreillers en confection européenne, à essayer en showroom.",
+    email: clean(contact.email),
+    phone: clean(contact.phone),
+    sameAs: sameAs.length ? sameAs : undefined,
+  };
+}
+
 export function organizationSchema(opts: {
   name?: string;
+  description?: string;
   logo?: string;
   email?: string;
   phone?: string;
@@ -36,6 +76,7 @@ export function organizationSchema(opts: {
     "@id": `${SITE_URL}/#organization`,
     name: opts.name || "DreamsFly",
     url: SITE_URL,
+    description: opts.description,
     logo: opts.logo ? { "@type": "ImageObject", url: opts.logo } : undefined,
     email: opts.email,
     telephone: opts.phone,

@@ -9,7 +9,7 @@ import { Footer } from "@/components/footer";
 import { EditorialPageHeader } from "@/components/editorial-page-header";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import { buildMetadata } from "@/lib/seo/metadata";
-import { JsonLd, breadcrumbSchema, organizationSchema, faqSchema } from "@/lib/seo/jsonld";
+import { JsonLd, breadcrumbSchema, organizationSchema, faqSchema, organizationFromSettings } from "@/lib/seo/jsonld";
 import { urlFor } from "@/lib/sanity/image";
 
 export const revalidate = 600;
@@ -186,7 +186,7 @@ export default async function ShowroomsHub() {
       </main>
       <Footer settings={siteSettings} />
 
-      <JsonLd data={organizationSchema({ name: "DreamsFly" })} />
+      <JsonLd data={organizationSchema(organizationFromSettings(siteSettings))} />
       <JsonLd data={breadcrumbSchema(breadcrumbs)} />
       {faqItems.length > 0 && <JsonLd data={faqSchema(faqItems)} />}
     </>

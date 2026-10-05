@@ -14,7 +14,7 @@ import { productImageAlt, productSpecLine } from "@/lib/product-card";
 import { CategoryIntro } from "@/components/category/category-intro";
 import { QuizBanner } from "@/components/quiz-banner";
 import { buildMetadata } from "@/lib/seo/metadata";
-import { JsonLd, breadcrumbSchema, organizationSchema, faqSchema } from "@/lib/seo/jsonld";
+import { JsonLd, breadcrumbSchema, organizationSchema, faqSchema, organizationFromSettings } from "@/lib/seo/jsonld";
 import { urlFor } from "@/lib/sanity/image";
 import { CategorySeoSections } from "@/components/category/category-seo-sections";
 import { FiltersSidebar } from "@/components/category/filters-sidebar";
@@ -328,7 +328,7 @@ export default async function MatelasPillar({ searchParams }: { searchParams: Se
       />
       <Footer settings={siteSettings} />
 
-      <JsonLd data={organizationSchema({ name: "DreamsFly" })} />
+      <JsonLd data={organizationSchema(organizationFromSettings(siteSettings))} />
       <JsonLd data={breadcrumbSchema(breadcrumbs)} />
       <JsonLd
         data={faqSchema(

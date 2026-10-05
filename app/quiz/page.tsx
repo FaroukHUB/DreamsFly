@@ -9,7 +9,7 @@ import { EditorialPageHeader } from "@/components/editorial-page-header";
 import { LineIcon, iconNameForEmoji } from "@/components/line-icon";
 import { QuizWidget } from "@/components/quiz/quiz-widget";
 import { buildMetadata } from "@/lib/seo/metadata";
-import { JsonLd, breadcrumbSchema, organizationSchema, faqSchema } from "@/lib/seo/jsonld";
+import { JsonLd, breadcrumbSchema, organizationSchema, faqSchema, organizationFromSettings } from "@/lib/seo/jsonld";
 import { defaultQuizSteps, defaultQuizContent, type QuizStep } from "@/lib/quiz-defaults";
 import { groq } from "next-sanity";
 
@@ -242,7 +242,7 @@ export default async function QuizPage() {
 
       <Footer settings={siteSettings} />
 
-      <JsonLd data={organizationSchema({ name: "DreamsFly" })} />
+      <JsonLd data={organizationSchema(organizationFromSettings(siteSettings))} />
       <JsonLd data={breadcrumbSchema(breadcrumbs)} />
       {faqItems.length > 0 && <JsonLd data={faqSchema(faqItems)} />}
     </>
