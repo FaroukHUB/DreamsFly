@@ -318,12 +318,11 @@ export function CheckoutForm({
 
           <ul className="mt-6 space-y-3 border-t border-border pt-6">
             <Perk title="Livraison à domicile">
-              5 à 7 jours ouvrés, montée à l'étage incluse par deux livreurs. Rendez-vous confirmé
-              par SMS 48 h avant.
+              5 à 7 jours ouvrés en France métropolitaine, par deux livreurs. Un rendez-vous est
+              convenu avant leur passage.
             </Perk>
-            <Perk title="Reprise de l'ancien matelas">
-              Gratuite le jour de la livraison, sur simple demande. Remise à un centre de recyclage
-              agréé.
+            <Perk title="Frais de livraison">
+              Forfait de 99 €, déjà inclus dans le total ci-dessus.
             </Perk>
             <Perk title="Une question ?">
               <a href="tel:0785889260" className="underline hover:text-noir">

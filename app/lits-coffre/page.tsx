@@ -43,7 +43,7 @@ const FAQ: { question: string; answer: string }[] = [
   {
     question: "Les vérins sont-ils solides dans le temps ?",
     answer:
-      "Les vérins DreamsFly sont testés pour 15 000 ouvertures minimum — soit environ 5 ouvertures par jour pendant 8 ans. Si un jour un vérin faiblit, il se remplace en 15 minutes et coûte une trentaine d'euros. Le mécanisme n'est pas un consommable court terme.",
+      "Les vérins hydrauliques sont des pièces d'usure, mais remplaçables : un vérin fatigué se change sans toucher au reste du lit. La durée de garantie du mécanisme figure dans les conditions de chaque modèle. Les signes à surveiller sont une ouverture devenue dure et un plateau qui ne tient plus en position haute.",
   },
   {
     question: "Peut-on utiliser n'importe quel matelas sur un lit coffre ?",
@@ -81,9 +81,9 @@ const COMPARISON = [
   { criterion: "Rangement", coffre: "300 à 500 L intégrés", classique: "Aucun (sauf ajout externe)", divan: "Tiroirs limités (~150 L)" },
   { criterion: "Encombrement au sol", coffre: "Identique à un lit classique", classique: "Standard", divan: "Standard + accès tiroirs" },
   { criterion: "Accès rangement", coffre: "Coffre entier d'un geste", classique: "—", divan: "Un tiroir à la fois" },
-  { criterion: "Mécanisme", coffre: "Vérins hydrauliques (15 000 cycles)", classique: "Aucun", divan: "Roulettes / glissières" },
+  { criterion: "Mécanisme", coffre: "Vérins hydrauliques", classique: "Aucun", divan: "Roulettes / glissières" },
   { criterion: "Prix moyen", coffre: "590 – 990 €", classique: "290 – 690 €", divan: "390 – 790 €" },
-  { criterion: "Durée de vie", coffre: "10 à 15 ans", classique: "10 à 20 ans", divan: "8 à 12 ans" },
+  { criterion: "Pièce d'usure", coffre: "Vérins, remplaçables", classique: "Aucune", divan: "Glissières" },
   { criterion: "Idéal pour", coffre: "Petites chambres, saisons chargées", classique: "Chambres avec dressing", divan: "Chambres d'enfant" },
 ];
 
@@ -176,9 +176,9 @@ export default async function LitCoffreGuide() {
             <ul className="mt-6 space-y-6">
               {[
                 { n: "400 L", txt: "Capacité moyenne (140×190) — équivalent 4 tiroirs de commode" },
-                { n: "15 000", txt: "Cycles d'ouverture garantis par les vérins DreamsFly" },
-                { n: "1 sec", txt: "Temps d'ouverture, matelas inclus, d'une seule main" },
-                { n: "−32 %", txt: "Gain d'espace ressenti vs un lit classique + commode" },
+                { n: "2", txt: "Personnes recommandées pour le montage — les panneaux sont lourds" },
+                { n: "99 €", txt: "Forfait de livraison en France métropolitaine" },
+                { n: "2 ans", txt: "Garantie du tissu — structure et vérins selon le modèle" },
               ].map((s, i) => (
                 <li key={i} className="border-t border-white/10 pt-4 first:border-t-0 first:pt-0">
                   <div className="display-serif text-[2rem] font-normal text-or md:text-[2.4rem]">{s.n}</div>
@@ -195,7 +195,7 @@ export default async function LitCoffreGuide() {
             Les 3 pièges à éviter (que personne ne vous dit)
           </h2>
           <p className="mb-8 max-w-2xl text-pierre">
-            On a testé 40 lits coffre sur le marché français. Voici les défauts les plus fréquents — et comment les repérer avant d'acheter.
+            Les défauts les plus fréquents sur ce type de lit — et comment les repérer avant d'acheter.
           </p>
           <div className="grid gap-4 md:grid-cols-3 md:gap-5">
             {[

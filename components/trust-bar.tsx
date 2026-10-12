@@ -14,7 +14,7 @@ export function TrustBar({ googleRating, labels, press }: TrustBarProps = {}) {
     labels && labels.length > 0
       ? labels
       : [
-          { label: "OEKO-TEX®", sublabel: "Standard 100" },
+          { label: "Garantie 2 ans", sublabel: "Matelas, sommiers, oreillers" },
           { label: "Confection européenne", sublabel: "Ateliers audités" },
           { label: "Garantie 2 ans", sublabel: "Service après-vente" },
         ];

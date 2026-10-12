@@ -10,7 +10,7 @@ const DEFAULT_ADVANTAGES: Advantage[] = [
   // Chiffre client et note Google retirés : la fiche Google est celle de
   // Trust Industrie, pas celle de DreamsFly.
   { icon: "star", title: "Essai en showroom", subtitle: "Testez avant d'acheter" },
-  { icon: "leaf", title: "Tissus OEKO-TEX", subtitle: "Hypoallergéniques" },
+  { icon: "leaf", title: "Confection européenne", subtitle: "Fabricants sélectionnés" },
 ];
 
 /**

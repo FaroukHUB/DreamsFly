@@ -9,16 +9,18 @@ type Props = {
   tone?: "noir" | "cream";
 };
 
+// Ces valeurs par défaut annonçaient cinq certifications — GOTS, CertiPUR-EU,
+// OEKO-TEX, PEFC, densité 75 kg/m³ — qu'aucune donnée du projet n'étaye, et
+// trois showrooms à Paris, Lyon et Marseille alors que les magasins réels sont
+// ailleurs. Le composant n'est importé nulle part, mais une liste fausse prête
+// à l'emploi finit toujours par être branchée un jour.
 const DEFAULT_ITEMS = [
-  "COTON BIO CERTIFIÉ GOTS",
-  "MOUSSE CERTIPUR-EU",
-  "LABEL OEKO-TEX STANDARD 100",
-  "BOIS PEFC",
-  "MÉMOIRE DE FORME 75 KG/M³",
+  "CONFECTION EUROPÉENNE",
   "RESSORTS ENSACHÉS",
-  "FABRICATION EUROPÉENNE",
+  "MÉMOIRE DE FORME",
   "ESSAI EN SHOWROOM",
-  "3 SHOWROOMS · PARIS · LYON · MARSEILLE",
+  "GARANTIE 2 ANS",
+  "LIVRAISON 99 € EN FRANCE MÉTROPOLITAINE",
   "PAIEMENT 3× SANS FRAIS",
 ];
 

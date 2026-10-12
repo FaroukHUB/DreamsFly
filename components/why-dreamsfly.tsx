@@ -27,7 +27,7 @@ export function WhyDreamsFly() {
           <Reason
             number="02"
             title="Des matériaux nobles, certifiés"
-            text="Tissus OEKO-TEX Standard 100, mousses hypoallergéniques, latex naturel sur nos gammes premium. Aucun compromis sur la qualité des matériaux qui touchent votre peau toute la nuit."
+            text="Les matériaux, traitements et certifications de chaque modèle sont indiqués sur sa fiche produit. Nous préférons documenter ce qui est vérifiable plutôt que d'annoncer une qualité en général."
           />
           <Reason
             number="03"

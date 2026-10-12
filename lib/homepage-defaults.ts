@@ -19,13 +19,13 @@ export const defaultWhyUs: {
   eyebrow: "Notre différence",
   title: "Pourquoi choisir DreamsFly ?",
   subtitle:
-    "Une literie premium fabriquée en Europe, sélectionnée par des passionnés, livrée à domicile avec un service pensé pour durer.",
+    "Une literie premium en confection européenne, sélectionnée modèle par modèle, livrée à domicile avec un service pensé pour durer.",
   pillars: [
     { icon: "🎓", title: "Expertise", text: "6 ans à sélectionner les meilleurs fabricants européens de literie." },
-    { icon: "🎯", title: "Sélection", text: "Moins de 3 % des modèles testés arrivent dans notre catalogue." },
-    { icon: "🛡️", title: "Qualité", text: "Certifications OEKO-TEX, garanties longues, matériaux traçables." },
+    { icon: "🎯", title: "Sélection", text: "Un catalogue volontairement resserré, modèle par modèle." },
+    { icon: "🛡️", title: "Garantie", text: "2 ans sur nos matelas, sommiers et oreillers." },
     { icon: "🤝", title: "Accompagnement", text: "Conseillers sommeil formés, disponibles par téléphone ou en showroom." },
-    { icon: "💬", title: "Service client", text: "Réponse en moins de 4 h, du lundi au samedi. Français, humain, sans script." },
+    { icon: "💬", title: "Service client", text: "Joignable par téléphone et en showroom. Français, humain, sans script." },
   ],
 };
 
@@ -100,17 +100,17 @@ export const defaultHomepageFaq: {
   subtitle: "Tout ce qu'on nous demande le plus souvent — regroupé par thème pour aller vite.",
   questions: [
     // ─── Produit ───────────────────────────────────
-    { category: "produit", question: "Quelle marque de matelas choisir ?", answer: "Cela dépend de votre position de sommeil, votre gabarit et votre budget. Chez DreamsFly, nous sélectionnons uniquement des fabricants européens certifiés OEKO-TEX. Notre quiz en 1 minute vous oriente vers le modèle qui correspond à votre morphologie." },
+    { category: "produit", question: "Quelle marque de matelas choisir ?", answer: "Cela dépend de votre position de sommeil, de votre gabarit et de votre budget. Nos modèles sont en confection européenne ; les certifications éventuelles sont indiquées sur chaque fiche. Notre quiz en une minute vous oriente selon votre morphologie." },
     { category: "produit", question: "Quelle est la meilleure taille de matelas pour un couple ?", answer: "Le 160×200 (Queen) est le meilleur compromis pour la plupart des couples. Le 180×200 (King) offre plus d'espace individuel — recommandé si l'un de vous bouge beaucoup ou pour les grandes tailles." },
-    { category: "produit", question: "Combien de temps dure un matelas de qualité ?", answer: "Entre 7 et 10 ans en usage quotidien. Au-delà, la mousse perd 30 % de son soutien même s'il « semble » encore bon. Un protège-matelas + retournement tous les 3 mois prolongent la vie du matelas de 30 à 40 %." },
+    { category: "produit", question: "Combien de temps dure un matelas de qualité ?", answer: "Comptez une dizaine d'années en usage quotidien. Le repère fiable n'est pas l'âge mais l'état : un creux qui ne se reprend plus, des points d'appui marqués. Un protège-matelas et une rotation régulière aident à retarder cette usure." },
     { category: "produit", question: "Peut-on utiliser un ancien sommier ?", answer: "Techniquement oui, mais un vieux sommier avec lattes cassées ou mou dégrade rapidement un matelas neuf. Nous recommandons de renouveler les deux ensemble tous les 10 ans." },
-    { category: "produit", question: "Les matelas DreamsFly sont-ils hypoallergéniques ?", answer: "Oui — traitement anti-acariens en usine, housses certifiées OEKO-TEX Standard 100 (absence de substances nocives). Pour les allergies sévères, ajoutez une alèse imperméable." },
+    { category: "produit", question: "Les matelas DreamsFly sont-ils hypoallergéniques ?", answer: "Les traitements et certifications sont indiqués sur la fiche de chaque modèle — nous ne les généralisons pas. En cas d'allergie, une alèse anti-acariens reste la protection la plus efficace." },
 
     // ─── Livraison ─────────────────────────────────
-    { category: "livraison", question: "Comment fonctionne la livraison ?", answer: "Livraison en France métropolitaine à un tarif forfaitaire unique, avec montée à l'étage incluse (2 livreurs). Le montant exact des frais de port s'affiche au moment de valider votre panier. Corse et zones difficiles d'accès : supplément indiqué au checkout." },
-    { category: "livraison", question: "En combien de temps serai-je livré ?", answer: "5 à 7 jours ouvrés en France métropolitaine. Rendez-vous programmé par SMS 48 h avant, créneaux matin, après-midi ou samedi selon les zones." },
-    { category: "livraison", question: "Reprenez-vous mon ancien matelas ?", answer: "Oui, gratuitement à la livraison sur simple demande à la commande. Nous le remettons à un centre de recyclage agréé Éco-mobilier." },
-    { category: "livraison", question: "Livrez-vous en Belgique / Suisse / DOM-TOM ?", answer: "Belgique et Luxembourg : oui, sous 8-10 jours ouvrés, tarif dégressif selon poids. Suisse : oui, sous 10-14 jours (formalités douanières). DOM-TOM : nous consulter pour un devis personnalisé." },
+    { category: "livraison", question: "Comment fonctionne la livraison ?", answer: "La livraison est payante : un forfait unique de 99 € en France métropolitaine, affiché au panier avant validation. Les livreurs interviennent à deux et un rendez-vous est convenu avant leur passage." },
+    { category: "livraison", question: "En combien de temps serai-je livré ?", answer: "5 à 7 jours ouvrés en France métropolitaine. Un rendez-vous est convenu avant le passage des livreurs, sur un créneau matin, après-midi ou samedi selon les zones." },
+    { category: "livraison", question: "Reprenez-vous mon ancien matelas ?", answer: "Demandez-le-nous au moment de la commande : nous vous confirmerons si la reprise est possible sur votre zone de livraison et à quelles conditions." },
+    { category: "livraison", question: "Livrez-vous en Belgique / Suisse / DOM-TOM ?", answer: "Notre tarif de livraison en ligne couvre la France métropolitaine. Pour toute autre destination, contactez-nous : nous établirons un devis au cas par cas." },
 
     // ─── Paiement ──────────────────────────────────
     { category: "paiement", question: "Puis-je payer en plusieurs fois ?", answer: "Oui, en 2×, 3× ou 4× sans frais avec Alma (paiement sécurisé par carte bancaire). Sans impact sur votre crédit, réponse immédiate au checkout." },
@@ -123,7 +123,7 @@ export const defaultHomepageFaq: {
     { category: "garantie", question: "Comment activer la garantie ?", answer: "Envoyez-nous une photo + description du problème par email à contact@dreamsfly.fr. Nous vous répondons sous 4 h ouvrées avec la marche à suivre — le plus souvent un simple retour + échange." },
 
     // ─── Entretien ─────────────────────────────────
-    { category: "entretien", question: "Faut-il retourner un matelas ?", answer: "Oui — tous les 3 mois la 1re année, puis tous les 6 mois. Alternez tête-pied et face A / face B. Cette rotation prolonge la durée de vie de 30 à 40 %." },
+    { category: "entretien", question: "Faut-il retourner un matelas ?", answer: "Cela dépend du modèle. Beaucoup de matelas se tournent tête-pied, mais tous ne se retournent pas sur l'autre face : un modèle à faces différenciées se dégrade si on l'inverse. Suivez l'étiquette du vôtre." },
     { category: "entretien", question: "Comment nettoyer une tache sur mon matelas ?", answer: "Tamponnez immédiatement avec un chiffon microfibre humide (jamais détrempé). Un peu de savon de Marseille pour les taches organiques. Séchez au sèche-cheveux à distance. Évitez absolument l'eau de Javel." },
 
     // ─── SAV & Retour ──────────────────────────────

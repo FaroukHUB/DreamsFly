@@ -113,7 +113,7 @@ export const defaultQuizSteps: QuizStep[] = [
       { value: "soutien", label: "Soutien lombaire", subtitle: "Dos préservé" },
       { value: "enveloppant", label: "Accueil enveloppant", subtitle: "Cocooning" },
       { value: "silence", label: "Indépendance de couchage", subtitle: "L'autre bouge, vous dormez" },
-      { value: "eco", label: "Matières éco-responsables", subtitle: "OEKO-TEX, Europe" },
+      { value: "eco", label: "Matières éco-responsables", subtitle: "Confection européenne" },
     ],
   },
   {

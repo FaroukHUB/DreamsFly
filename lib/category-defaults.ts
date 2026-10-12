@@ -22,16 +22,16 @@ export function categoryAdvantages(pt: ProductType): Advantage[] {
         { icon: "🦴", title: "Soutien lombaire", text: "7 zones de confort différenciées pour aligner la colonne." },
         { icon: "🤝", title: "Indépendance de couchage", text: "L'autre bouge, vous dormez. Silence absolu." },
         { icon: "🌬️", title: "Régulation thermique", text: "Mousses aérées et housses respirantes — nuit fraîche." },
-        { icon: "🛡️", title: "Certifiés OEKO-TEX", text: "Absence de substances nocives, sûr pour toute la famille." },
+        { icon: "🛡️", title: "Garantie 2 ans", text: "Défaut de fabrication et affaissement anormal en usage normal." },
         { icon: "♾️", title: "Garantie 2 ans", text: "Défauts de fabrication couverts, en plus des garanties légales." },
       ];
     case "lit":
       return [
-        { icon: "📦", title: "Rangement optimisé", text: "Coffres 300 à 500 L — l'équivalent d'une commode entière." },
-        { icon: "🛠️", title: "Vérins fiables", text: "Testés 15 000 cycles, ouverture d'une main." },
+        { icon: "📦", title: "Rangement intégré", text: "La capacité du coffre est indiquée sur la fiche de chaque modèle." },
+        { icon: "🛠️", title: "Vérins hydrauliques", text: "Pièces d'usure remplaçables sans changer le lit." },
         { icon: "🎨", title: "Matières premium", text: "Velours, tissu tramé, capitonné — pour chaque style." },
-        { icon: "🇪🇺", title: "Fabriqués en Europe", text: "Ateliers certifiés, matériaux traçables, bois FSC." },
-        { icon: "🚚", title: "Livraison à l'étage", text: "Deux livreurs incluent le portage jusqu'à votre chambre." },
+        { icon: "🇪🇺", title: "Confection européenne", text: "Modèles sélectionnés chez des fabricants européens." },
+        { icon: "🚚", title: "Livraison 99 €", text: "Forfait France métropolitaine, affiché au panier." },
         { icon: "🔧", title: "Montage rapide", text: "45 min à deux, tournevis fourni, notice claire." },
       ];
     case "sommier":
@@ -100,10 +100,10 @@ export function categoryTips(pt: ProductType): Tip[] {
   switch (pt) {
     case "matelas":
       return [
-        { icon: "🕐", title: "Remplacez tous les 10 ans max", text: "Au-delà, votre matelas perd 30 % de son soutien même s'il paraît intact. Un vieux matelas cause 2 fois plus de douleurs dorsales.", source: { label: "Institut national du sommeil (INSV)", url: "https://institut-sommeil-vigilance.org/" } },
-        { icon: "🔄", title: "Retournez-le tous les 3 mois la 1re année", text: "Puis tous les 6 mois. Alternez tête-pied et face A / face B pour prolonger la durée de vie de 30 à 40 %.", source: { label: "Fédération française du sommeil" } },
-        { icon: "🛡️", title: "Un protège-matelas est obligatoire", text: "40 € qui préservent 500 € de matelas. Lavable 60°C, il évite les taches (qui annulent la garantie) et bloque les acariens.", source: { label: "ANSES — Allergènes de l'habitat" } },
-        { icon: "📅", title: "Comptez 21 nuits d'adaptation", text: "Votre dos a des habitudes. Un matelas neuf, même parfait, demande 3 semaines pour être « lu » par votre corps.", source: { label: "Recommandation des ostéopathes (SFDO)" } },
+        { icon: "🕐", title: "Jugez l'usure, pas l'âge", text: "Une dizaine d'années est un repère courant, pas une date de péremption. Le signal fiable reste le ressenti : un creux qui ne se reprend plus, des points d'appui marqués." },
+        { icon: "🔄", title: "Suivez l'étiquette pour la rotation", text: "Beaucoup de matelas se tournent tête-pied, mais tous ne se retournent pas : un modèle à faces différenciées se dégrade si on l'inverse." },
+        { icon: "🛡️", title: "Utilisez un protège-matelas", text: "C'est la protection la plus simple contre les taches et l'humidité — et les taches sont exclues de la garantie." },
+        { icon: "📅", title: "Laissez-vous le temps de l'adaptation", text: "Le corps est habitué à l'ancien couchage. Ne jugez pas un matelas neuf sur deux ou trois nuits." },
       ];
     case "lit":
       return [
@@ -175,25 +175,25 @@ export function categoryFaq(pt: ProductType): FaqEntry[] {
         { question: "Comment choisir son matelas ?", answer: "Trois critères : position de sommeil (dos = mi-ferme, côté = moelleux, ventre = ferme), gabarit (< 70 kg mi-ferme, 70-90 kg ferme, > 90 kg très ferme), et sensibilité thermique (chaud → ressorts, frileux → mousse mémoire)." },
         { question: "Quelle taille de matelas choisir ?", answer: "90×190 pour une personne. 140×190 pour un couple qui privilégie l'espace vertical (chambres < 12 m²). 160×200 est le meilleur compromis couple. 180×200 pour l'espace king size ou les grandes tailles." },
         { question: "Quelle différence entre mousse et ressorts ?", answer: "La mousse (polyuréthane ou mémoire) enveloppe le corps et absorbe les points de pression. Les ressorts ensachés offrent un soutien plus tonique + une meilleure indépendance de couchage. Les hybrides combinent les deux." },
-        { question: "Combien de temps dure un matelas ?", answer: "7 à 10 ans en usage quotidien. Au-delà, la mousse perd 30 % de son soutien même s'il semble intact. Un vieux matelas double le risque de douleurs dorsales." },
+        { question: "Combien de temps dure un matelas ?", answer: "Comptez une dizaine d'années en usage quotidien. Le repère utile n'est pas l'âge mais l'état : un creux persistant, des points d'appui marqués, un soutien devenu irrégulier." },
         { question: "Quel sommier utiliser avec un matelas neuf ?", answer: "Toujours neuf, adapté. Un vieux sommier avec lattes cassées ruine un matelas neuf en quelques mois — et annule la garantie. Lattes espacées pour la ventilation, tapissier pour un soutien dense." },
-        { question: "Combien de temps pour être livré ?", answer: "5 à 7 jours ouvrés en France métropolitaine, frais de port forfaitaires affichés au panier. Rendez-vous par SMS 48 h avant, montée à l'étage incluse, reprise gratuite de l'ancien matelas sur demande." },
+        { question: "Combien de temps pour être livré ?", answer: "5 à 7 jours ouvrés en France métropolitaine, forfait de livraison de 99 € affiché au panier. Un rendez-vous est convenu avant le passage des livreurs." },
         { question: "Puis-je essayer le matelas avant d'acheter ?", answer: "Oui, en showroom : nos boutiques présentent les modèles et un conseiller vous oriente selon votre morphologie et votre position de sommeil. Pour une commande en ligne, vous disposez du droit de rétractation légal de 14 jours (article L221-18 du Code de la consommation), le produit devant être retourné complet et dans son emballage d'origine." },
         { question: "Quelle est la garantie ?", answer: "2 ans sur tous nos matelas (défaut de fabrication, affaissement > 3 cm). Ne couvre pas l'usure normale ni les taches. S'ajoutent les garanties légales de conformité et des vices cachés prévues par le Code de la consommation." },
-        { question: "Les matelas sont-ils hypoallergéniques ?", answer: "Traitement anti-acariens en usine, housses certifiées OEKO-TEX Standard 100. Pour les allergies sévères, ajoutez une alèse imperméable." },
-        { question: "Comment entretenir mon matelas ?", answer: "Aérez chaque matin, aspirez tous les mois, retournez tous les 3 mois. Une housse de protection lavable à 60°C prolonge sa vie de plusieurs années." },
-        { question: "Quel poids maximum le matelas supporte-t-il ?", answer: "Nos matelas standard supportent 130 kg par personne. Au-delà, privilégiez nos modèles ferme ou très ferme (mousse HR + ressorts) au maintien renforcé." },
+        { question: "Les matelas sont-ils hypoallergéniques ?", answer: "Les traitements et certifications sont indiqués sur la fiche de chaque modèle — nous ne les généralisons pas. En cas d'allergie, une alèse anti-acariens reste la protection la plus efficace." },
+        { question: "Comment entretenir mon matelas ?", answer: "Aérez chaque matin, aspirez régulièrement et utilisez un protège-matelas. Pour la rotation, suivez l'étiquette du modèle : tous les matelas ne se retournent pas." },
+        { question: "Quel poids maximum le matelas supporte-t-il ?", answer: "Le poids admissible dépend du modèle et figure sur sa fiche lorsqu'il est communiqué. Au-delà de 90 kg par dormeur, une fermeté ferme à très ferme est généralement plus confortable." },
         { question: "Peut-on plier un matelas pour le déplacer ?", answer: "Un matelas mousse peut être plié en 3 sur 24 h max. Les ressorts ensachés ne se plient jamais — ils se déforment définitivement. Préférez un déménagement à plat." },
       ];
     case "lit":
       return [
         { question: "Coffre frontal ou latéral, quelle différence ?", answer: "Frontal (par les pieds) est le plus courant, permet de ranger de grands objets. Latéral (par le côté) est utile quand le lit est contre un mur — se manœuvre depuis le côté accessible." },
-        { question: "Quelle capacité de rangement offre un lit coffre ?", answer: "300 L pour 90×190, 400 L pour 140×190, 500 L pour 160×200 et plus. Soit l'équivalent d'une commode 4 tiroirs. Idéal pour couettes, linge de saison, valises." },
-        { question: "Les vérins sont-ils fiables dans le temps ?", answer: "Nos vérins hydrauliques sont testés pour 15 000 cycles d'ouverture — soit 5 ouvertures par jour pendant 8 ans. Remplacement 30 € et 15 min si un jour ils faiblissent." },
-        { question: "Peut-on utiliser n'importe quel matelas ?", answer: "Épaisseur 18-30 cm, poids minimum 12 kg pour la stabilité à l'ouverture. Un matelas trop léger glisse sous les vérins. Nos matelas DreamsFly sont tous compatibles." },
-        { question: "Le montage est-il compliqué ?", answer: "45 minutes à deux personnes avec un tournevis cruciforme (fourni). Notice illustrée + vidéo de montage. Aide au montage à domicile en option (39 €)." },
+        { question: "Quelle capacité de rangement offre un lit coffre ?", answer: "La capacité dépend de la dimension du lit et figure sur sa fiche produit. Un coffre de cette taille accueille couettes, linge de saison et valises." },
+        { question: "Les vérins sont-ils fiables dans le temps ?", answer: "Les vérins sont des pièces d'usure qui se remplacent sans changer le lit. Leur garantie figure dans les conditions du modèle. Une ouverture devenue dure, ou un plateau qui ne tient plus en position haute, indique qu'ils sont à changer." },
+        { question: "Peut-on utiliser n'importe quel matelas ?", answer: "L'épaisseur et le poids admissibles sont indiqués sur la fiche du lit. Un matelas trop fin laisse voir le cadre, un matelas trop lourd fatigue le mécanisme." },
+        { question: "Le montage est-il compliqué ?", answer: "Le lit arrive démonté avec sa notice. Prévoyez deux personnes : les panneaux sont lourds et encombrants à manipuler seul. Temps et outils nécessaires sont précisés dans la notice du modèle." },
         { question: "Comment entretenir le tissu ?", answer: "Aspirateur brosse douce toutes les 2 semaines. Taches : chiffon microfibre humide, tamponnez sans frotter. Éviter absolument le nettoyeur vapeur qui écrase les fibres." },
-        { question: "Livraison à l'étage possible ?", answer: "Oui — 2 livreurs montent jusqu'à votre chambre quel que soit l'étage. Le lit arrive démonté en 3 colis pour faciliter les passages étroits (portes, escaliers)." },
+        { question: "Livraison à l'étage possible ?", answer: "Le lit est livré démonté, en plusieurs colis, ce qui facilite les passages étroits. Les conditions de montée à l'étage dépendent de l'accès : indiquez-nous votre étage et la présence d'un ascenseur à la commande." },
         { question: "Quelle est la garantie ?", answer: "Structure : 5 ans. Vérins hydrauliques : 8 ans. Tissu : 2 ans. La garantie couvre les défauts de fabrication en usage normal." },
         { question: "Le lit est-il bruyant ?", answer: "Non — vérins hydrauliques modernes silencieux (< 30 dB). Une goutte d'huile silicone sur les articulations une fois par an suffit à garder le mécanisme feutré." },
         { question: "Puis-je démonter le lit pour un déménagement ?", answer: "Oui — démontable en 30 minutes, remontable à l'identique. Gardez la notice et la boîte de visserie d'origine." },
@@ -212,7 +212,7 @@ export function categoryFaq(pt: ProductType): FaqEntry[] {
         { question: "Quelle hauteur choisir selon ma position ?", answer: "Sur le dos : 10-12 cm. Sur le côté : 14-16 cm (l'épaule doit être comblée). Sur le ventre : 5-8 cm pour ne pas cambrer la nuque." },
         { question: "Puis-je laver l'oreiller en machine ?", answer: "La housse est amovible et lavable à 40°C. La garniture ne se lave pas mais peut être aérée au soleil ou passée 30 min au congélateur (anti-acariens)." },
         { question: "Combien de temps dure un oreiller ?", answer: "2 à 3 ans pour un usage quotidien. Test simple : plié en deux, il doit reprendre sa forme en < 3 secondes." },
-        { question: "L'oreiller convient-il aux allergiques ?", answer: "Traitement anti-acariens et housse OEKO-TEX. Pour les allergies sévères, ajoutez une housse anti-acariens supplémentaire." },
+        { question: "L'oreiller convient-il aux allergiques ?", answer: "Les traitements éventuels sont indiqués sur la fiche de chaque modèle. En cas d'allergie, un garnissage synthétique et une housse anti-acariens sont les options les plus sûres." },
         { question: "Quel oreiller pour douleurs cervicales ?", answer: "Un oreiller ergonomique (mémoire de forme, forme vague) qui épouse la nuque sans la cambrer. Consultez un ostéopathe si les douleurs persistent." },
         { question: "Comment se déroule la livraison ?", answer: "48h en France métropolitaine, frais de port forfaitaires affichés au panier. Colis suivi, remise en boîte aux lettres ou en main propre selon la taille." },
       ];
