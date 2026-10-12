@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useCart } from "@/lib/cart/store";
 import Link from "next/link";
 import { PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { formatCents, type PricedLine } from "./types";
@@ -65,6 +66,7 @@ export function CheckoutForm({
 }) {
   const stripe = useStripe();
   const elements = useElements();
+  const openCart = useCart((c) => c.open);
 
   const [fields, setFields] = useState<Fields>(EMPTY);
   const [errors, setErrors] = useState<Partial<Record<keyof Fields, string>>>({});
@@ -344,12 +346,16 @@ export function CheckoutForm({
           </button>
         </div>
 
-        <Link
-          href="/panier"
-          className="mt-5 block text-center font-sans text-[12px] uppercase tracking-[0.12em] text-taupe hover:text-noir"
+        {/* Le panier est un tiroir, pas une page : /panier n'existe pas et
+            renvoyait une 404 depuis le tunnel de paiement — à l'étape où
+            l'on perd le plus de clients. On ouvre le tiroir. */}
+        <button
+          type="button"
+          onClick={openCart}
+          className="mt-5 block w-full text-center font-sans text-[12px] uppercase tracking-[0.12em] text-taupe hover:text-noir"
         >
           ← Modifier mon panier
-        </Link>
+        </button>
       </aside>
     </form>
   );

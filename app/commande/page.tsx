@@ -44,10 +44,10 @@ function Steps() {
   const current = 2; // index de l'étape en cours
 
   return (
-    <ol className="mx-auto mb-14 flex max-w-lg items-center justify-center gap-3 md:gap-5">
+    <ol className="mx-auto mb-14 flex max-w-lg flex-wrap items-center justify-center gap-y-2 gap-x-2 sm:gap-x-3 md:gap-5">
       {steps.map((label, i) => (
-        <li key={label} className="flex items-center gap-3 md:gap-5">
-          <span className="flex items-center gap-2.5">
+        <li key={label} className="flex items-center gap-2 sm:gap-3 md:gap-5">
+          <span className="flex items-center gap-2 sm:gap-2.5">
             <span
               className={`flex h-7 w-7 items-center justify-center rounded-full font-sans text-[11px] font-medium transition-colors ${
                 i <= current ? "bg-noir text-or" : "border border-border bg-ivoire text-taupe"
@@ -56,7 +56,7 @@ function Steps() {
               {i + 1}
             </span>
             <span
-              className={`font-sans text-[11px] uppercase tracking-[0.14em] ${
+              className={`font-sans text-[10px] uppercase tracking-[0.06em] sm:text-[11px] sm:tracking-[0.14em] ${
                 i <= current ? "text-ink" : "text-taupe"
               }`}
             >
@@ -64,7 +64,7 @@ function Steps() {
             </span>
           </span>
           {i < steps.length - 1 && (
-            <span className="h-px w-6 bg-border md:w-12" aria-hidden="true" />
+            <span className="h-px w-3 bg-border sm:w-6 md:w-12" aria-hidden="true" />
           )}
         </li>
       ))}
