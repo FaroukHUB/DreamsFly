@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
+import { variantLabel } from "@/lib/product-card";
 import Image from "next/image";
 import { urlFor } from "@/lib/sanity/image";
 import { useCart } from "@/lib/cart/store";
@@ -301,7 +302,9 @@ export function ProductBuyBox({
           <div className="mb-6">
             <div className="mb-3 flex items-baseline gap-2 text-sm font-semibold uppercase tracking-wide text-pierre">
               <span>Taille</span>
-              {variant?.size && <span className="text-ink normal-case">— {variant.size}</span>}
+              {variantLabel(variant?.size) && (
+                <span className="text-ink normal-case">— {variantLabel(variant?.size)}</span>
+              )}
             </div>
             <div className="grid grid-cols-3 gap-2">
               {availableVariants.map((v) => (
@@ -315,7 +318,7 @@ export function ProductBuyBox({
                       : "border-border bg-ivoire text-ink hover:border-midnight"
                   }`}
                 >
-                  {v.size}
+                  {variantLabel(v.size) || "Taille unique"}
                 </button>
               ))}
             </div>

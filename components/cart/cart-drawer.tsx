@@ -1,4 +1,5 @@
 "use client";
+import { variantLabel } from "@/lib/product-card";
 import { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -103,8 +104,8 @@ export function CartDrawer() {
                     >
                       {l.productName}
                     </Link>
-                    {l.variantSize && (
-                      <span className="mt-0.5 text-xs text-pierre">{l.variantSize}</span>
+                    {variantLabel(l.variantSize) && (
+                      <span className="mt-0.5 text-xs text-pierre">{variantLabel(l.variantSize)}</span>
                     )}
                     <div className="mt-2 flex items-center justify-between">
                       <div className="flex items-center gap-2 rounded-pill border border-border bg-ivoire">

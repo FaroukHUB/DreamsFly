@@ -142,6 +142,38 @@ const OREILLER_SHAPE_SHORT: Record<string, string> = {
 };
 
 /**
+ * Libellés de variante qui ne sont pas des tailles.
+ *
+ * « Default Title » est l'intitulé que Shopify donne à la variante unique
+ * d'un produit qui n'en a pas vraiment. Il a suivi l'import et s'affiche
+ * tel quel sur les cartes et dans le panier — un nom technique montré au
+ * client, qui ne lui apprend rien et abîme la perception du catalogue.
+ *
+ * On ne supprime PAS la variante : elle porte le prix et le stock. On
+ * masque seulement son libellé, là où il serait affiché.
+ */
+const PLACEHOLDER_VARIANT_LABELS = new Set([
+  "default title",
+  "default",
+  "title",
+  "n/a",
+  "na",
+  "-",
+  "—",
+]);
+
+/**
+ * Libellé affichable d'une variante, ou `null` s'il s'agit d'un intitulé
+ * technique à masquer.
+ */
+export function variantLabel(size: unknown): string | null {
+  if (typeof size !== "string") return null;
+  const trimmed = size.trim();
+  if (!trimmed) return null;
+  return PLACEHOLDER_VARIANT_LABELS.has(trimmed.toLowerCase()) ? null : trimmed;
+}
+
+/**
  * Première taille proposée. Sert de repère concret — « 140 x 190 cm » parle
  * immédiatement, là où « plusieurs tailles » n'apprend rien.
  */
@@ -149,8 +181,8 @@ function mainSize(product: ProductCardInput): string | null {
   const variants = product?.variants;
   if (!Array.isArray(variants)) return null;
   for (const variant of variants) {
-    const size = typeof variant?.size === "string" ? variant.size.trim() : "";
-    if (size) return size;
+    const label = variantLabel(variant?.size);
+    if (label) return label;
   }
   return null;
 }

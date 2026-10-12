@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { productSpecs, productSpecLine, productPathFor } from "../lib/product-card.ts";
+import { productSpecs, productSpecLine, productPathFor, variantLabel } from "../lib/product-card.ts";
 
 /**
  * Les cartes produit n'affichaient que le nom de collection, une accroche et
@@ -105,4 +105,44 @@ test("l'URL d'une fiche respecte la rubrique de son type", () => {
   assert.equal(productPathFor({ productType: "matelas", slug: "milan" }), "/matelas/milan");
   // Fiches importées avant l'introduction de productType.
   assert.equal(productPathFor({ slug: "berlin" }), "/matelas/berlin");
+});
+
+// ─── Intitulés techniques de variante ───────────────────────
+
+test("« Default Title » et consorts ne s'affichent jamais", () => {
+  for (const brut of ["Default Title", "default title", "DEFAULT", "Title", "N/A", "-", "—", "  "]) {
+    assert.equal(variantLabel(brut), null, `« ${brut} » devrait être masqué`);
+  }
+});
+
+test("une vraie taille passe, débarrassée de ses espaces", () => {
+  assert.equal(variantLabel("  140 x 190 cm "), "140 x 190 cm");
+  assert.equal(variantLabel("Taille unique"), "Taille unique");
+  assert.equal(variantLabel("90x190"), "90x190");
+});
+
+test("valeur absente ou non textuelle : masquée sans lever d'exception", () => {
+  assert.equal(variantLabel(null), null);
+  assert.equal(variantLabel(undefined), null);
+  assert.equal(variantLabel(42 as unknown as string), null);
+});
+
+test("la ligne de caractéristiques ignore un intitulé technique", () => {
+  // Sans le filtre, la carte affichait « Mi-ferme · Ressorts ensachés · Default Title ».
+  const line = productSpecLine({
+    productType: "matelas",
+    firmness: "mi-ferme",
+    type: "mousse-ressorts",
+    variants: [{ size: "Default Title" }, { size: "140 x 190 cm" }],
+  });
+  assert.equal(line, "Mi-ferme · Ressorts ensachés · 140 x 190 cm");
+});
+
+test("toutes les variantes techniques : aucune dimension affichée", () => {
+  const specs = productSpecs({
+    productType: "matelas",
+    firmness: "ferme",
+    variants: [{ size: "Default Title" }],
+  });
+  assert.deepEqual(specs, ["Ferme"]);
 });
