@@ -8,26 +8,24 @@ import { Header } from "@/components/header";
 import { EditorialPageHeader } from "@/components/editorial-page-header";
 import { fetchPageHeros, pickHeroImageUrl } from "@/lib/sanity/page-heros";
 import { Footer } from "@/components/footer";
+import { productImageAlt, productSpecLine, variantLabel } from "@/lib/product-card";
 import { buildMetadata } from "@/lib/seo/metadata";
 import {
   JsonLd,
-  articleSchema,
   faqSchema,
   breadcrumbSchema,
   organizationSchema,
   organizationFromSettings,
-  howToSchema,
 } from "@/lib/seo/jsonld";
 import { urlFor } from "@/lib/sanity/image";
 
 export const revalidate = 300;
 
 const PATH = "/lits-coffre";
-const H1 = "Lit coffre : guide complet 2026 pour choisir le bon modèle";
-const META_TITLE = "Lit coffre : guide complet + comparatif 2026 | DreamsFly";
+const H1 = "Lits coffre avec rangement intégré";
+const META_TITLE = "Lits coffre avec rangement — modèles et prix";
 const META_DESC =
   "Tout sur le lit coffre : capacité de rangement, mécanisme à vérins, tissus, taille adaptée. Comparatif honnête + sélection DreamsFly (velours, lin, capitonné).";
-const PUBLISHED_AT = "2026-01-14";
 
 const FAQ: { question: string; answer: string }[] = [
   {
@@ -115,7 +113,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: META_TITLE,
     description: META_DESC,
     path: PATH,
-    type: "article",
+    type: "website",
   });
 }
 
@@ -143,6 +141,26 @@ export default async function LitCoffreGuide() {
   }
   const uniqueLits = Array.from(byName.values()).slice(0, 12);
 
+  // Dimensions et prix annoncés en tête de catalogue : calculés à partir des
+  // variantes réellement présentes, jamais écrits en dur. Si le catalogue
+  // change, la page suit — et si elle se vide, elle ne promet rien.
+  const sizesAvailable = Array.from(
+    new Set(
+      uniqueLits
+        .flatMap((p) => (Array.isArray(p.variants) ? p.variants : []))
+        .map((v: any) => variantLabel(v?.size))
+        .filter((label): label is string => Boolean(label)),
+    ),
+  ).sort((a, b) => {
+    const width = (x: string) => parseInt(x.match(/(\d+)/)?.[1] ?? "9999", 10);
+    return width(a) - width(b);
+  });
+
+  const priceCandidates = uniqueLits
+    .map((p) => p.minPrice)
+    .filter((n: unknown): n is number => typeof n === "number" && n > 0);
+  const priceFrom = priceCandidates.length ? Math.min(...priceCandidates) : null;
+
   const breadcrumbs = [
     { name: "Accueil", url: "/" },
     { name: "Lits", url: "/lits" },
@@ -155,9 +173,9 @@ export default async function LitCoffreGuide() {
 
       <EditorialPageHeader
         breadcrumbs={breadcrumbs}
-        eyebrow="Guide expert · janvier 2026"
+        eyebrow="Catégorie · Lits coffre"
         title={H1}
-        lead="Un lit coffre, ce n'est pas juste un lit avec un tiroir dessous. C'est 300 à 500 litres de rangement caché qui transforme une chambre de 12 m² en pièce fonctionnelle. Ce guide vous dit ce que les fiches produit ne disent pas — mécanisme, entretien, pièges à éviter, choix de tissu."
+        lead="Le couchage se relève et libère tout le volume sous le sommier — de quoi ranger couettes, linge de saison et valises sans occuper un mètre carré de plus. Nos modèles, leurs dimensions et leurs prix, puis ce qu'il faut vérifier avant de choisir."
         emphasize={2}
         imageUrl={pickHeroImageUrl(heros.litsCoffre, "https://images.pexels.com/photos/271816/pexels-photo-271816.jpeg?auto=compress&cs=tinysrgb&w=1400")}
       />
@@ -165,9 +183,10 @@ export default async function LitCoffreGuide() {
       <main className="mx-auto max-w-site px-6 py-14 md:px-10 md:py-20">
         <div className="mb-14 grid gap-10 lg:grid-cols-[1fr_1fr] lg:items-start lg:gap-16">
           <div className="flex flex-wrap gap-3 font-sans text-[11px] uppercase tracking-[0.14em]">
-            <a href="#comparatif" className="rounded-pill border border-ink/15 bg-ivoire px-5 py-2.5 font-medium text-noir transition-colors hover:border-noir hover:text-or">Comparatif rapide ↓</a>
-            <a href="#modeles" className="rounded-pill border border-ink/15 bg-ivoire px-5 py-2.5 font-medium text-noir transition-colors hover:border-noir hover:text-or">Voir les modèles ↓</a>
-            <a href="#faq" className="rounded-pill border border-ink/15 bg-ivoire px-5 py-2.5 font-medium text-noir transition-colors hover:border-noir hover:text-or">FAQ complète ↓</a>
+            <a href="#modeles" className="rounded-pill bg-noir px-5 py-2.5 font-medium text-ivoire transition-colors hover:bg-ink">Voir les modèles ↓</a>
+            <a href="#choisir" className="rounded-pill border border-ink/15 bg-ivoire px-5 py-2.5 font-medium text-noir transition-colors hover:border-noir hover:text-or">Comment choisir ↓</a>
+            <a href="#comparatif" className="rounded-pill border border-ink/15 bg-ivoire px-5 py-2.5 font-medium text-noir transition-colors hover:border-noir hover:text-or">Comparatif ↓</a>
+            <a href="#faq" className="rounded-pill border border-ink/15 bg-ivoire px-5 py-2.5 font-medium text-noir transition-colors hover:border-noir hover:text-or">FAQ ↓</a>
           </div>
 
           {/* Bloc chiffres-clés éditorial noir */}
@@ -189,8 +208,102 @@ export default async function LitCoffreGuide() {
           </aside>
         </div>
 
+        {/*
+          CATALOGUE EN PREMIER.
+
+          La page était construite comme un guide : mécanisme, pièges,
+          comparatif, puis les modèles tout en bas. Search Console la voit
+          sur des requêtes d'achat — « meilleur lit coffre », « lit coffre
+          80x190 » — pour 123 impressions et zéro clic. Un visiteur venu
+          acheter doit voir ce qui est en vente avant de lire des conseils.
+        */}
+        {uniqueLits.length > 0 ? (
+          <section id="modeles" className="mb-16 scroll-mt-20 md:mb-20">
+            <h2 className="mb-2 font-sora text-2xl font-semibold tracking-tight text-ink md:text-3xl">
+              {uniqueLits.length === 1 ? "Notre lit coffre" : `Nos ${uniqueLits.length} lits coffre`}
+            </h2>
+            <p className="mb-8 max-w-2xl text-pierre">
+              {priceFrom !== null && <>À partir de {priceFrom} €. </>}
+              {sizesAvailable.length > 0 && <>Dimensions disponibles : {sizesAvailable.join(" · ")}. </>}
+              Livraison 99 € en France métropolitaine, essai possible en showroom.
+            </p>
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {uniqueLits.map((p) => {
+                const specs = productSpecLine(p);
+                const discount =
+                  p.compareAtPrice && p.minPrice && p.compareAtPrice > p.minPrice
+                    ? Math.round(((p.compareAtPrice - p.minPrice) / p.compareAtPrice) * 100)
+                    : null;
+                return (
+                  <Link
+                    key={p._id}
+                    href={`/lits/${p.slug}`}
+                    className="group flex flex-col rounded-2xl border border-border bg-ivoire p-4 transition-all hover:-translate-y-1 hover:border-midnight focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-midnight focus-visible:ring-offset-2"
+                  >
+                    <div className="relative mb-4 aspect-[5/4] overflow-hidden rounded-xl bg-sable">
+                      {p.image && (
+                        <Image
+                          src={urlFor(p.image).width(500).url()}
+                          alt={productImageAlt(p)}
+                          fill
+                          sizes="(max-width:1024px) 50vw, 25vw"
+                          className="object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                      )}
+                      {discount !== null && discount > 0 && (
+                        <span className="absolute right-3 top-3 rounded-md bg-discount px-2.5 py-1 font-sans text-[10px] font-semibold uppercase tracking-[0.12em] text-ivoire">
+                          −{discount}%
+                        </span>
+                      )}
+                    </div>
+                    <h3 className="font-sora text-base font-semibold text-ink">{p.name}</h3>
+                    {p.tagline && <p className="line-clamp-2 text-[13px] text-pierre">{p.tagline}</p>}
+                    {specs && <p className="mt-1.5 text-[12.5px] leading-snug text-taupe">{specs}</p>}
+                    <div className="mt-auto flex items-baseline gap-2 border-t border-border pt-3">
+                      <span className="text-[11px] text-brume">Dès</span>
+                      <span className="font-sora text-lg font-bold text-discount">{p.minPrice} €</span>
+                      {p.compareAtPrice && p.compareAtPrice > p.minPrice && (
+                        <span className="text-xs text-brume line-through">{p.compareAtPrice} €</span>
+                      )}
+                    </div>
+                    <span
+                      aria-hidden="true"
+                      className="mt-3 inline-flex items-center gap-2 self-start border-b border-ink/25 pb-1 font-sans text-[11px] font-medium uppercase tracking-[0.14em] text-ink transition-all group-hover:gap-3 group-hover:border-midnight group-hover:text-midnight"
+                    >
+                      Voir le produit
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
+          </section>
+        ) : (
+          /* Aucun lit coffre au catalogue : ne pas annoncer une sélection
+             qui n'existe pas. On renvoie vers la rubrique qui, elle, a du
+             stock, plutôt que d'afficher une grille vide. */
+          <section id="modeles" className="mb-16 scroll-mt-20 rounded-[24px] border border-ink/10 bg-creme p-8 text-center md:mb-20 md:p-12">
+            <h2 className="display-serif on-cream text-[1.6rem] font-normal md:text-[2rem]">
+              Aucun lit coffre disponible pour le moment
+            </h2>
+            <p className="mx-auto mt-4 max-w-xl font-sans text-[15px] leading-relaxed text-taupe md:text-base">
+              Les conseils ci-dessous restent valables pour préparer votre choix. En attendant, nos
+              autres lits sont consultables, et nos conseillers peuvent vous signaler les prochains
+              réassorts.
+            </p>
+            <div className="mt-7 flex flex-wrap items-center justify-center gap-4">
+              <Link href="/lits" className="inline-flex items-center gap-3 rounded-pill bg-noir px-7 py-3.5 font-sans text-sm font-semibold text-ivoire transition-all hover:bg-ink">
+                Voir tous les lits
+              </Link>
+              <Link href="/magasins" className="inline-flex items-center gap-2 border-b border-noir pb-1 font-sans text-[12px] font-medium uppercase tracking-[0.14em] text-noir transition-colors hover:border-or hover:text-or">
+                Nous rendre visite en showroom
+              </Link>
+            </div>
+          </section>
+        )}
+
         {/* CE QU'IL FAUT SAVOIR — 3 pièges à éviter */}
-        <section className="mb-16 md:mb-20">
+        <section id="choisir" className="mb-16 scroll-mt-20 md:mb-20">
           <h2 className="mb-2 font-sora text-2xl font-semibold tracking-tight text-ink md:text-3xl">
             Les 3 pièges à éviter (que personne ne vous dit)
           </h2>
@@ -408,48 +521,6 @@ export default async function LitCoffreGuide() {
           </ol>
         </section>
 
-        {/* MODÈLES DreamsFly */}
-        {uniqueLits.length > 0 && (
-          <section id="modeles" className="mb-16 scroll-mt-20 md:mb-20">
-            <h2 className="mb-2 font-sora text-2xl font-semibold tracking-tight text-ink md:text-3xl">
-              Nos lits coffre en stock
-            </h2>
-            <p className="mb-8 max-w-2xl text-pierre">
-              {uniqueLits.length} modèles disponibles · Livraison à domicile · Paiement en 3× ou 4× sans frais
-            </p>
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {uniqueLits.map((p) => (
-                <Link
-                  key={p._id}
-                  href={`/lits/${p.slug}`}
-                  className="group flex flex-col rounded-2xl border border-border bg-ivoire p-4 transition-all hover:-translate-y-1 hover:border-midnight"
-                >
-                  <div className="relative mb-4 aspect-[5/4] overflow-hidden rounded-xl bg-sable">
-                    {p.image && (
-                      <Image
-                        src={urlFor(p.image).width(500).url()}
-                        alt={p.name}
-                        fill
-                        sizes="(max-width:1024px) 50vw, 25vw"
-                        className="object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                    )}
-                  </div>
-                  <h3 className="font-sora text-base font-semibold text-ink">{p.name}</h3>
-                  <p className="mb-3 line-clamp-2 text-[13px] text-pierre">{p.tagline}</p>
-                  <div className="mt-auto flex items-baseline gap-2 border-t border-border pt-3">
-                    <span className="text-[11px] text-brume">Dès</span>
-                    <span className="font-sora text-lg font-bold text-discount">{p.minPrice} €</span>
-                    {p.compareAtPrice && p.compareAtPrice > p.minPrice && (
-                      <span className="text-xs text-brume line-through">{p.compareAtPrice} €</span>
-                    )}
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </section>
-        )}
-
         {/* FAQ */}
         <section id="faq" className="mb-16 scroll-mt-20 md:mb-20">
           <h2 className="mb-2 font-sora text-2xl font-semibold tracking-tight text-ink md:text-3xl">
@@ -517,25 +588,15 @@ export default async function LitCoffreGuide() {
       {/* JSON-LD stack */}
       <JsonLd data={organizationSchema(organizationFromSettings(siteSettings))} />
       <JsonLd data={breadcrumbSchema(breadcrumbs)} />
-      <JsonLd
-        data={articleSchema({
-          title: H1,
-          description: META_DESC,
-          url: PATH,
-          publishedAt: PUBLISHED_AT,
-          updatedAt: PUBLISHED_AT,
-          author: { name: "L'équipe DreamsFly" },
-          articleType: "Article",
-        })}
-      />
+      {/*
+        Plus d'`articleSchema` ni de `howToSchema` ici : la page est une
+        rubrique commerciale, pas un article. Se déclarer Article à Google
+        tout en visant des requêtes d'achat envoie deux signaux opposés —
+        et le balisage HowTo n'est plus repris dans les résultats depuis
+        que Google l'a retiré. Le fil d'Ariane et la FAQ, eux, restent
+        pertinents et affichables.
+      */}
       <JsonLd data={faqSchema(FAQ)} />
-      <JsonLd
-        data={howToSchema({
-          name: "Choisir son lit coffre en 5 étapes",
-          description: "Méthode DreamsFly pour sélectionner le bon lit coffre selon sa chambre, son couchage et son usage.",
-          steps: HOWTO_STEPS,
-        })}
-      />
     </>
   );
 }

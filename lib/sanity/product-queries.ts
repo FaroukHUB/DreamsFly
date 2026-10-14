@@ -101,7 +101,10 @@ export const pillarPageQuery = groq`
 export const allLitsQuery = groq`
   *[_type == "product" && productType == "lit"] | order(name asc) {
     _id, name, title, "slug": slug.current, tagline,
+    productType,
     litMaterial,
+    litCoffreType,
+    litCoffreCapacityL,
     "image": images[0],
     "minPrice": variants[0].price,
     "compareAtPrice": variants[0].compareAtPrice,
