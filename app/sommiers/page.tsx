@@ -19,6 +19,7 @@ import { urlFor } from "@/lib/sanity/image";
 import { CategorySeoSections } from "@/components/category/category-seo-sections";
 import { FiltersSidebar } from "@/components/category/filters-sidebar";
 import { categoryFaq } from "@/lib/category-defaults";
+import { sommiersHeading } from "@/lib/category-h1";
 
 export const revalidate = 120;
 
@@ -73,10 +74,14 @@ export async function generateMetadata({ searchParams }: { searchParams: SearchP
   const nbFilters = [sp.types, sp.sizes, sp.priceMin, sp.priceMax].filter(Boolean).length;
   const filterLabel = nbFilters > 0 ? " — sélection filtrée" : "";
   return buildMetadata({
-    title: (pillar?.metaTitle || pillar?.h1 || "Sommiers premium — DreamsFly") + filterLabel,
+    // Le titre de repli décrit ce que la page contient — des modèles, des
+    // tailles, des prix — sans énumérer des types de sommier dont la
+    // présence au catalogue n'est pas connue ici : `generateMetadata` ne
+    // charge pas les produits, seulement la page pilier.
+    title: (pillar?.metaTitle || pillar?.h1 || "Sommiers — modèles, tailles et prix") + filterLabel,
     description:
       pillar?.metaDescription ||
-      "Découvrez notre collection de sommiers : à lattes, tapissiers, avec pieds inclus. Compatibilité tous matelas, garantie 2 ans, livraison à domicile.",
+      "Nos sommiers : type, nombre de lattes, dimensions et prix. Filtrez par taille et par budget, comparez les modèles et trouvez le support adapté à votre matelas.",
     path: "/sommiers",
   });
 }
@@ -156,10 +161,19 @@ export default async function SommiersPillar({ searchParams }: { searchParams: S
     ],
   };
 
-  const h1 = pillar?.h1 || "Sommiers premium DreamsFly";
+  // Le H1 se déduit des types réellement publiés — voir lib/category-h1.ts.
+  // Il est calculé sur `allProducts` et non sur `products` : un visiteur qui
+  // filtre sur « tapissier » ne doit pas voir le titre de la catégorie
+  // rétrécir à ce seul type.
+  const h1 = pillar?.h1 || sommiersHeading(allProducts);
+
+  // L'ancien chapeau affirmait « bois massif européen » pour toute la
+  // catégorie : l'essence du cadre n'est renseignée nulle part, et seuls les
+  // pieds sont décrits comme en bois massif dans la FAQ. Le texte retenu ne
+  // dit que ce que la page documente par ailleurs.
   const intro =
     pillar?.intro ||
-    "Le sommier est la fondation de vos nuits — souvent oublié, il conditionne pourtant la durée de vie de votre matelas et la qualité de votre sommeil. Notre sélection privilégie bois massif européen, ventilation et longévité.";
+    "Le sommier porte une part du soutien que vous ressentez : un modèle affaissé annule le confort d'un matelas neuf, quel qu'en soit le prix. Nos modèles, leurs dimensions et leurs prix, puis ce qu'il faut vérifier avant de choisir.";
   const breadcrumbs = [
     { name: "Accueil", url: "/" },
     { name: "Sommiers", url: "/sommiers" },
@@ -170,7 +184,7 @@ export default async function SommiersPillar({ searchParams }: { searchParams: S
       <Header settings={siteSettings} />
       <EditorialPageHeader
         breadcrumbs={breadcrumbs}
-        eyebrow="Collection sommiers"
+        eyebrow="Catégorie · Sommiers"
         title={h1}
         lead={intro}
         imageUrl={pickHeroImageUrl(heros.sommiers, "https://images.pexels.com/photos/271624/pexels-photo-271624.jpeg?auto=compress&cs=tinysrgb&w=1400")}
@@ -289,7 +303,7 @@ export default async function SommiersPillar({ searchParams }: { searchParams: S
           { href: "/magazine/guide-choisir-sommier", label: "Comment choisir son sommier" },
           { href: "/matelas", label: "Nos matelas" },
           { href: "/lits", label: "Nos lits" },
-          { href: "/lits-coffre", label: "Guide du lit coffre" },
+          { href: "/lits-coffre", label: "Lits coffre avec rangement" },
         ]}
       />
       <Footer settings={siteSettings} />

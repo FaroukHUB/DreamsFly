@@ -38,7 +38,7 @@ export const pageHeros = defineType({
     }),
     defineField({
       name: "litsCoffre",
-      title: "Guide lits coffre (/lits-coffre)",
+      title: "Lits coffre (/lits-coffre)",
       type: "image",
       group: "landings",
       options: { hotspot: true },

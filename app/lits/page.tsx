@@ -302,7 +302,7 @@ export default async function LitsPillar({ searchParams }: { searchParams: Searc
 
       <SeoCrossLinks
         links={[
-          { href: "/lits-coffre", label: "Guide du lit coffre" },
+          { href: "/lits-coffre", label: "Lits coffre avec rangement" },
           { href: "/magazine/guide-choisir-lit", label: "Comment choisir son lit" },
           { href: "/sommiers", label: "Nos sommiers" },
           { href: "/matelas", label: "Nos matelas" },

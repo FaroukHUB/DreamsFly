@@ -151,11 +151,20 @@ export const litBySlugQuery = groq`
   }
 `;
 
-/** Tous les sommiers — page pilier /sommiers. */
+/**
+ * Tous les sommiers — page pilier /sommiers.
+ *
+ * `productType` est sélectionné explicitement : `productSpecLine` s'en sert
+ * pour choisir quelles caractéristiques afficher, et retombe sur « matelas »
+ * quand le champ est absent. Sans lui, les cartes cherchaient une fermeté et
+ * une technologie de suspension qu'un sommier ne possède pas, et n'affichaient
+ * donc jamais le type de sommier ni le nombre de lattes.
+ */
 export const allSommiersQuery = groq`
   *[_type == "product" && productType == "sommier"] | order(name asc) {
     _id, name, title, "slug": slug.current, tagline,
-    sommierType, thicknessCm,
+    productType,
+    sommierType, sommierLattes, thicknessCm,
     "image": images[0],
     "minPrice": variants[0].price,
     "compareAtPrice": variants[0].compareAtPrice,
@@ -200,11 +209,20 @@ export const sommierBySlugQuery = groq`
   }
 `;
 
-/** Tous les oreillers — page pilier /oreillers. */
+/**
+ * Tous les oreillers — page pilier /oreillers.
+ *
+ * Même raison que pour les sommiers : sans `productType`, `productSpecLine`
+ * traitait chaque oreiller comme un matelas et affichait sa fermeté plutôt
+ * que son garnissage et sa forme. `oreillerDimensions` est nécessaire parce
+ * que la dimension d'un oreiller vit dans ce champ texte, pas dans les
+ * variantes — celles-ci portent souvent « Taille unique ».
+ */
 export const allOreillersQuery = groq`
   *[_type == "product" && productType == "oreiller"] | order(name asc) {
     _id, name, title, "slug": slug.current, tagline,
-    oreillerFilling, oreillerShape, firmness, thicknessCm,
+    productType,
+    oreillerFilling, oreillerShape, oreillerDimensions, firmness, thicknessCm,
     "image": images[0],
     "minPrice": variants[0].price,
     "compareAtPrice": variants[0].compareAtPrice,

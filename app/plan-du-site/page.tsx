@@ -91,7 +91,7 @@ export default async function PlanDuSite() {
               <SiteLink href="/lits">Tous les lits</SiteLink>
               <SiteLink href="/sommiers">Tous les sommiers</SiteLink>
               <SiteLink href="/oreillers">Tous les oreillers</SiteLink>
-              <SiteLink href="/lits-coffre">Lits coffre — Guide</SiteLink>
+              <SiteLink href="/lits-coffre">Lits coffre avec rangement</SiteLink>
             </SubSection>
           </Section>
 
